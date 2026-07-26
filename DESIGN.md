@@ -16,8 +16,7 @@ Desain visual RIVERSE mengusung nuansa *River Sage & Clean Water* yang dipadukan
 │                           BRAND COLOR PALETTE                           │
 ├──────────────┬──────────────┬──────────────┬──────────────┬─────────────┤
 │  Primary     │  Secondary   │  Mint Accent │ Surface Light│ Pure White  │
-│  #618264     │  #79AC78     │  #B0D9B1     │  #D0E7D2     │ #FFFFFF     │
-│ (Deep Sage)  │ (River Mint) │(Soft Meadow) │ (Ice Tint)   │ (Card Bg)   │
+│  #0284C7    │  #79AC78     │  #B0D9B1     │  #D0E7D2     │ #FFFFFF     │
 └──────────────┴──────────────┴──────────────┴──────────────┴─────────────┘
 ```
 

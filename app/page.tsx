@@ -1,65 +1,88 @@
+import React from "react";
+import ScrollIntroHero from "./components/ScrollIntroHero";
+import FeaturesOverview from "./components/FeaturesOverview";
 import Image from "next/image";
+import { MapPin, ShieldCheck } from "lucide-react";
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
+    <main className="min-h-screen bg-[#F8FAFC] font-sans selection:bg-[#0284C7] selection:text-white">
+      {/* Animated Scroll Intro & Portal Hero Sequence */}
+      <ScrollIntroHero />
+
+      {/* Main Ecosystem Features & Design System Showcase */}
+      <FeaturesOverview />
+
+      {/* Interactive Map CTA Banner */}
+      <section id="peta-gis" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0284C7] text-white relative overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.25),transparent_50%)] pointer-events-none" />
+
+        <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
+          <div className="max-w-2xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0284C7]/30 border border-sky-400/40 text-sky-200 text-xs font-semibold uppercase tracking-wider mb-4">
+              <MapPin className="w-3.5 h-3.5" />
+              Sistem Informasi Geografis Real-Time
+            </div>
+            <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
+              Jelajahi Peta Kondisi Sungai <br />
+              <span className="text-[#38BDF8]">Di Wilayah Anda Hari Ini</span>
+            </h2>
+            <p className="mt-4 text-sm sm:text-base text-sky-100/90 leading-relaxed">
+              Pantau titik ketercemaran, berikan dukungan upvote pada laporan terdekat, atau unggah laporan pencemaran sungai baru secara presisi dengan smart geofencing.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
             <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              href="#peta-gis"
+              className="flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-gradient-to-r from-[#0284C7] to-[#38BDF8] text-white font-bold text-sm shadow-xl shadow-[#0284C7]/30 hover:brightness-110 transition-all hover:scale-105 active:scale-95"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
+              <MapPin className="w-5 h-5 text-white" />
+              <span>Buka Peta GIS</span>
+            </a>
             <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+              href="#dashboard-dlh"
+              className="flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold text-sm hover:bg-white/20 transition-all hover:scale-105 active:scale-95"
             >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+              <ShieldCheck className="w-5 h-5 text-sky-300" />
+              <span>Portal Dinas DLH</span>
+            </a>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-[#0F172A] text-slate-400 py-12 px-4 sm:px-6 lg:px-8 border-t border-slate-800">
+        <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <div className="h-9 w-9 rounded-xl bg-white/10 p-1 flex items-center justify-center">
+              <Image
+                src="/assets/logo.png"
+                alt="RIVERSE Logo"
+                width={32}
+                height={32}
+                className="h-full w-full object-contain"
+              />
+            </div>
+            <div>
+              <span className="text-white font-bold tracking-tight text-lg">RIVER<span className="text-[#38BDF8]">SE</span></span>
+              <p className="text-[11px] text-slate-400">Crowdsourced River Monitoring & DLH Governance Platform</p>
+            </div>
+          </div>
+
+          <div className="flex items-center gap-6 text-xs font-medium">
+            <a href="#peta-gis" className="hover:text-white transition-colors">Peta GIS</a>
+            <a href="#laporan" className="hover:text-white transition-colors">Laporan Warga</a>
+            <a href="#dashboard-dlh" className="hover:text-white transition-colors">Portal DLH</a>
+            <a href="#privasi" className="hover:text-white transition-colors">Kebijakan Privasi</a>
+          </div>
+
+          <div className="text-xs text-slate-400 flex items-center gap-1">
+            <span>Palette Token:</span>
+            <span className="text-[#38BDF8] font-semibold">#0F172A • #0284C7 • #E0F2FE</span>
+          </div>
         </div>
-      </main>
-    </div>
+      </footer>
+    </main>
   );
 }
