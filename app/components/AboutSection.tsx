@@ -12,13 +12,15 @@ export default function AboutSection() {
       {/* ============================================================ */}
       {/* TOP BANNER: Blue Topographic Wave Gradient Header             */}
       {/* ============================================================ */}
-      {/* ============================================================ */}
-      {/* TOP BANNER: Blue Topographic Wave Gradient Header             */}
-      {/* ============================================================ */}
       <div className="relative bg-gradient-to-br from-[#0284C7] via-[#0284C7] to-[#0F172A] text-white overflow-hidden">
         
-        {/* Top Fade Transition (Multi-Stop easing gradient, smooth melt without hard cut) */}
-        <div className="absolute top-0 inset-x-0 h-48 bg-gradient-to-b from-white via-white/40 to-transparent pointer-events-none z-[5] blur-[1px]" />
+        {/* Top 5-Stop Smooth Fade Gradient Overlay */}
+        <div
+          className="absolute top-0 inset-x-0 h-64 z-[1] pointer-events-none"
+          style={{
+            background: 'linear-gradient(to bottom, white 0%, rgba(255,255,255,0.7) 25%, rgba(255,255,255,0.3) 50%, rgba(255,255,255,0.05) 75%, transparent 100%)'
+          }}
+        />
 
         {/* Ambient Radial Glow */}
         <div className="absolute inset-0 opacity-25 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.5),transparent_60%)]" />
@@ -47,8 +49,8 @@ export default function AboutSection() {
         />
 
         {/* Content Wrapper Layer */}
-        <div className="relative z-10 px-4 sm:px-6 lg:px-8 pt-28 pb-40 max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-sky-100 text-xs font-bold uppercase tracking-widest mb-5 shadow-sm">
+        <div className="relative z-10 px-4 sm:px-6 lg:px-8 pt-32 pb-40 max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-sky-200" />
             Tentang Kami
           </div>
@@ -61,20 +63,23 @@ export default function AboutSection() {
           </p>
         </div>
 
-        {/* Bottom Gentle Landai River Wave Shape Divider */}
+        {/* Seam Concealer Blur Strip */}
+        <div className="absolute bottom-0 left-0 right-0 h-2 bg-white/50 blur-md z-[2] pointer-events-none" />
+
+        {/* Landai 2-Curve River Wave Shape Divider */}
         <svg
-          className="absolute bottom-0 left-0 w-full h-16 sm:h-20 text-white z-[1] pointer-events-none"
-          viewBox="0 0 1440 120"
+          className="absolute -bottom-1 left-0 w-full h-20 sm:h-28 z-[1] pointer-events-none"
+          viewBox="0 0 1440 150"
           preserveAspectRatio="none"
         >
           <path
-            d="M0,60 C360,110 1080,10 1440,60 L1440,120 L0,120 Z"
+            d="M0,90 C240,120 480,60 720,80 C960,100 1200,50 1440,85 L1440,150 L0,150 Z"
             fill="white"
           />
         </svg>
 
-        {/* Bottom Easing Fade Gradient Overlay */}
-        <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#0284C7]/20 to-white pointer-events-none z-[2]" />
+        {/* Bottom Easing Fade Overlay */}
+        <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#0284C7]/15 to-white pointer-events-none z-[2]" />
       </div>
 
       {/* ============================================================ */}
