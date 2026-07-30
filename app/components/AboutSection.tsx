@@ -7,7 +7,7 @@ import { Sparkles, ShieldCheck, Waves, Users, MapPin } from "lucide-react";
 
 export default function AboutSection() {
   return (
-    <section id="tentang-kami" className="relative bg-white pt-0 pb-24 border-t border-sky-100 overflow-hidden">
+    <section id="tentang-kami" className="relative bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] pt-0 pb-24 border-t border-sky-100 overflow-hidden">
       
       {/* ============================================================ */}
       {/* TOP BANNER: Blue Topographic Wave Gradient Header             */}
@@ -64,13 +64,13 @@ export default function AboutSection() {
           {/* Card 1: Tall Portrait */}
           <div className="relative h-64 sm:h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform hover:-translate-y-2 transition-all duration-300 group">
             <Image
-              src="/assets/sungai/026016200_1633163690-20211002-Pencemaran_Teluk_Jakarta_oleh_Paracetamol-1.jpg"
-              alt="Pemantauan Sungai"
+              src="/assets/sungai/Pencemaran Teluk Jakarta oleh Paracetamol.jpg"
+              alt="Pencemaran Pesisir"
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 via-transparent to-transparent" />
-            <div className="absolute bottom-3 left-3 right-3 text-white">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 via-[#0F172A]/20 to-transparent" />
+            <div className="absolute bottom-4 left-4 right-4 text-white">
               <span className="block text-xs font-bold truncate">Pencemaran Pesisir</span>
               <span className="text-[10px] text-sky-200 flex items-center gap-1 mt-0.5">
                 <MapPin className="w-3 h-3 text-[#38BDF8]" /> Jakarta Utara
@@ -81,8 +81,8 @@ export default function AboutSection() {
           {/* Card 2: Medium Square */}
           <div className="relative h-48 sm:h-64 rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform hover:-translate-y-2 transition-all duration-300 group">
             <Image
-              src="/assets/sungai/Mengerikan! Ini Penampakan Pencemaran Sungai di Jakarta.jpeg"
-              alt="Laporan Warga"
+              src="/assets/sungai/20200812-Sungai-Ciliwung-1_ratio-16x9.jpg"
+              alt="Sungai Ciliwung"
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-700"
             />
@@ -98,15 +98,15 @@ export default function AboutSection() {
           {/* Card 3: Tall Portrait */}
           <div className="relative h-64 sm:h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform hover:-translate-y-2 transition-all duration-300 group">
             <Image
-              src="/assets/sungai/pencemaran-teluk-jakarta-9r95-dom.jpg"
-              alt="Aksi Penanganan DLH"
+              src="/assets/sungai/sungai ciliwung bening.jpg"
+              alt="Pembersihan Hilir"
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 via-transparent to-transparent" />
-            <div className="absolute bottom-3 left-3 right-3 text-white">
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 via-[#0F172A]/20 to-transparent" />
+            <div className="absolute bottom-4 left-4 right-4 text-white">
               <span className="block text-xs font-bold truncate">Pembersihan Hilir</span>
-              <span className="text-[10px] text-sky-200 flex items-center gap-1 mt-0.5">
+              <span className="text-[10px] text-emerald-300 flex items-center gap-1 mt-0.5 font-medium">
                 <ShieldCheck className="w-3 h-3 text-emerald-400" /> Aksi DLH Selesai
               </span>
             </div>
@@ -156,7 +156,7 @@ export default function AboutSection() {
       {/* BOTTOM SECTION: 2-Column (Image Left, Mission Text Right)    */}
       {/* ============================================================ */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:24px_24px] rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-md">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-xl shadow-slate-200/40">
           
           {/* Image Left */}
           <div className="md:col-span-5 relative h-64 sm:h-80 w-full rounded-2xl overflow-hidden shadow-lg border border-sky-100">
