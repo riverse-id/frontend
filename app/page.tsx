@@ -2,8 +2,9 @@ import React from "react";
 import ScrollIntroHero from "./components/ScrollIntroHero";
 import FeaturesOverview from "./components/FeaturesOverview";
 import AboutSection from "./components/AboutSection";
+import PartnerSection from "./components/PartnerSection";
 import Image from "next/image";
-import { MapPin, ShieldCheck, Handshake, Mail, Phone } from "lucide-react";
+import { MapPin, ShieldCheck, Mail } from "lucide-react";
 
 export default function Home() {
   return (
@@ -17,39 +18,8 @@ export default function Home() {
       {/* About Us & Mission Section */}
       <AboutSection />
 
-      {/* Partner Section */}
-      <section id="partner" className="py-20 px-4 sm:px-6 lg:px-8 bg-white border-t border-sky-100 relative overflow-hidden">
-        <div className="max-w-7xl mx-auto text-center relative z-10">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0284C7]/10 text-[#0284C7] text-xs font-bold uppercase tracking-wider mb-4">
-            <Handshake className="w-3.5 h-3.5" /> Partner & Kolaborasi Institusi
-          </div>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight">
-            Dipercaya Oleh Instansi Lingkungan & Komunitas Sungai
-          </h2>
-          <p className="mt-3 text-sm text-slate-600 max-w-xl mx-auto">
-            Terhubung langsung dengan Dinas Lingkungan Hidup (DLH), komunitas peduli sungai, dan penyedia peta GIS profesional.
-          </p>
-
-          <div className="mt-12 grid grid-cols-2 md:grid-cols-4 gap-6 items-center">
-            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-sm flex flex-col items-center justify-center gap-2 hover:border-sky-300 transition-all">
-              <span className="font-extrabold text-lg text-slate-800">Dinas LH DKI</span>
-              <span className="text-xs text-sky-600 font-semibold">Integrasi Eskalasi Official</span>
-            </div>
-            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-sm flex flex-col items-center justify-center gap-2 hover:border-sky-300 transition-all">
-              <span className="font-extrabold text-lg text-slate-800">PostGIS OpenSource</span>
-              <span className="text-xs text-sky-600 font-semibold">Spasial Indexing Database</span>
-            </div>
-            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-sm flex flex-col items-center justify-center gap-2 hover:border-sky-300 transition-all">
-              <span className="font-extrabold text-lg text-slate-800">Komunitas Ciliwung</span>
-              <span className="text-xs text-sky-600 font-semibold">Relawan Verifikasi Lapangan</span>
-            </div>
-            <div className="p-6 rounded-2xl bg-slate-50 border border-slate-200/80 shadow-sm flex flex-col items-center justify-center gap-2 hover:border-sky-300 transition-all">
-              <span className="font-extrabold text-lg text-slate-800">EcoGIS Indonesia</span>
-              <span className="text-xs text-sky-600 font-semibold">Peta Topografi Precision</span>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Infinite Marquee Partner Section */}
+      <PartnerSection />
 
       {/* Interactive Map CTA Banner */}
       <section id="peta-gis" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0284C7] text-white relative overflow-hidden">
