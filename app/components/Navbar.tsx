@@ -93,7 +93,7 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
           {/* Right Action Button */}
           <div className="flex items-center gap-3">
             <a
-              href="#peta-gis"
+              href="/lapor"
               className="flex items-center gap-2 px-5 py-2 rounded-full border-2 border-[#0284C7] text-[#0284C7] text-xs font-bold hover:bg-[#0284C7] hover:text-white shadow-sm transition-all hover:scale-105 active:scale-95"
             >
               <PlusCircle className="w-3.5 h-3.5" />
