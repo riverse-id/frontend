@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import {
   ArrowLeft,
   MapPin,
@@ -178,9 +179,13 @@ export default function LaporPage() {
       <section className="relative w-full bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] border-b border-slate-200/80 py-16 sm:py-20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
           
-          {/* Floating Tilted Cards (Placed on spacious wide margins so no collision with text) */}
-          <div className="hidden lg:block absolute left-2 xl:left-8 top-2 -rotate-6 hover:rotate-0 transition-transform duration-300 z-10">
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3">
+          {/* Floating Tilted Cards with Smooth Organic Bobbing Animations */}
+          <motion.div
+            animate={{ y: [0, -10, 0] }}
+            transition={{ repeat: Infinity, duration: 4.2, ease: "easeInOut" }}
+            className="hidden lg:block absolute left-2 xl:left-8 top-2 -rotate-6 hover:rotate-0 transition-transform duration-300 z-10 cursor-pointer"
+          >
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-xl transition-shadow">
               <div className="flex flex-col text-left">
                 <span className="font-extrabold text-lg text-slate-900 leading-none">5.000+</span>
                 <span className="text-[10px] text-slate-500 font-semibold mt-1">Laporan Terverifikasi</span>
@@ -189,10 +194,14 @@ export default function LaporPage() {
                 <CheckCircle2 className="w-4 h-4" />
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="hidden lg:block absolute right-2 xl:right-8 top-4 rotate-6 hover:rotate-0 transition-transform duration-300 z-10">
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3">
+          <motion.div
+            animate={{ y: [0, 10, 0] }}
+            transition={{ repeat: Infinity, duration: 5.0, ease: "easeInOut" }}
+            className="hidden lg:block absolute right-2 xl:right-8 top-4 rotate-6 hover:rotate-0 transition-transform duration-300 z-10 cursor-pointer"
+          >
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-xl transition-shadow">
               <div className="flex flex-col text-left">
                 <span className="font-extrabold text-lg text-slate-900 leading-none">10.000+</span>
                 <span className="text-[10px] text-slate-500 font-semibold mt-1">Relawan Warga</span>
@@ -201,10 +210,14 @@ export default function LaporPage() {
                 <UserCheck className="w-4 h-4" />
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="hidden lg:block absolute left-4 xl:left-10 bottom-2 -rotate-3 hover:rotate-0 transition-transform duration-300 z-10">
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3">
+          <motion.div
+            animate={{ y: [0, -12, 0] }}
+            transition={{ repeat: Infinity, duration: 4.8, ease: "easeInOut" }}
+            className="hidden lg:block absolute left-4 xl:left-10 bottom-2 -rotate-3 hover:rotate-0 transition-transform duration-300 z-10 cursor-pointer"
+          >
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-xl transition-shadow">
               <div className="flex flex-col text-left">
                 <span className="font-extrabold text-lg text-slate-900 leading-none">24 Jam</span>
                 <span className="text-[10px] text-slate-500 font-semibold mt-1">Respon Cepat DLH</span>
@@ -213,10 +226,14 @@ export default function LaporPage() {
                 <Clock className="w-4 h-4" />
               </div>
             </div>
-          </div>
+          </motion.div>
 
-          <div className="hidden lg:block absolute right-4 xl:right-10 bottom-4 rotate-3 hover:rotate-0 transition-transform duration-300 z-10">
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3">
+          <motion.div
+            animate={{ y: [0, 8, 0] }}
+            transition={{ repeat: Infinity, duration: 5.4, ease: "easeInOut" }}
+            className="hidden lg:block absolute right-4 xl:right-10 bottom-4 rotate-3 hover:rotate-0 transition-transform duration-300 z-10 cursor-pointer"
+          >
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-xl transition-shadow">
               <div className="flex flex-col text-left">
                 <span className="font-extrabold text-lg text-slate-900 leading-none">100% Spasial</span>
                 <span className="text-[10px] text-slate-500 font-semibold mt-1">Geofencing GIS</span>
@@ -225,7 +242,7 @@ export default function LaporPage() {
                 <MapPin className="w-4 h-4" />
               </div>
             </div>
-          </div>
+          </motion.div>
 
           {/* Main Hero Header Content */}
           <div className="max-w-3xl mx-auto relative z-20">
