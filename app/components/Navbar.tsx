@@ -2,7 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
-import { MapPin, PlusCircle, BarChart3, ShieldCheck, Layers } from "lucide-react";
+import { Home, Info, Handshake, Mail, PlusCircle } from "lucide-react";
 
 interface NavbarProps {
   opacity?: number;
@@ -18,7 +18,7 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-3">
         <div className="flex items-center justify-between rounded-2xl bg-white/85 backdrop-blur-md px-5 py-3 shadow-lg shadow-[#0284C7]/10 border border-[#E0F2FE]">
           {/* Logo & Brand */}
-          <div className="flex items-center gap-3 cursor-pointer group">
+          <a href="#beranda" className="flex items-center gap-3 cursor-pointer group">
             <div className="relative h-10 w-10 overflow-hidden rounded-xl bg-gradient-to-br from-[#0284C7] to-[#0F172A] p-1 shadow-sm transition-transform duration-300 group-hover:scale-105">
               <Image
                 src="/assets/logo.png"
@@ -34,47 +34,47 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
                 RIVER<span className="text-[#0284C7]">SE</span>
               </span>
               <span className="text-[10px] font-medium tracking-wide text-sky-700 uppercase -mt-1">
-                River Monitoring GIS
+                Active River System ゼロズ
               </span>
             </div>
-          </div>
+          </a>
 
-          {/* Navigation Links */}
+          {/* Navigation Links (Beranda, Tentang Kami, Partner, Kontak) */}
           <nav className="hidden md:flex items-center gap-1 bg-[#E0F2FE]/50 p-1.5 rounded-xl border border-sky-200/60">
             <a
-              href="#peta-gis"
-              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[#0284C7] bg-white shadow-sm transition-all"
+              href="#beranda"
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-[#0284C7] bg-white shadow-sm transition-all hover:scale-105"
             >
-              <MapPin className="w-3.5 h-3.5 text-[#0284C7]" />
-              Peta GIS
+              <Home className="w-3.5 h-3.5 text-[#0284C7]" />
+              Beranda
             </a>
             <a
-              href="#laporan"
-              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-[#0284C7] hover:bg-white hover:shadow-sm transition-all"
+              href="#tentang-kami"
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-[#0284C7] hover:bg-white hover:shadow-sm transition-all hover:scale-105"
             >
-              <Layers className="w-3.5 h-3.5 text-sky-500" />
-              Laporan Warga
+              <Info className="w-3.5 h-3.5 text-sky-500" />
+              Tentang Kami
             </a>
             <a
-              href="#statistik"
-              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-[#0284C7] hover:bg-white hover:shadow-sm transition-all"
+              href="#partner"
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-[#0284C7] hover:bg-white hover:shadow-sm transition-all hover:scale-105"
             >
-              <BarChart3 className="w-3.5 h-3.5 text-sky-500" />
-              Statistik
+              <Handshake className="w-3.5 h-3.5 text-sky-500" />
+              Partner
             </a>
             <a
-              href="#dashboard-dlh"
-              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-[#0284C7] hover:bg-white hover:shadow-sm transition-all"
+              href="#kontak"
+              className="flex items-center gap-2 px-3.5 py-1.5 rounded-lg text-xs font-semibold text-slate-700 hover:text-[#0284C7] hover:bg-white hover:shadow-sm transition-all hover:scale-105"
             >
-              <ShieldCheck className="w-3.5 h-3.5 text-[#0284C7]" />
-              Portal DLH
+              <Mail className="w-3.5 h-3.5 text-sky-500" />
+              Kontak
             </a>
           </nav>
 
           {/* Action Button */}
           <div className="flex items-center gap-3">
             <a
-              href="#buat-laporan"
+              href="#peta-gis"
               className="flex items-center gap-2 px-4.5 py-2 rounded-xl bg-gradient-to-r from-[#0284C7] to-[#38BDF8] text-white text-xs font-semibold shadow-md shadow-[#0284C7]/25 hover:shadow-lg hover:brightness-105 active:scale-95 transition-all"
             >
               <PlusCircle className="w-4 h-4" />
