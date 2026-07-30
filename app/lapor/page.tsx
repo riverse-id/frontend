@@ -173,17 +173,13 @@ export default function LaporPage() {
       </header>
 
       {/* ============================================================ */}
-      {/* MAIN FORM CONTENT AREA                                       */}
+      {/* HERO SECTION: Full-Bleed Edge-to-Edge Grid Paper Background   */}
       {/* ============================================================ */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
-        
-        {/* ============================================================ */}
-        {/* HERO SECTION: White Grid Graph Background & Floating Badges */}
-        {/* ============================================================ */}
-        <div className="relative bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:24px_24px] rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden py-12 px-4 sm:px-10 text-center mb-10">
+      <section className="relative w-full bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] border-b border-slate-200/80 py-16 sm:py-20 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
           
-          {/* Floating Tilted Cards (Left & Right - Matching Reference Design) */}
-          <div className="hidden lg:block absolute left-6 top-8 -rotate-6 hover:rotate-0 transition-transform duration-300 z-10">
+          {/* Floating Tilted Cards (Placed on spacious wide margins so no collision with text) */}
+          <div className="hidden lg:block absolute left-2 xl:left-8 top-2 -rotate-6 hover:rotate-0 transition-transform duration-300 z-10">
             <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3">
               <div className="flex flex-col text-left">
                 <span className="font-extrabold text-lg text-slate-900 leading-none">5.000+</span>
@@ -195,7 +191,7 @@ export default function LaporPage() {
             </div>
           </div>
 
-          <div className="hidden lg:block absolute right-8 top-10 rotate-6 hover:rotate-0 transition-transform duration-300 z-10">
+          <div className="hidden lg:block absolute right-2 xl:right-8 top-4 rotate-6 hover:rotate-0 transition-transform duration-300 z-10">
             <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3">
               <div className="flex flex-col text-left">
                 <span className="font-extrabold text-lg text-slate-900 leading-none">10.000+</span>
@@ -207,7 +203,7 @@ export default function LaporPage() {
             </div>
           </div>
 
-          <div className="hidden lg:block absolute left-12 bottom-12 -rotate-3 hover:rotate-0 transition-transform duration-300 z-10">
+          <div className="hidden lg:block absolute left-4 xl:left-10 bottom-2 -rotate-3 hover:rotate-0 transition-transform duration-300 z-10">
             <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3">
               <div className="flex flex-col text-left">
                 <span className="font-extrabold text-lg text-slate-900 leading-none">24 Jam</span>
@@ -219,7 +215,7 @@ export default function LaporPage() {
             </div>
           </div>
 
-          <div className="hidden lg:block absolute right-14 bottom-14 rotate-3 hover:rotate-0 transition-transform duration-300 z-10">
+          <div className="hidden lg:block absolute right-4 xl:right-10 bottom-4 rotate-3 hover:rotate-0 transition-transform duration-300 z-10">
             <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3">
               <div className="flex flex-col text-left">
                 <span className="font-extrabold text-lg text-slate-900 leading-none">100% Spasial</span>
@@ -231,18 +227,18 @@ export default function LaporPage() {
             </div>
           </div>
 
-          {/* Main Hero Header Title */}
-          <div className="max-w-2xl mx-auto relative z-20">
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#0284C7] leading-tight mb-4">
+          {/* Main Hero Header Content */}
+          <div className="max-w-3xl mx-auto relative z-20">
+            <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#0284C7] leading-tight mb-4">
               Pusat Pelaporan Sungai <br className="hidden sm:block" />
               <span className="text-[#0284C7]">Terbaik di Indonesia</span>
             </h1>
 
-            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium max-w-xl mx-auto mb-8">
+            <p className="text-xs sm:text-sm lg:text-base text-slate-600 leading-relaxed font-medium max-w-xl mx-auto mb-8">
               Laporkan semua aspek pencemaran sungai dari nol hingga terverifikasi. Bebas hambatan, tanpa login, dan langsung terhubung dengan Dinas Lingkungan Hidup.
             </p>
 
-            {/* Search Input Box (Matching Reference Design) */}
+            {/* Search Input Box */}
             <div className="relative max-w-lg mx-auto mb-6">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
                 <Info className="w-4 h-4" />
@@ -250,16 +246,16 @@ export default function LaporPage() {
               <input
                 type="text"
                 placeholder="Cari segmen sungai, jenis limbah, atau patokan lokasi..."
-                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-slate-200 bg-white/90 shadow-sm text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0284C7] focus:bg-white"
+                className="w-full pl-10 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-white/95 shadow-sm text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0284C7] focus:bg-white"
               />
             </div>
 
-            {/* Category Filter Pills (Matching Reference Design) */}
+            {/* Category Filter Pills */}
             <div className="flex flex-wrap items-center justify-center gap-2">
               <button
                 type="button"
                 onClick={() => setCategory("sampah")}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
                   category === "sampah"
                     ? "bg-[#0284C7] text-white shadow-sm"
                     : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -270,7 +266,7 @@ export default function LaporPage() {
               <button
                 type="button"
                 onClick={() => setCategory("limbah-cair")}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
                   category === "limbah-cair"
                     ? "bg-[#0284C7] text-white shadow-sm"
                     : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -281,7 +277,7 @@ export default function LaporPage() {
               <button
                 type="button"
                 onClick={() => setCategory("bau-warna")}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
                   category === "bau-warna"
                     ? "bg-[#0284C7] text-white shadow-sm"
                     : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -292,7 +288,7 @@ export default function LaporPage() {
               <button
                 type="button"
                 onClick={() => setCategory("tanggul")}
-                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
                   category === "tanggul"
                     ? "bg-[#0284C7] text-white shadow-sm"
                     : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
@@ -303,6 +299,12 @@ export default function LaporPage() {
             </div>
           </div>
         </div>
+      </section>
+
+      {/* ============================================================ */}
+      {/* MAIN FORM CONTENT AREA                                       */}
+      {/* ============================================================ */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
 
         {/* Form Container or Success Confirmation */}
         {isSubmitted ? (
