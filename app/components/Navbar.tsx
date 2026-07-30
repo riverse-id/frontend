@@ -51,17 +51,15 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
         <div className="flex items-center justify-between rounded-full bg-white/70 backdrop-blur-xl backdrop-saturate-180 px-6 py-2.5 shadow-[0_8px_32px_rgba(2,132,199,0.12)] border border-white/60 transition-all duration-300">
           
           {/* Logo & Brand */}
-          <a href="#beranda" className="flex items-center gap-3 cursor-pointer group">
-            <div className="relative h-9 w-9 overflow-hidden rounded-xl bg-gradient-to-br from-[#0284C7] to-[#0F172A] p-1 shadow-sm transition-transform duration-300 group-hover:scale-105">
-              <Image
-                src="/assets/logo.png"
-                alt="RIVERSE Logo"
-                width={36}
-                height={36}
-                className="h-full w-full object-contain filter drop-shadow"
-                priority
-              />
-            </div>
+          <a href="#beranda" className="flex items-center gap-2.5 cursor-pointer group">
+            <Image
+              src="/assets/logo.png"
+              alt="RIVERSE Logo"
+              width={36}
+              height={36}
+              className="h-9 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              priority
+            />
             <div className="flex flex-col">
               <span className="font-extrabold text-lg tracking-tight text-[#0F172A]">
                 RIVER<span className="text-[#0284C7]">SE</span>
