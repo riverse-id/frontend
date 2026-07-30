@@ -156,7 +156,7 @@ export default function AboutSection() {
       {/* BOTTOM SECTION: 2-Column (Image Left, Mission Text Right)    */}
       {/* ============================================================ */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center bg-slate-50/80 rounded-3xl p-6 sm:p-10 border border-sky-100/80 shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:24px_24px] rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-md">
           
           {/* Image Left */}
           <div className="md:col-span-5 relative h-64 sm:h-80 w-full rounded-2xl overflow-hidden shadow-lg border border-sky-100">

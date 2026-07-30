@@ -22,7 +22,7 @@ export default function PartnerSection() {
   const doublePartners = [...PARTNERS, ...PARTNERS];
 
   return (
-    <section id="partner" className="py-20 bg-white border-t border-sky-100 relative overflow-hidden">
+    <section id="partner" className="py-20 bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] border-t border-sky-100 relative overflow-hidden">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 mb-12">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0284C7]/10 text-[#0284C7] text-xs font-bold uppercase tracking-wider mb-4 border border-[#0284C7]/20">
           <Handshake className="w-4 h-4" /> Partner & Kolaborasi Institusi
