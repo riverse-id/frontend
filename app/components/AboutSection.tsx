@@ -12,11 +12,11 @@ export default function AboutSection() {
       {/* ============================================================ */}
       {/* TOP BANNER: Blue Topographic Wave Gradient Header             */}
       {/* ============================================================ */}
-      <div className="relative bg-gradient-to-br from-[#0284C7] via-[#0284C7] to-[#0F172A] text-white pt-20 pb-36 px-4 sm:px-6 lg:px-8 overflow-hidden">
+      <div className="relative bg-gradient-to-br from-[#0284C7] via-[#0284C7] to-[#0F172A] text-white overflow-hidden">
         {/* Ambient Radial Glow */}
         <div className="absolute inset-0 opacity-25 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.5),transparent_60%)]" />
 
-        {/* Dual-Layer Parallax Flowing River Waves (Layer A: Left 14s | Layer B: Right 9s) */}
+        {/* Dual-Layer Parallax Flowing River Waves (Full Bleed Edge-to-Edge) */}
         <motion.div
           animate={{ backgroundPositionX: ["0px", "-220px"] }}
           transition={{ repeat: Infinity, duration: 14, ease: "linear" }}
@@ -39,7 +39,8 @@ export default function AboutSection() {
           }}
         />
 
-        <div className="max-w-4xl mx-auto text-center relative z-10">
+        {/* Content Wrapper Layer (Padding applied HERE so wave patterns stretch edge-to-edge) */}
+        <div className="relative z-10 px-4 sm:px-6 lg:px-8 pt-20 pb-36 max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-sky-100 text-xs font-bold uppercase tracking-widest mb-5 shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-sky-200" />
             Tentang Kami
