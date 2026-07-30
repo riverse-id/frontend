@@ -14,8 +14,20 @@ export default function AboutSection() {
       {/* ============================================================ */}
       <div className="relative bg-gradient-to-br from-[#0284C7] via-[#0284C7] to-[#0F172A] text-white overflow-hidden">
         
-        {/* Top Smooth Fade Gradient Transition (Melts top section into blue header) */}
-        <div className="absolute top-0 left-0 right-0 h-24 bg-gradient-to-b from-white via-white/40 to-transparent pointer-events-none z-[5]" />
+        {/* Top Organic River Wave Shape Divider */}
+        <svg
+          className="absolute top-0 left-0 w-full h-16 sm:h-24 text-white z-[6] pointer-events-none transform rotate-180"
+          viewBox="0 0 1440 120"
+          preserveAspectRatio="none"
+        >
+          <path
+            d="M0,32 C360,95 720,10 1080,75 C1260,100 1380,45 1440,30 L1440,120 L0,120 Z"
+            fill="currentColor"
+          />
+        </svg>
+
+        {/* Top Multi-Step Ultra-Smooth Fade Gradient Overlay */}
+        <div className="absolute top-0 left-0 right-0 h-44 bg-gradient-to-b from-white via-white/80 via-white/30 to-transparent pointer-events-none z-[5]" />
 
         {/* Ambient Radial Glow */}
         <div className="absolute inset-0 opacity-25 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.5),transparent_60%)]" />
@@ -44,7 +56,7 @@ export default function AboutSection() {
         />
 
         {/* Content Wrapper Layer */}
-        <div className="relative z-10 px-4 sm:px-6 lg:px-8 pt-24 pb-40 max-w-4xl mx-auto text-center">
+        <div className="relative z-10 px-4 sm:px-6 lg:px-8 pt-28 pb-44 max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-sky-100 text-xs font-bold uppercase tracking-widest mb-5 shadow-sm">
             <Sparkles className="w-3.5 h-3.5 text-sky-200" />
             Tentang Kami
@@ -58,9 +70,9 @@ export default function AboutSection() {
           </p>
         </div>
 
-        {/* Organic River Wave Shape Divider at Bottom */}
+        {/* Bottom Organic River Wave Shape Divider */}
         <svg
-          className="absolute bottom-0 left-0 w-full h-16 sm:h-24 text-white z-[4] pointer-events-none opacity-90"
+          className="absolute bottom-0 left-0 w-full h-20 sm:h-28 text-white z-[6] pointer-events-none"
           viewBox="0 0 1440 120"
           preserveAspectRatio="none"
         >
@@ -70,8 +82,8 @@ export default function AboutSection() {
           />
         </svg>
 
-        {/* Bottom Fade Gradient Transition Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-b from-transparent via-[#0284C7]/30 to-white pointer-events-none z-[5]" />
+        {/* Bottom Multi-Step Ultra-Smooth Fade Gradient Overlay */}
+        <div className="absolute bottom-0 left-0 right-0 h-56 bg-gradient-to-b from-transparent via-[#0284C7]/20 via-sky-50/70 to-white pointer-events-none z-[5]" />
       </div>
 
       {/* ============================================================ */}
