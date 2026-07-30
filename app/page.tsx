@@ -12,11 +12,11 @@ export default function Home() {
       {/* Animated Scroll Intro & Portal Hero Sequence */}
       <ScrollIntroHero />
 
-      {/* Main Ecosystem Features & Design System Showcase */}
-      <FeaturesOverview />
-
       {/* About Us & Mission Section */}
       <AboutSection />
+
+      {/* Main Ecosystem Features & Design System Showcase */}
+      <FeaturesOverview />
 
       {/* Infinite Marquee Partner Section */}
       <PartnerSection />

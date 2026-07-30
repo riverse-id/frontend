@@ -7,7 +7,7 @@ import { Sparkles, ShieldCheck, Waves, Users, MapPin } from "lucide-react";
 
 export default function AboutSection() {
   return (
-    <section id="tentang-kami" className="relative bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] pt-0 pb-24 border-t border-sky-100 overflow-hidden">
+    <section id="beranda" className="relative bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] pt-0 pb-24 border-t border-sky-100 overflow-hidden">
       
       {/* ============================================================ */}
       {/* TOP BANNER: Blue Topographic Wave Gradient Header             */}
