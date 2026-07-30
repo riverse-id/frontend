@@ -14,7 +14,7 @@ import {
 
 export default function FeaturesOverview() {
   return (
-    <section className="relative bg-[#F8FAFC] py-20 lg:py-28 px-4 sm:px-6 lg:px-8 border-t border-sky-100 overflow-hidden">
+    <section id="beranda" className="relative bg-[#F8FAFC] py-20 lg:py-28 px-4 sm:px-6 lg:px-8 border-t border-sky-100 overflow-hidden">
       {/* Subtle Background Grid Pattern */}
       <div className="absolute inset-0 bg-[radial-gradient(#0284C7_1px,transparent_1px)] [background-size:28px_28px] opacity-10 pointer-events-none" />
 

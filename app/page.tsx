@@ -1,6 +1,7 @@
 import React from "react";
 import ScrollIntroHero from "./components/ScrollIntroHero";
 import FeaturesOverview from "./components/FeaturesOverview";
+import AboutSection from "./components/AboutSection";
 import Image from "next/image";
 import { MapPin, ShieldCheck } from "lucide-react";
 
@@ -12,6 +13,9 @@ export default function Home() {
 
       {/* Main Ecosystem Features & Design System Showcase */}
       <FeaturesOverview />
+
+      {/* About Us & Mission Section */}
+      <AboutSection />
 
       {/* Interactive Map CTA Banner */}
       <section id="peta-gis" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0284C7] text-white relative overflow-hidden">
