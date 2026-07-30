@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import { Sparkles, ShieldCheck, Waves, Users, MapPin } from "lucide-react";
 
 export default function AboutSection() {
@@ -12,21 +13,43 @@ export default function AboutSection() {
       {/* TOP BANNER: Blue Topographic Wave Gradient Header             */}
       {/* ============================================================ */}
       <div className="relative bg-gradient-to-br from-[#0284C7] via-[#0284C7] to-[#0F172A] text-white pt-20 pb-36 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Topographic Contour Wave Pattern SVG Overlay */}
-        <div className="absolute inset-0 opacity-15 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.4),transparent_60%)]" />
-        <svg
-          className="absolute inset-0 w-full h-full opacity-10 pointer-events-none"
-          xmlns="http://www.w3.org/2000/svg"
+        {/* Ambient Radial Glow */}
+        <div className="absolute inset-0 opacity-25 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.5),transparent_60%)]" />
+
+        {/* Animated Flowing River Waves Pattern Layer 1 */}
+        <motion.div
+          animate={{ x: [0, -100] }}
+          transition={{ repeat: Infinity, duration: 16, ease: "linear" }}
+          className="absolute inset-0 -left-[100px] w-[calc(100%+200px)] h-full opacity-20 pointer-events-none"
         >
-          <defs>
-            <pattern id="topo-pattern" width="100" height="100" patternUnits="userSpaceOnUse">
-              <path d="M 0 20 Q 25 5 50 20 T 100 20" fill="none" stroke="white" strokeWidth="1.5"/>
-              <path d="M 0 50 Q 25 35 50 50 T 100 50" fill="none" stroke="white" strokeWidth="1.5"/>
-              <path d="M 0 80 Q 25 65 50 80 T 100 80" fill="none" stroke="white" strokeWidth="1.5"/>
-            </pattern>
-          </defs>
-          <rect width="100%" height="100%" fill="url(#topo-pattern)"/>
-        </svg>
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="topo-pattern-1" width="100" height="100" patternUnits="userSpaceOnUse">
+                <path d="M 0 20 Q 25 5 50 20 T 100 20" fill="none" stroke="white" strokeWidth="1.8"/>
+                <path d="M 0 50 Q 25 35 50 50 T 100 50" fill="none" stroke="white" strokeWidth="1.8"/>
+                <path d="M 0 80 Q 25 65 50 80 T 100 80" fill="none" stroke="white" strokeWidth="1.8"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#topo-pattern-1)"/>
+          </svg>
+        </motion.div>
+
+        {/* Animated Flowing River Waves Pattern Layer 2 (Secondary undulation layer for liquid depth) */}
+        <motion.div
+          animate={{ x: [-100, 0], y: [0, 8, 0] }}
+          transition={{ repeat: Infinity, duration: 24, ease: "linear" }}
+          className="absolute inset-0 -left-[100px] w-[calc(100%+200px)] h-full opacity-15 pointer-events-none"
+        >
+          <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <pattern id="topo-pattern-2" width="120" height="120" patternUnits="userSpaceOnUse">
+                <path d="M 0 30 Q 30 15 60 30 T 120 30" fill="none" stroke="#38BDF8" strokeWidth="1.5"/>
+                <path d="M 0 70 Q 30 55 60 70 T 120 70" fill="none" stroke="#38BDF8" strokeWidth="1.5"/>
+              </pattern>
+            </defs>
+            <rect width="100%" height="100%" fill="url(#topo-pattern-2)"/>
+          </svg>
+        </motion.div>
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-sky-100 text-xs font-bold uppercase tracking-widest mb-5 shadow-sm">
