@@ -2,6 +2,7 @@ import React from "react";
 import ScrollIntroHero from "./components/ScrollIntroHero";
 import FeaturesOverview from "./components/FeaturesOverview";
 import AboutSection from "./components/AboutSection";
+import EcosystemSection from "./components/EcosystemSection";
 import PartnerSection from "./components/PartnerSection";
 import Image from "next/image";
 import { MapPin, ShieldCheck, Mail } from "lucide-react";
@@ -9,19 +10,22 @@ import { MapPin, ShieldCheck, Mail } from "lucide-react";
 export default function Home() {
   return (
     <main className="min-h-screen bg-[#F8FAFC] font-sans selection:bg-[#0284C7] selection:text-white">
-      {/* Animated Scroll Intro & Portal Hero Sequence */}
+      {/* 1. Animated Scroll Intro & Portal Hero Sequence */}
       <ScrollIntroHero />
 
-      {/* About Us & Mission Section */}
-      <AboutSection />
-
-      {/* Main Ecosystem Features & Design System Showcase */}
+      {/* 2. Beranda Hero Showcase ("Laporkan & Pantau Sungai dalam 5 Menit!") */}
       <FeaturesOverview />
 
-      {/* Infinite Marquee Partner Section */}
+      {/* 3. About Us & Mission Section ("Tentang Kami") */}
+      <AboutSection />
+
+      {/* 4. Ecosystem Governance Section ("Ekosistem RIVERSE" - Ditaruh Di Bawah Tentang Kami!) */}
+      <EcosystemSection />
+
+      {/* 5. Infinite Marquee Partner Section */}
       <PartnerSection />
 
-      {/* Interactive Map CTA Banner */}
+      {/* 6. Interactive Map CTA Banner */}
       <section id="peta-gis" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0284C7] text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.25),transparent_50%)] pointer-events-none" />
 
@@ -42,7 +46,7 @@ export default function Home() {
 
           <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
             <a
-              href="#peta-gis"
+              href="/lapor"
               className="flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-gradient-to-r from-[#0284C7] to-[#38BDF8] text-white font-bold text-sm shadow-xl shadow-[#0284C7]/30 hover:brightness-110 transition-all hover:scale-105 active:scale-95"
             >
               <MapPin className="w-5 h-5 text-white" />
@@ -59,7 +63,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Kontak & Footer Section */}
+      {/* 7. Kontak & Footer Section */}
       <footer id="kontak" className="bg-[#0F172A] text-slate-400 py-16 px-4 sm:px-6 lg:px-8 border-t border-slate-800 relative">
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 pb-12 border-b border-slate-800">
           <div className="flex flex-col gap-3">
@@ -85,6 +89,7 @@ export default function Home() {
             <div className="flex flex-col gap-2 text-xs">
               <a href="#beranda" className="hover:text-white transition-colors">Beranda</a>
               <a href="#tentang-kami" className="hover:text-white transition-colors">Tentang Kami</a>
+              <a href="#ekosistem" className="hover:text-white transition-colors">Ekosistem Tata Kelola</a>
               <a href="#partner" className="hover:text-white transition-colors">Partner & Kolaborasi</a>
               <a href="#peta-gis" className="hover:text-white transition-colors">Peta GIS & Laporan</a>
             </div>
