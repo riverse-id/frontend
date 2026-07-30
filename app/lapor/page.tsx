@@ -177,22 +177,130 @@ export default function LaporPage() {
       {/* ============================================================ */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-10">
         
-        {/* Banner Announcement */}
-        <div className="bg-gradient-to-r from-[#0284C7] via-[#0284C7] to-[#0F172A] rounded-3xl p-6 sm:p-8 text-white shadow-xl shadow-[#0284C7]/15 relative overflow-hidden mb-10">
-          <div className="absolute right-0 top-0 translate-x-8 -translate-y-8 w-64 h-64 bg-sky-400/20 rounded-full blur-3xl pointer-events-none" />
+        {/* ============================================================ */}
+        {/* HERO SECTION: White Grid Graph Background & Floating Badges */}
+        {/* ============================================================ */}
+        <div className="relative bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:24px_24px] rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden py-12 px-4 sm:px-10 text-center mb-10">
           
-          <div className="relative z-10 max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-sky-100 text-xs font-bold uppercase tracking-wider mb-3">
-              <Sparkles className="w-3.5 h-3.5 text-sky-300" />
-              Sistem Pelaporan Spasial Warga
+          {/* Floating Tilted Cards (Left & Right - Matching Reference Design) */}
+          <div className="hidden lg:block absolute left-6 top-8 -rotate-6 hover:rotate-0 transition-transform duration-300 z-10">
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3">
+              <div className="flex flex-col text-left">
+                <span className="font-extrabold text-lg text-slate-900 leading-none">5.000+</span>
+                <span className="text-[10px] text-slate-500 font-semibold mt-1">Laporan Terverifikasi</span>
+              </div>
+              <div className="h-8 w-8 rounded-xl bg-sky-100 text-[#0284C7] flex items-center justify-center">
+                <CheckCircle2 className="w-4 h-4" />
+              </div>
             </div>
-            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
-              Laporkan Pencemaran Sungai <br />
-              <span className="text-[#38BDF8]">Cepat, Mudah & Tanpa Akun</span>
+          </div>
+
+          <div className="hidden lg:block absolute right-8 top-10 rotate-6 hover:rotate-0 transition-transform duration-300 z-10">
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3">
+              <div className="flex flex-col text-left">
+                <span className="font-extrabold text-lg text-slate-900 leading-none">10.000+</span>
+                <span className="text-[10px] text-slate-500 font-semibold mt-1">Relawan Warga</span>
+              </div>
+              <div className="h-8 w-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
+                <UserCheck className="w-4 h-4" />
+              </div>
+            </div>
+          </div>
+
+          <div className="hidden lg:block absolute left-12 bottom-12 -rotate-3 hover:rotate-0 transition-transform duration-300 z-10">
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3">
+              <div className="flex flex-col text-left">
+                <span className="font-extrabold text-lg text-slate-900 leading-none">24 Jam</span>
+                <span className="text-[10px] text-slate-500 font-semibold mt-1">Respon Cepat DLH</span>
+              </div>
+              <div className="h-8 w-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
+                <Clock className="w-4 h-4" />
+              </div>
+            </div>
+          </div>
+
+          <div className="hidden lg:block absolute right-14 bottom-14 rotate-3 hover:rotate-0 transition-transform duration-300 z-10">
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3">
+              <div className="flex flex-col text-left">
+                <span className="font-extrabold text-lg text-slate-900 leading-none">100% Spasial</span>
+                <span className="text-[10px] text-slate-500 font-semibold mt-1">Geofencing GIS</span>
+              </div>
+              <div className="h-8 w-8 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
+                <MapPin className="w-4 h-4" />
+              </div>
+            </div>
+          </div>
+
+          {/* Main Hero Header Title */}
+          <div className="max-w-2xl mx-auto relative z-20">
+            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-[#0284C7] leading-tight mb-4">
+              Pusat Pelaporan Sungai <br className="hidden sm:block" />
+              <span className="text-[#0284C7]">Terbaik di Indonesia</span>
             </h1>
-            <p className="mt-3 text-xs sm:text-sm text-sky-100/90 leading-relaxed font-medium">
-              Laporan Anda akan langsung dipetakan ke koordinat GIS terverifikasi dan diteruskan ke Dashboard Penanganan Dinas Lingkungan Hidup (DLH).
+
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium max-w-xl mx-auto mb-8">
+              Laporkan semua aspek pencemaran sungai dari nol hingga terverifikasi. Bebas hambatan, tanpa login, dan langsung terhubung dengan Dinas Lingkungan Hidup.
             </p>
+
+            {/* Search Input Box (Matching Reference Design) */}
+            <div className="relative max-w-lg mx-auto mb-6">
+              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                <Info className="w-4 h-4" />
+              </div>
+              <input
+                type="text"
+                placeholder="Cari segmen sungai, jenis limbah, atau patokan lokasi..."
+                className="w-full pl-10 pr-4 py-3 rounded-2xl border border-slate-200 bg-white/90 shadow-sm text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0284C7] focus:bg-white"
+              />
+            </div>
+
+            {/* Category Filter Pills (Matching Reference Design) */}
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <button
+                type="button"
+                onClick={() => setCategory("sampah")}
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                  category === "sampah"
+                    ? "bg-[#0284C7] text-white shadow-sm"
+                    : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                Sampah Plastik
+              </button>
+              <button
+                type="button"
+                onClick={() => setCategory("limbah-cair")}
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                  category === "limbah-cair"
+                    ? "bg-[#0284C7] text-white shadow-sm"
+                    : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                Limbah Cair
+              </button>
+              <button
+                type="button"
+                onClick={() => setCategory("bau-warna")}
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                  category === "bau-warna"
+                    ? "bg-[#0284C7] text-white shadow-sm"
+                    : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                Bau Air
+              </button>
+              <button
+                type="button"
+                onClick={() => setCategory("tanggul")}
+                className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
+                  category === "tanggul"
+                    ? "bg-[#0284C7] text-white shadow-sm"
+                    : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
+                }`}
+              >
+                Kerusakan Tanggul
+              </button>
+            </div>
           </div>
         </div>
 
