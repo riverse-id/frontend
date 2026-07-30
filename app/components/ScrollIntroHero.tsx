@@ -94,7 +94,7 @@ interface RiverCardItemProps {
   cardOpacity: MotionValue<number>;
 }
 
-function RiverCardItem({
+const RiverCardItem = React.memo(function RiverCardItem({
   card,
   cardDispersionProgress,
   cardScale,
@@ -146,7 +146,7 @@ function RiverCardItem({
       </div>
     </motion.div>
   );
-}
+});
 
 export default function ScrollIntroHero() {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -171,6 +171,7 @@ export default function ScrollIntroHero() {
   const introLogoOpacity = useTransform(smoothProgress, [0.10, 0.22], [1, 0]);
   const introSubtitleOpacity = useTransform(smoothProgress, [0.02, 0.16], [1, 0]);
   const scrollCueOpacity = useTransform(smoothProgress, [0.0, 0.12], [1, 0]);
+  const phase1BgOpacity = useTransform(smoothProgress, [0.10, 0.24], [1, 0]);
 
   // --- PHASE 2: Storytelling & Floating Cards (0.20 -> 0.62 Scroll) ---
   const navbarOpacity = useTransform(smoothProgress, [0.18, 0.32], [0, 1]);
@@ -207,6 +208,12 @@ export default function ScrollIntroHero() {
 
       {/* Sticky Viewport Container */}
       <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#0F172A]">
+
+        {/* Phase 1 Light/White Background Layer */}
+        <motion.div
+          style={{ opacity: phase1BgOpacity }}
+          className="absolute inset-0 bg-gradient-to-b from-white via-slate-50 to-sky-50 pointer-events-none z-12"
+        />
 
         {/* Dynamic Dark Vignette Camera Lens Frame */}
         <motion.div
@@ -256,14 +263,14 @@ export default function ScrollIntroHero() {
         >
           {/* Central Logo & Glow Aura */}
           <div className="relative mb-6">
-            <div className="absolute -inset-6 rounded-full bg-gradient-to-r from-[#0284C7] via-[#38BDF8] to-[#E0F2FE] opacity-60 blur-3xl animate-pulse" />
-            <div className="relative h-28 w-28 md:h-36 md:w-36 rounded-3xl bg-white p-3.5 shadow-2xl border border-sky-100 flex items-center justify-center">
+            <div className="absolute -inset-8 rounded-full bg-gradient-to-r from-[#0284C7]/25 via-[#38BDF8]/35 to-sky-200/40 opacity-70 blur-3xl animate-pulse" />
+            <div className="relative h-36 w-36 md:h-48 md:w-48 flex items-center justify-center">
               <Image
                 src="/assets/logo.png"
                 alt="RIVERSE Logo"
-                width={130}
-                height={130}
-                className="h-full w-full object-contain filter drop-shadow-md"
+                width={200}
+                height={200}
+                className="h-full w-full object-contain filter drop-shadow-[0_12px_30px_rgba(2,132,199,0.35)]"
                 priority
               />
             </div>
@@ -271,27 +278,27 @@ export default function ScrollIntroHero() {
 
           {/* Title & Brand Tagline */}
           <div className="flex flex-col items-center">
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-white drop-shadow-lg flex items-center gap-1">
-              /RIVER<span className="text-[#38BDF8]">SE</span>
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-[#0F172A] drop-shadow-sm flex items-center gap-1">
+              /RIVER<span className="text-[#0284C7]">SE</span>
             </h1>
-            <span className="text-xs md:text-sm font-bold tracking-[0.25em] text-sky-300 uppercase mt-1">
+            <span className="text-xs md:text-sm font-bold tracking-[0.25em] text-sky-700 uppercase mt-1">
               Active River System ゼロズ
             </span>
           </div>
 
           {/* Subtitle & Info Pill */}
           <motion.div style={{ opacity: introSubtitleOpacity }} className="mt-5 flex flex-col items-center">
-            <p className="text-base md:text-xl font-medium text-sky-100 tracking-wide max-w-xl drop-shadow">
-              Platform Monitoring & Pelaporan Sungai <span className="text-[#38BDF8] font-bold">Crowdsourced</span>
+            <p className="text-base md:text-xl font-semibold text-slate-700 tracking-wide max-w-xl">
+              Platform Monitoring & Pelaporan Sungai <span className="text-[#0284C7] font-bold">Crowdsourced</span>
             </p>
-            <div className="mt-4 flex items-center gap-2 px-4 py-2 rounded-full bg-[#0284C7]/30 border border-sky-400/40 text-sky-200 text-xs font-semibold backdrop-blur-md shadow-md">
-              <Waves className="w-4 h-4 text-[#38BDF8] animate-bounce" />
+            <div className="mt-4 flex items-center gap-2 px-4 py-2 rounded-full bg-[#0284C7]/10 border border-[#0284C7]/30 text-sky-900 text-xs font-bold shadow-sm backdrop-blur-md">
+              <Waves className="w-4 h-4 text-[#0284C7] animate-bounce" />
               <span>Scroll Ke Bawah Untuk Memulai Animasi</span>
             </div>
           </motion.div>
         </motion.div>
 
-        {/* PHASE 2: Chapter 1 Concept Storytelling Text (Appears on CLEAN CENTER CANVAS) */}
+        {/* PHASE 2: Concept Storytelling Text (Appears on CLEAN CENTER CANVAS) */}
         <motion.div
           style={{
             opacity: chapterTextOpacity,
@@ -299,19 +306,12 @@ export default function ScrollIntroHero() {
           }}
           className="absolute z-30 flex flex-col items-center text-center px-6 pointer-events-none will-change-transform"
         >
-          <span className="inline-flex items-center gap-2 text-xs md:text-sm font-bold tracking-widest uppercase text-[#0284C7] bg-white/95 backdrop-blur-xl px-4 py-1.5 rounded-full border border-sky-200 shadow-xl mb-4">
-            <Sparkles className="w-4 h-4 text-[#0284C7]" />
-            Chapter 1
-          </span>
           <h2 className="text-3xl md:text-6xl font-extrabold text-white tracking-tight max-w-3xl leading-tight drop-shadow-md">
             Menjaga Aliran Sungai, <br />
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#38BDF8] via-sky-200 to-white">
               Menyelamatkan Masa Depan
             </span>
           </h2>
-          <p className="mt-4 text-xs md:text-sm font-semibold tracking-wider text-sky-200/90 uppercase bg-slate-900/60 backdrop-blur-md px-4 py-1.5 rounded-xl border border-sky-400/20">
-            ( Partisipasi Warga & Responsif Dinas Lingkungan Hidup )
-          </p>
         </motion.div>
 
         {/* PHASE 3: Portal Aperture Center Message */}
@@ -328,8 +328,8 @@ export default function ScrollIntroHero() {
           <span className="text-2xl md:text-4xl font-extrabold text-[#0F172A] tracking-tight drop-shadow">
             Ekosistem Terintegrasi
           </span>
-          <p className="mt-2 text-xs md:text-sm font-bold text-[#0284C7] tracking-widest uppercase">
-            Masuk Ke Landing Page Utama...
+          <p className="mt-2 text-xs md:text-sm font-bold text-[#0284C7] tracking-wider uppercase">
+            Mari Berpartisipasi & Gunakan Sistem RIVERSE Sekarang
           </p>
         </motion.div>
 
