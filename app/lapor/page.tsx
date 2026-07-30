@@ -151,15 +151,15 @@ export default function LaporPage() {
             <span>Kembali ke Beranda</span>
           </Link>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-3">
             <Image
               src="/assets/logo.png"
               alt="RIVERSE Logo"
-              width={32}
-              height={32}
-              className="h-8 w-auto object-contain"
+              width={40}
+              height={40}
+              className="h-10 w-auto object-contain"
             />
-            <span className="font-extrabold text-base tracking-tight text-[#0F172A]">
+            <span className="font-extrabold text-lg tracking-tight text-[#0F172A]">
               RIVER<span className="text-[#0284C7]">SE</span>
             </span>
           </div>
