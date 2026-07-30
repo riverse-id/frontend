@@ -16,25 +16,25 @@ export default function AboutSection() {
         {/* Ambient Radial Glow */}
         <div className="absolute inset-0 opacity-25 pointer-events-none bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.5),transparent_60%)]" />
 
-        {/* Dual-Layer Parallax Flowing River Waves (Seamless 800px & 600px continuous flow) */}
+        {/* Dual-Layer Parallax Flowing River Waves (Layer A: Left 14s | Layer B: Right 9s) */}
         <motion.div
-          animate={{ backgroundPositionX: ["0px", "-800px"] }}
-          transition={{ repeat: Infinity, duration: 20, ease: "linear" }}
-          className="absolute inset-0 pointer-events-none opacity-85 z-0"
+          animate={{ backgroundPositionX: ["0px", "-220px"] }}
+          transition={{ repeat: Infinity, duration: 14, ease: "linear" }}
+          className="absolute inset-0 pointer-events-none opacity-100 z-0"
           style={{
             backgroundImage: "url('/wave-a.svg')",
-            backgroundSize: "800px 160px",
+            backgroundSize: "220px 110px",
             backgroundRepeat: "repeat",
           }}
         />
 
         <motion.div
-          animate={{ backgroundPositionX: ["0px", "600px"] }}
-          transition={{ repeat: Infinity, duration: 14, ease: "linear" }}
-          className="absolute inset-0 pointer-events-none opacity-90 z-0"
+          animate={{ backgroundPositionX: ["0px", "180px"] }}
+          transition={{ repeat: Infinity, duration: 9, ease: "linear" }}
+          className="absolute inset-0 pointer-events-none opacity-100 z-0"
           style={{
             backgroundImage: "url('/wave-b.svg')",
-            backgroundSize: "600px 140px",
+            backgroundSize: "180px 90px",
             backgroundRepeat: "repeat",
           }}
         />
