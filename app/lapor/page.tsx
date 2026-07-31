@@ -162,7 +162,7 @@ export default function LaporPage() {
   };
 
   return (
-    <div className="min-h-screen bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] text-slate-800 font-sans pb-24 selection:bg-[#0284C7] selection:text-white">
+    <div className="min-h-screen bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] text-slate-800 font-sans selection:bg-[#0284C7] selection:text-white">
       {/* ============================================================ */}
       {/* FLOATING GLASSMORPHISM NAVBAR                                 */}
       {/* ============================================================ */}
