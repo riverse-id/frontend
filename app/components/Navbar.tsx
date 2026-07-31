@@ -4,15 +4,23 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { ShieldCheck } from "lucide-react";
 
+import { usePathname } from "next/navigation";
+
 interface NavbarProps {
   opacity?: number;
   className?: string;
 }
 
 export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
+  const pathname = usePathname();
   const [activeNav, setActiveNav] = useState("beranda");
 
   useEffect(() => {
+    if (pathname === "/lapor") {
+      setActiveNav("lapor");
+      return;
+    }
+
     const handleScroll = () => {
       const sections = ["beranda", "tentang-kami", "partner", "kontak"];
       const scrollPosition = window.scrollY + 200;
@@ -32,13 +40,13 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+  }, [pathname]);
 
   const NAV_ITEMS = [
-    { id: "beranda", label: "Beranda", href: "#beranda" },
-    { id: "tentang-kami", label: "Tentang Kami", href: "#tentang-kami" },
-    { id: "partner", label: "Partner", href: "#partner" },
-    { id: "kontak", label: "Kontak", href: "#kontak" },
+    { id: "beranda", label: "Beranda", href: "/#beranda" },
+    { id: "tentang-kami", label: "Tentang Kami", href: "/#tentang-kami" },
+    { id: "partner", label: "Partner", href: "/#partner" },
+    { id: "kontak", label: "Kontak", href: "/#kontak" },
     { id: "lapor", label: "Buat Laporan", href: "/lapor" },
   ];
 
