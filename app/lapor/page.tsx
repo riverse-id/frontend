@@ -20,7 +20,9 @@ import {
   Send,
   RefreshCw,
   Clock,
-  UserCheck
+  UserCheck,
+  X,
+  PlusCircle
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import dynamic from "next/dynamic";
@@ -91,10 +93,11 @@ export default function LaporPage() {
   const [isLocating, setIsLocating] = useState(false);
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   
-  // Submission States
+  // Submission & Modal States
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [ticketNumber, setTicketNumber] = useState("");
+  const [showFormModal, setShowFormModal] = useState(false);
 
   // Handle GPS Auto Locate
   const handleGetLocation = () => {
@@ -123,6 +126,7 @@ export default function LaporPage() {
   const handleMapSelectLocation = (location: { lat: number; lng: number; riverName: string }) => {
     setGpsLocation(`${location.lat}, ${location.lng} (Titik Spasial Peta Leaflet)`);
     setAddress(location.riverName);
+    setShowFormModal(true);
   };
 
   // Handle Photo Upload Simulation
@@ -311,346 +315,289 @@ export default function LaporPage() {
       {/* ============================================================ */}
       {/* LEAFLET GIS SPATIAL MAP SECTION                              */}
       {/* ============================================================ */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 relative z-20 mb-12">
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 relative z-20 mb-8">
         <RiverGISMap onSelectLocation={handleMapSelectLocation} />
       </section>
 
+      {/* Prominent CTA Button to Open Reporting Form */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center mb-16 relative z-30">
+        <button
+          onClick={() => setShowFormModal(true)}
+          className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#0284C7] text-white text-base font-extrabold shadow-xl shadow-[#0284C7]/30 hover:bg-[#0284C7]/90 transition-all hover:scale-105 active:scale-95 cursor-pointer"
+        >
+          <PlusCircle className="w-5 h-5" />
+          <span>Buat Laporan Baru Sekarang</span>
+        </button>
+        <p className="text-xs text-slate-500 font-medium mt-2">
+          Atau klik salah satu titik penanda di peta untuk langsung mengisi laporan spasial.
+        </p>
+      </div>
+
       {/* ============================================================ */}
-      {/* MAIN FORM CONTENT AREA                                       */}
+      {/* MODAL DIALOG REPORTING FORM OVERLAY                           */}
       {/* ============================================================ */}
-      <main id="form-pelaporan" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 scroll-mt-24">
-
-        {/* Form Container or Success Confirmation */}
-        {isSubmitted ? (
-          /* ============================================================ */
-          /* SUCCESS SUBMISSION CARD                                      */
-          /* ============================================================ */
-          <div className="bg-white rounded-3xl p-8 sm:p-12 border border-sky-100 shadow-xl shadow-sky-900/5 text-center max-w-2xl mx-auto animate-in fade-in zoom-in duration-300">
-            <div className="h-20 w-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-              <CheckCircle2 className="w-10 h-10" />
-            </div>
-
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold tracking-wide mb-3">
-              Tiket Pelaporan Resmi
-            </div>
+      {showFormModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/75 backdrop-blur-md overflow-y-auto animate-fadeIn">
+          <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200/90 overflow-hidden my-auto max-h-[90vh] flex flex-col">
             
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-              Laporan Berhasil Terkirim!
-            </h2>
-            
-            <p className="mt-2 text-sm text-slate-600 max-w-md mx-auto">
-              Terima kasih telah berkontribusi menjaga kebersihan sungai. Laporan Anda telah tersimpan di basis data spasial RIVERSE.
-            </p>
-
-            {/* Ticket Card Box */}
-            <div className="my-8 p-6 rounded-2xl bg-sky-50/80 border border-sky-200 text-left max-w-md mx-auto">
-              <div className="flex justify-between items-center pb-3 border-b border-sky-200/80">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">No. Tiket Spasial</span>
-                <span className="font-mono font-extrabold text-base text-[#0284C7] bg-white px-3 py-1 rounded-lg border border-sky-200 shadow-xs">
-                  {ticketNumber}
-                </span>
-              </div>
-
-              <div className="mt-4 space-y-2 text-xs text-slate-600">
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Status Awal:</span>
-                  <span className="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                    Menunggu Verifikasi DLH
-                  </span>
+            {/* Modal Header Bar */}
+            <div className="p-5 sm:p-6 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800 flex-shrink-0">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-2xl bg-[#0284C7] text-white flex items-center justify-center flex-shrink-0">
+                  <PlusCircle className="w-5 h-5" />
                 </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Segmen Sungai:</span>
-                  <span className="font-semibold text-slate-800">{riverSegment}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500">Identitas Pelapor:</span>
-                  <span className="font-semibold text-slate-800">
-                    {isAnonymous ? "Anonim (Privasi Dilindungi)" : reporterName || "Warga Peduli"}
-                  </span>
+                <div>
+                  <h3 className="text-base sm:text-lg font-extrabold text-white">Formulir Pelaporan Pencemaran Sungai</h3>
+                  <p className="text-xs text-sky-200 font-medium">Lengkapi detail laporan pencemaran secara presisi</p>
                 </div>
               </div>
-            </div>
-
-            {/* Action CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link
-                href="/"
-                className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-[#0284C7] hover:bg-sky-600 text-white font-bold text-sm shadow-md shadow-[#0284C7]/20 transition-all hover:scale-105"
-              >
-                <MapPin className="w-4 h-4" />
-                <span>Lihat di Peta GIS Utama</span>
-              </Link>
               <button
-                onClick={handleReset}
-                className="flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-sm transition-all"
+                onClick={() => setShowFormModal(false)}
+                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer"
+                title="Tutup Formulir"
               >
-                <RefreshCw className="w-4 h-4" />
-                <span>Buat Laporan Baru</span>
+                <X className="w-5 h-5" />
               </button>
             </div>
-          </div>
-        ) : (
-          /* ============================================================ */
-          /* FORM SECTION                                                 */
-          /* ============================================================ */
-          <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 sm:p-10 border border-sky-100 shadow-xl shadow-sky-900/5 space-y-8">
-            
-            {/* SECTION 1: Category Selection */}
-            <div>
-              <label className="block text-sm font-extrabold text-slate-900 mb-2">
-                1. Pilih Kategori Pencemaran <span className="text-rose-500">*</span>
-              </label>
-              <p className="text-xs text-slate-500 mb-4">
-                Pilih jenis masalah pencemaran sungai yang Anda temukan di lokasi.
-              </p>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {POLLUTION_CATEGORIES.map((cat) => {
-                  const Icon = cat.icon;
-                  const isSelected = category === cat.id;
-                  return (
-                    <div
-                      key={cat.id}
-                      onClick={() => setCategory(cat.id)}
-                      className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-4 ${
-                        isSelected
-                          ? "border-[#0284C7] bg-sky-50/60 shadow-md ring-2 ring-[#0284C7]/20"
-                          : "border-slate-200 hover:border-sky-300 bg-slate-50/50"
-                      }`}
+            {/* Modal Body - Scrollable Form Content */}
+            <div className="p-6 sm:p-8 overflow-y-auto flex-1">
+              {isSubmitted ? (
+                /* SUCCESS SUBMISSION CARD */
+                <div className="bg-white rounded-3xl p-6 sm:p-8 border border-sky-100 shadow-xl shadow-sky-900/5 text-center max-w-2xl mx-auto animate-in fade-in zoom-in duration-300">
+                  <div className="h-20 w-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                    <CheckCircle2 className="w-10 h-10" />
+                  </div>
+
+                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold tracking-wide mb-3">
+                    Tiket Pelaporan Resmi
+                  </div>
+                  
+                  <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                    Laporan Berhasil Terkirim!
+                  </h2>
+                  
+                  <p className="mt-2 text-sm text-slate-600 max-w-md mx-auto">
+                    Terima kasih telah berkontribusi menjaga kebersihan sungai. Laporan Anda telah tersimpan di basis data spasial RIVERSE.
+                  </p>
+
+                  {/* Ticket Card Box */}
+                  <div className="my-6 p-6 rounded-2xl bg-sky-50/80 border border-sky-200 text-left max-w-md mx-auto">
+                    <div className="flex justify-between items-center pb-3 border-b border-sky-200/80">
+                      <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">No. Tiket Spasial</span>
+                      <span className="font-mono font-extrabold text-base text-[#0284C7] bg-white px-3 py-1 rounded-lg border border-sky-200 shadow-xs">
+                        {ticketNumber}
+                      </span>
+                    </div>
+
+                    <div className="mt-4 space-y-2 text-xs text-slate-600">
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">Status Awal:</span>
+                        <span className="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                          Menunggu Verifikasi DLH
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">Segmen Sungai:</span>
+                        <span className="font-semibold text-slate-800">{riverSegment}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-500">Identitas Pelapor:</span>
+                        <span className="font-semibold text-slate-800">
+                          {isAnonymous ? "Anonim (Privasi Terjaga)" : reporterName || "Anonim"}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                    <button
+                      onClick={() => {
+                        handleReset();
+                        setShowFormModal(false);
+                      }}
+                      className="w-full sm:w-auto px-6 py-3 rounded-xl bg-slate-900 text-white font-bold text-xs hover:bg-slate-800 transition-all"
                     >
-                      <div className={`p-2.5 rounded-xl bg-gradient-to-br ${cat.color} border shadow-xs`}>
-                        <Icon className="w-5 h-5" />
-                      </div>
+                      Selesai & Kembali ke Peta
+                    </button>
+                    <button
+                      onClick={handleReset}
+                      className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#0284C7] text-white font-bold text-xs hover:bg-[#0284C7]/90 transition-all shadow-md"
+                    >
+                      Buat Laporan Lain
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                /* MAIN pelaporan FORM */
+                <form onSubmit={handleSubmit} className="space-y-8">
+                  {/* 1. Kategori Pencemaran */}
+                  <div>
+                    <label className="block text-sm font-extrabold text-slate-900 mb-1">
+                      1. Pilih Kategori Pencemaran <span className="text-rose-500">*</span>
+                    </label>
+                    <p className="text-xs text-slate-500 mb-4">Pilih jenis masalah pencemaran sungai yang Anda temukan di lokasi.</p>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
+                      {POLLUTION_CATEGORIES.map((cat) => {
+                        const Icon = cat.icon;
+                        const isSelected = category === cat.id;
+                        return (
+                          <div
+                            key={cat.id}
+                            onClick={() => setCategory(cat.id)}
+                            className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3.5 ${
+                              isSelected
+                                ? "border-[#0284C7] bg-sky-50/50 shadow-md shadow-sky-500/5"
+                                : "border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/50"
+                            }`}
+                          >
+                            <div className={`p-2.5 rounded-xl bg-gradient-to-br ${cat.color} border`}>
+                              <Icon className="w-5 h-5" />
+                            </div>
+                            <div>
+                              <h4 className="font-extrabold text-xs text-slate-900">{cat.title}</h4>
+                              <p className="text-[11px] text-slate-500 leading-snug mt-0.5">{cat.desc}</p>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 2. Lokasi & Segmen Sungai */}
+                  <div>
+                    <label className="block text-sm font-extrabold text-slate-900 mb-1">
+                      2. Lokasi & Segmen Sungai <span className="text-rose-500">*</span>
+                    </label>
+
+                    <div className="space-y-3">
                       <div>
-                        <h3 className="font-extrabold text-sm text-slate-900">{cat.title}</h3>
-                        <p className="text-xs text-slate-500 mt-1 leading-relaxed">{cat.desc}</p>
+                        <span className="block text-xs font-bold text-slate-700 mb-1.5">Wilayah / Segmen Sungai:</span>
+                        <select
+                          value={riverSegment}
+                          onChange={(e) => setRiverSegment(e.target.value)}
+                          className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
+                        >
+                          {RIVER_SEGMENTS.map((seg) => (
+                            <option key={seg} value={seg}>
+                              {seg}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+
+                      {/* GPS Button */}
+                      <div>
+                        <button
+                          type="button"
+                          onClick={handleGetLocation}
+                          disabled={isLocating}
+                          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-sky-50 border border-sky-200 text-[#0284C7] text-xs font-bold hover:bg-sky-100 transition-all cursor-pointer"
+                        >
+                          <Zap className={`w-4 h-4 ${isLocating ? "animate-spin" : ""}`} />
+                          <span>{isLocating ? "Mendeteksi Koordinat GPS..." : "Gunakan Titik GPS Presisi"}</span>
+                        </button>
+                        {gpsLocation && (
+                          <div className="mt-2 p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+                            <span className="truncate">{gpsLocation}</span>
+                          </div>
+                        )}
+                      </div>
+
+                      <div>
+                        <span className="block text-xs font-bold text-slate-700 mb-1.5">Detail Patokan Lokasi / Alamat Lengkap:</span>
+                        <input
+                          type="text"
+                          value={address}
+                          onChange={(e) => setAddress(e.target.value)}
+                          placeholder="Contoh: Dekat Jembatan Merah Rt 04/02, belakang pabrik..."
+                          className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
+                        />
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            <hr className="border-slate-100" />
-
-            {/* SECTION 2: Location & River Segment */}
-            <div>
-              <label className="block text-sm font-extrabold text-slate-900 mb-2">
-                2. Lokasi & Segmen Sungai <span className="text-rose-500">*</span>
-              </label>
-              
-              <div className="space-y-4">
-                {/* River Segment Selection */}
-                <div>
-                  <span className="block text-xs font-semibold text-slate-700 mb-1.5">Wilayah / Segmen Sungai:</span>
-                  <select
-                    value={riverSegment}
-                    onChange={(e) => setRiverSegment(e.target.value)}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-slate-50 text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
-                  >
-                    {RIVER_SEGMENTS.map((seg, idx) => (
-                      <option key={idx} value={seg}>{seg}</option>
-                    ))}
-                  </select>
-                </div>
-
-                {/* GPS Auto Button */}
-                <div className="flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
-                  <button
-                    type="button"
-                    onClick={handleGetLocation}
-                    disabled={isLocating}
-                    className="inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-sky-50 hover:bg-sky-100 border border-sky-200 text-[#0284C7] font-bold text-xs transition-all active:scale-95"
-                  >
-                    <MapPin className={`w-4 h-4 ${isLocating ? "animate-bounce" : ""}`} />
-                    <span>{isLocating ? "Mencari GPS..." : "Gunakan Koordinat GPS Presisi Saya"}</span>
-                  </button>
-
-                  {gpsLocation && (
-                    <span className="text-xs font-mono font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-3 py-2 rounded-xl flex items-center gap-1.5">
-                      <CheckCircle2 className="w-3.5 h-3.5" /> {gpsLocation}
-                    </span>
-                  )}
-                </div>
-
-                {/* Address Landmark Input */}
-                <div>
-                  <span className="block text-xs font-semibold text-slate-700 mb-1.5">Patokan / Alamat Detil:</span>
-                  <input
-                    type="text"
-                    required
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
-                    placeholder="Contoh: Dekat Pintu Air Manggarai, Samping Jembatan Merah..."
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <hr className="border-slate-100" />
-
-            {/* SECTION 3: Photo Evidence Upload */}
-            <div>
-              <label className="block text-sm font-extrabold text-slate-900 mb-2">
-                3. Unggah Foto Bukti Lapangan <span className="text-slate-400 font-normal">(Sangat Dianjurkan)</span>
-              </label>
-              <p className="text-xs text-slate-500 mb-4">
-                Foto bukti membantu verifikator DLH merespons laporan Anda secara cepat.
-              </p>
-
-              <div className="border-2 border-dashed border-sky-200 hover:border-[#0284C7] bg-sky-50/40 rounded-2xl p-6 text-center transition-all cursor-pointer relative group">
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={handleImageChange}
-                  className="absolute inset-0 opacity-0 cursor-pointer z-10"
-                />
-                
-                {previewImage ? (
-                  <div className="relative h-48 w-full max-w-md mx-auto rounded-xl overflow-hidden shadow-md">
-                    <img src={previewImage} alt="Preview Bukti" className="h-full w-full object-cover" />
-                    <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-bold">
-                      Klik untuk Mengganti Foto
-                    </div>
                   </div>
-                ) : (
-                  <div className="flex flex-col items-center justify-center gap-2 py-4">
-                    <div className="h-12 w-12 rounded-full bg-sky-100 text-[#0284C7] flex items-center justify-center group-hover:scale-110 transition-transform">
-                      <Camera className="w-6 h-6" />
-                    </div>
-                    <span className="text-xs font-bold text-slate-800">Tarik foto ke sini atau pilih file</span>
-                    <span className="text-[11px] text-slate-400">Format PNG, JPG, JPEG (Maks. 10MB)</span>
+
+                  {/* 3. Detail Kejadian */}
+                  <div>
+                    <label className="block text-sm font-extrabold text-slate-900 mb-1">
+                      3. Detail Deskripsi Pencemaran <span className="text-rose-500">*</span>
+                    </label>
+                    <textarea
+                      rows={3}
+                      required
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Jelaskan kondisi pencemaran yang terjadi (misal: air menghitam sejak tadi pagi, tumpukan sampah plastik menyumbat aliran...)"
+                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0284C7] resize-none"
+                    />
                   </div>
-                )}
-              </div>
-            </div>
 
-            <hr className="border-slate-100" />
-
-            {/* SECTION 4: Urgency & Description */}
-            <div>
-              <label className="block text-sm font-extrabold text-slate-900 mb-2">
-                4. Urgensi & Detail Kronologi <span className="text-rose-500">*</span>
-              </label>
-
-              <div className="space-y-4">
-                {/* Urgency Radio Pills */}
-                <div>
-                  <span className="block text-xs font-semibold text-slate-700 mb-2">Tingkat Keparahan:</span>
-                  <div className="grid grid-cols-3 gap-3">
-                    {[
-                      { id: "ringan", label: "Ringan", desc: "Sampah Kecil", color: "peer-checked:bg-emerald-500 peer-checked:text-white" },
-                      { id: "sedang", label: "Sedang", desc: "Penumpukan Sedang", color: "peer-checked:bg-amber-500 peer-checked:text-white" },
-                      { id: "darurat", label: "Darurat (DLH)", desc: "Limbah Berbahaya", color: "peer-checked:bg-rose-600 peer-checked:text-white" }
-                    ].map((urg) => (
-                      <label key={urg.id} className="cursor-pointer">
-                        <input
-                          type="radio"
-                          name="urgency"
-                          value={urg.id}
-                          checked={urgency === urg.id}
-                          onChange={(e) => setUrgency(e.target.value)}
-                          className="peer sr-only"
-                        />
-                        <div className={`p-3 rounded-xl border border-slate-200 text-center transition-all bg-slate-50 ${urg.color} peer-checked:border-transparent peer-checked:shadow-sm`}>
-                          <span className="block font-bold text-xs">{urg.label}</span>
-                          <span className="block text-[10px] opacity-80 mt-0.5">{urg.desc}</span>
+                  {/* 4. Unggah Foto Bukti */}
+                  <div>
+                    <label className="block text-sm font-extrabold text-slate-900 mb-1">
+                      4. Unggah Foto Bukti Lapangan
+                    </label>
+                    
+                    <div className="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-2xl bg-slate-50/50 hover:bg-slate-50 transition-colors relative cursor-pointer">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                      />
+                      <div className="space-y-1 text-center">
+                        <Camera className="mx-auto h-8 w-8 text-slate-400" />
+                        <div className="flex text-xs text-slate-600 font-semibold justify-center">
+                          <span className="text-[#0284C7]">Pilih foto</span>
+                          <span className="pl-1">atau tarik berkas ke sini</span>
                         </div>
-                      </label>
-                    ))}
+                        <p className="text-[10px] text-slate-400">PNG, JPG hingga 10MB</p>
+                      </div>
+                    </div>
+
+                    {previewImage && (
+                      <div className="mt-3 relative rounded-xl overflow-hidden border border-slate-200 max-h-48">
+                        <img src={previewImage} alt="Preview Bukti" className="w-full h-full object-cover" />
+                        <button
+                          type="button"
+                          onClick={() => setPreviewImage(null)}
+                          className="absolute top-2 right-2 p-1.5 rounded-full bg-slate-900/80 text-white hover:bg-rose-600 transition-colors"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      </div>
+                    )}
                   </div>
-                </div>
 
-                {/* Description Textarea */}
-                <div>
-                  <span className="block text-xs font-semibold text-slate-700 mb-1.5">Deskripsi Kronologi Laporan:</span>
-                  <textarea
-                    rows={4}
-                    required
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Jelaskan kondisi air, warna, estimasi volume sampah, atau pihak penyebab jika terlihat..."
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <hr className="border-slate-100" />
-
-            {/* SECTION 5: Identity & Privacy Options */}
-            <div>
-              <div className="flex items-center justify-between mb-3">
-                <label className="block text-sm font-extrabold text-slate-900">
-                  5. Identitas Pelapor <span className="text-slate-400 font-normal">(Opsional)</span>
-                </label>
-                
-                {/* Anonymous Toggle Switch */}
-                <label className="inline-flex items-center gap-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={isAnonymous}
-                    onChange={(e) => setIsAnonymous(e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-9 h-5 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500 relative"></div>
-                  <span className="text-xs font-bold text-slate-700">Kirim Sebagai Anonim</span>
-                </label>
-              </div>
-
-              {!isAnonymous && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2 animate-in fade-in duration-200">
-                  <div>
-                    <span className="block text-xs font-semibold text-slate-700 mb-1">Nama Lengkap:</span>
-                    <input
-                      type="text"
-                      value={reporterName}
-                      onChange={(e) => setReporterName(e.target.value)}
-                      placeholder="Nama Anda"
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
-                    />
+                  {/* Submit Button */}
+                  <div className="pt-4 border-t border-slate-100">
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-gradient-to-r from-[#0284C7] to-[#38BDF8] hover:brightness-110 text-white font-extrabold text-base shadow-xl shadow-[#0284C7]/25 active:scale-[0.99] transition-all disabled:opacity-70 cursor-pointer"
+                    >
+                      {isSubmitting ? (
+                        <>
+                          <RefreshCw className="w-5 h-5 animate-spin" />
+                          <span>Mengirim Laporan ke Server Spasial...</span>
+                        </>
+                      ) : (
+                        <>
+                          <Send className="w-5 h-5" />
+                          <span>Kirim Laporan Spasial Sekarang</span>
+                        </>
+                      )}
+                    </button>
                   </div>
-                  <div>
-                    <span className="block text-xs font-semibold text-slate-700 mb-1">No. WhatsApp (Untuk Update Status):</span>
-                    <input
-                      type="tel"
-                      value={whatsapp}
-                      onChange={(e) => setWhatsapp(e.target.value)}
-                      placeholder="0812xxxxxxx"
-                      className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
-                    />
-                  </div>
-                </div>
+                </form>
               )}
             </div>
 
-            {/* Submit Button */}
-            <div className="pt-4">
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-gradient-to-r from-[#0284C7] to-[#38BDF8] hover:brightness-110 text-white font-extrabold text-base shadow-xl shadow-[#0284C7]/25 active:scale-[0.99] transition-all disabled:opacity-70"
-              >
-                {isSubmitting ? (
-                  <>
-                    <RefreshCw className="w-5 h-5 animate-spin" />
-                    <span>Mengirim Laporan ke Server Spasial...</span>
-                  </>
-                ) : (
-                  <>
-                    <Send className="w-5 h-5" />
-                    <span>Kirim Laporan Spasial Sekarang</span>
-                  </>
-                )}
-              </button>
-              <p className="text-[11px] text-slate-400 text-center mt-3">
-                Dengan mengklik Kirim, Anda menyatakan bahwa informasi pencemaran ini diberikan secara ikhlas & benar demi kelestarian sungai Indonesia.
-              </p>
-            </div>
-          </form>
-        )}
-      </main>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
