@@ -4,94 +4,276 @@ import React, { useEffect, useState, useRef } from "react";
 import L from "leaflet";
 import {
   MapPin,
-  Navigation,
-  CheckCircle2,
-  AlertCircle,
-  Clock,
-  Filter,
-  Search,
   Crosshair,
-  Layers,
-  ChevronDown,
   ArrowRight,
-  ShieldCheck,
+  Info,
+  Layers,
+  Sparkles,
 } from "lucide-react";
 
-interface MapMarkerData {
+// =======================================================================
+// KONFIGURASI WARNA & STYLE SEGMEN SUNGAI (GEOJSON POLYLINE)
+// =======================================================================
+// "default"  -> Hijau (#22c55e), segmen belum pernah dilaporkan
+// "tercemar" -> Merah (#ef4444), laporan limbah cair / bau / bahaya
+// "sampah"   -> Oranye (#f97316), laporan sampah plastik menumpuk
+const RIVER_STATUS_STYLE: Record<
+  string,
+  { color: string; weight: number; opacity: number; label: string; badgeBg: string }
+> = {
+  default: {
+    color: "#22c55e",
+    weight: 6,
+    opacity: 0.9,
+    label: "Normal / Clean 🟢",
+    badgeBg: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  },
+  tercemar: {
+    color: "#ef4444",
+    weight: 7,
+    opacity: 0.95,
+    label: "Tercemar / Bahaya 🔴",
+    badgeBg: "bg-rose-50 text-rose-800 border-rose-200",
+  },
+  sampah: {
+    color: "#f97316",
+    weight: 7,
+    opacity: 0.95,
+    label: "Banyak Sampah 🟠",
+    badgeBg: "bg-amber-50 text-amber-800 border-amber-200",
+  },
+};
+
+function getRiverStyle(feature: any) {
+  const status = feature?.properties?.status || "default";
+  const style = RIVER_STATUS_STYLE[status] || RIVER_STATUS_STYLE.default;
+  return {
+    color: style.color,
+    weight: style.weight,
+    opacity: style.opacity,
+    lineCap: "round" as const,
+    lineJoin: "round" as const,
+  };
+}
+
+// =======================================================================
+// DATA SEGMEN GEOJSON DUMMY (FALLBACK LOKAL SAMA DENGAN RIVERS-DUMMY)
+// =======================================================================
+const GEOJSON_RIVER_DATA = {
+  type: "FeatureCollection",
+  features: [
+    {
+      type: "Feature",
+      properties: {
+        id: "sungai-ciliwung-01",
+        nama_sungai: "Kali Ciliwung - Segmen Kalibata",
+        status: "default",
+        keterangan: "Belum ada laporan pencemaran pada segmen ini. Kondisi teratur.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.8451, -6.2615],
+          [106.8465, -6.258],
+          [106.848, -6.254],
+          [106.8495, -6.25],
+          [106.851, -6.246],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "sungai-ciliwung-02",
+        nama_sungai: "Kali Ciliwung - Segmen Manggarai",
+        status: "tercemar",
+        keterangan: "Laporan limbah cair terverifikasi, bau menyengat & busa industri.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.851, -6.246],
+          [106.8525, -6.242],
+          [106.854, -6.238],
+          [106.8555, -6.234],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "sungai-cipinang-01",
+        nama_sungai: "Kali Cipinang - Segmen Jatinegara",
+        status: "sampah",
+        keterangan: "Banyak laporan sampah plastik rumah tangga menumpuk di bantaran.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.87, -6.235],
+          [106.873, -6.232],
+          [106.876, -6.229],
+          [106.879, -6.226],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "sungai-cipinang-02",
+        nama_sungai: "Kali Cipinang - Segmen Rawa Terate",
+        status: "default",
+        keterangan: "Belum ada laporan pencemaran pada segmen ini.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.879, -6.226],
+          [106.882, -6.2225],
+          [106.885, -6.219],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "sungai-kalimalang-01",
+        nama_sungai: "Kalimalang - Segmen Bintara",
+        status: "sampah",
+        keterangan: "Penumpukan sampah plastik dan sisa pembuangan liar warga.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.955, -6.24],
+          [106.96, -6.238],
+          [106.965, -6.236],
+          [106.97, -6.234],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "sungai-pesanggrahan-01",
+        nama_sungai: "Kali Pesanggrahan - Segmen Bintaro",
+        status: "tercemar",
+        keterangan: "Pencemaran limbah cair industri terverifikasi oleh petugas DLH.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.73, -6.285],
+          [106.735, -6.282],
+          [106.74, -6.278],
+          [106.745, -6.274],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "sungai-pesanggrahan-02",
+        nama_sungai: "Kali Pesanggrahan - Segmen Kebon Jeruk",
+        status: "default",
+        keterangan: "Segmen terpantau normal dan bersih.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.745, -6.274],
+          [106.75, -6.27],
+          [106.755, -6.265],
+        ],
+      },
+    },
+  ],
+};
+
+// =======================================================================
+// MARKER LAPORAN TITIK SPASIAL
+// =======================================================================
+interface ReportMarker {
   id: string;
-  title: string;
-  category: string;
-  status: "pending" | "verified" | "processing" | "completed";
   lat: number;
   lng: number;
-  riverName: string;
+  status: "pending" | "terverifikasi" | "diproses" | "selesai";
+  judul: string;
+  lokasi: string;
   upvotes: number;
   timeAgo: string;
   image?: string;
 }
 
-const SAMPLE_MARKERS: MapMarkerData[] = [
+const REPORT_MARKERS: ReportMarker[] = [
   {
-    id: "RVR-101",
-    title: "Pencemaran Sampah Pesisir",
-    category: "Penumpukan Sampah",
-    status: "verified",
-    lat: -6.1088,
-    lng: 106.8156,
-    riverName: "Muara Teluk Jakarta",
+    id: "rpt-001",
+    lat: -6.238,
+    lng: 106.854,
+    status: "terverifikasi",
+    judul: "Limbah Cair Diduga Industri",
+    lokasi: "Kali Ciliwung - Segmen Manggarai",
     upvotes: 142,
     timeAgo: "10 menit yang lalu",
     image: "/assets/sungai/Pencemaran Teluk Jakarta oleh Paracetamol.jpg",
   },
   {
-    id: "RVR-102",
-    title: "Limbah Industri & Sampah Plastik",
-    category: "Limbah B3 / Cair",
-    status: "processing",
-    lat: -6.212,
+    id: "rpt-002",
+    lat: -6.25,
     lng: 106.848,
-    riverName: "Sungai Ciliwung (Segmen Manggarai)",
+    status: "diproses",
+    judul: "Bau Menyengat & Air Keruh",
+    lokasi: "Kali Ciliwung - Segmen Kalibata",
     upvotes: 98,
     timeAgo: "45 menit yang lalu",
     image: "/assets/sungai/Mengerikan! Ini Penampakan Pencemaran Sungai di Jakarta.jpeg",
   },
   {
-    id: "RVR-103",
-    title: "Air Berbau & Keruh Merah",
-    category: "Bau & Perubahan Warna Air",
-    status: "pending",
-    lat: -6.265,
-    lng: 106.772,
-    riverName: "Sungai Pesanggrahan",
-    upvotes: 35,
-    timeAgo: "2 jam yang lalu",
-    image: "/assets/sungai/20200812-Sungai-Ciliwung-1_ratio-16x9.jpg",
-  },
-  {
-    id: "RVR-104",
-    title: "Pembersihan Hilir Selesai DLH",
-    category: "Penumpukan Sampah",
-    status: "completed",
-    lat: -6.23,
-    lng: 106.885,
-    riverName: "Kali Cipinang (Segmen Jatinegara)",
+    id: "rpt-003",
+    lat: -6.229,
+    lng: 106.876,
+    status: "selesai",
+    judul: "Pembersihan Sampah Plastik Selesai",
+    lokasi: "Kali Cipinang - Segmen Jatinegara",
     upvotes: 210,
     timeAgo: "Dibersihkan kemarin",
     image: "/assets/sungai/sungai ciliwung bening.jpg",
   },
   {
-    id: "RVR-105",
-    title: "Kerusakan Tanggul Bantaran",
-    category: "Kerusakan Tanggul",
-    status: "verified",
-    lat: -6.155,
-    lng: 106.875,
-    riverName: "Sungai Sunter (Segmen Kelapa Gading)",
-    upvotes: 76,
-    timeAgo: "3 jam yang lalu",
-    image: "/assets/sungai/antarafoto-bantaran-sungai-penuh-sampah-230624-adm-1.jpg",
+    id: "rpt-004",
+    lat: -6.282,
+    lng: 106.73,
+    status: "pending",
+    judul: "Laporan Baru Menunggu Verifikasi",
+    lokasi: "Kali Pesanggrahan - Segmen Bintaro",
+    upvotes: 35,
+    timeAgo: "2 jam yang lalu",
+    image: "/assets/sungai/20200812-Sungai-Ciliwung-1_ratio-16x9.jpg",
   },
 ];
+
+const REPORT_STATUS_COLOR: Record<string, { color: string; label: string; badgeBg: string }> = {
+  pending: {
+    color: "#f97316",
+    label: "Pending 🟠",
+    badgeBg: "bg-amber-50 text-amber-800 border-amber-200",
+  },
+  terverifikasi: {
+    color: "#ef4444",
+    label: "Terverifikasi 🔴",
+    badgeBg: "bg-rose-50 text-rose-800 border-rose-200",
+  },
+  diproses: {
+    color: "#3b82f6",
+    label: "Diproses DLH 🔵",
+    badgeBg: "bg-blue-50 text-blue-800 border-blue-200",
+  },
+  selesai: {
+    color: "#22c55e",
+    label: "Selesai 🟢",
+    badgeBg: "bg-emerald-50 text-emerald-800 border-emerald-200",
+  },
+};
 
 interface RiverGISMapProps {
   onSelectLocation?: (location: { lat: number; lng: number; riverName: string }) => void;
@@ -100,11 +282,11 @@ interface RiverGISMapProps {
 export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
+  const geojsonLayerRef = useRef<L.GeoJSON | null>(null);
   const markersGroupRef = useRef<L.LayerGroup | null>(null);
   const selectedPinRef = useRef<L.Marker | null>(null);
 
-  const [activeFilter, setActiveFilter] = useState<string>("all");
-  const [searchQuery, setSearchQuery] = useState("");
+  const [activeFilter, setActiveFilter] = useState<string>("semua");
   const [selectedSpot, setSelectedSpot] = useState<{
     lat: number;
     lng: number;
@@ -112,18 +294,18 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
   } | null>(null);
   const [isLocating, setIsLocating] = useState(false);
 
-  // Initialize Leaflet Map instance
+  // Initialize Leaflet Map Instance with GeoJSON Rivers & Report Markers
   useEffect(() => {
     if (!mapContainerRef.current || mapInstanceRef.current) return;
 
-    // Create Leaflet map centered at Jakarta Ciliwung River Basin
+    // Center on Jakarta River Basin
     const map = L.map(mapContainerRef.current, {
-      center: [-6.2088, 106.8456],
+      center: [-6.24, 106.84],
       zoom: 12,
       zoomControl: false,
     });
 
-    // Add High-Definition CartoDB Voyager Tile Layer
+    // High-Definition CartoDB Tile Layer
     L.tileLayer(
       "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
       {
@@ -134,20 +316,64 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
       }
     ).addTo(map);
 
-    // Add Custom Zoom Controls on top-right
+    // Zoom Controls top-right
     L.control.zoom({ position: "topright" }).addTo(map);
 
-    // Create Markers Group
+    // Add GeoJSON River Segments Layer (Vector Polylines)
+    const geojsonLayer = L.geoJSON(GEOJSON_RIVER_DATA as any, {
+      style: getRiverStyle,
+      onEachFeature: (feature, layer) => {
+        const { nama_sungai, status, keterangan } = feature.properties;
+        const statusConfig = RIVER_STATUS_STYLE[status] || RIVER_STATUS_STYLE.default;
+
+        layer.bindPopup(
+          `<div class="p-1 max-w-[210px] font-sans">
+            <div class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${statusConfig.badgeBg} mb-1.5">
+              ${statusConfig.label}
+            </div>
+            <h4 class="font-extrabold text-xs text-slate-900 leading-tight mb-1">${nama_sungai}</h4>
+            <p class="text-[11px] text-slate-600 font-medium leading-relaxed">${keterangan || ""}</p>
+          </div>`,
+          { closeButton: false, offset: [0, -5] }
+        );
+
+        // Hover Effect on River Vector Polylines
+        layer.on({
+          mouseover: (e) => {
+            const l = e.target;
+            l.setStyle({ weight: 10, opacity: 1 });
+            if (l.bringToFront) l.bringToFront();
+          },
+          mouseout: (e) => {
+            geojsonLayer.resetStyle(e.target);
+          },
+          click: (e) => {
+            const { lat, lng } = e.latlng;
+            const formattedLat = parseFloat(lat.toFixed(4));
+            const formattedLng = parseFloat(lng.toFixed(4));
+            setSelectedSpot({
+              lat: formattedLat,
+              lng: formattedLng,
+              riverName: nama_sungai,
+            });
+          },
+        });
+      },
+    }).addTo(map);
+
+    geojsonLayerRef.current = geojsonLayer;
+
+    // Report Point Markers Layer Group
     const markersGroup = L.layerGroup().addTo(map);
     markersGroupRef.current = markersGroup;
     mapInstanceRef.current = map;
 
-    // Listen for Map Clicks to select custom coordinates
+    // Map Click Listener for custom pin placement
     map.on("click", (e: L.LeafletMouseEvent) => {
       const { lat, lng } = e.latlng;
       const formattedLat = parseFloat(lat.toFixed(4));
       const formattedLng = parseFloat(lng.toFixed(4));
-      const estRiverName = `Lokasi Geofencing (${formattedLat}, ${formattedLng})`;
+      const estRiverName = `Lokasi Titik Spasial (${formattedLat}, ${formattedLng})`;
 
       setSelectedSpot({
         lat: formattedLat,
@@ -155,7 +381,6 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
         riverName: estRiverName,
       });
 
-      // Update Custom Selected Pin on map
       if (selectedPinRef.current) {
         selectedPinRef.current.setLatLng([lat, lng]);
       } else {
@@ -179,51 +404,33 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
     };
   }, []);
 
-  // Update Markers based on Filters & Search
+  // Update Report Point Markers on Filter Change
   useEffect(() => {
     if (!mapInstanceRef.current || !markersGroupRef.current) return;
 
     const markersGroup = markersGroupRef.current;
     markersGroup.clearLayers();
 
-    const filtered = SAMPLE_MARKERS.filter((item) => {
-      const matchFilter =
-        activeFilter === "all" || item.status === activeFilter;
-      const matchQuery =
-        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        item.riverName.toLowerCase().includes(searchQuery.toLowerCase());
-      return matchFilter && matchQuery;
+    const filtered = REPORT_MARKERS.filter((item) => {
+      if (activeFilter === "semua") return true;
+      return item.status === activeFilter;
     });
 
     filtered.forEach((spot) => {
-      // Determine Status Color
-      let colorClass = "bg-[#F97316] ring-[#F97316]/30";
-      let statusBadgeText = "Pending 🟠";
-      let statusBadgeBg = "bg-amber-50 text-amber-800 border-amber-200";
-
-      if (spot.status === "verified") {
-        colorClass = "bg-[#EF4444] ring-[#EF4444]/30";
-        statusBadgeText = "Terverifikasi 🔴";
-        statusBadgeBg = "bg-rose-50 text-rose-800 border-rose-200";
-      } else if (spot.status === "processing") {
-        colorClass = "bg-[#3B82F6] ring-[#3B82F6]/30";
-        statusBadgeText = "Diproses DLH 🔵";
-        statusBadgeBg = "bg-blue-50 text-blue-800 border-blue-200";
-      } else if (spot.status === "completed") {
-        colorClass = "bg-[#22C55E] ring-[#22C55E]/30";
-        statusBadgeText = "Selesai 🟢";
-        statusBadgeBg = "bg-emerald-50 text-emerald-800 border-emerald-200";
-      }
+      const config = REPORT_STATUS_COLOR[spot.status] || REPORT_STATUS_COLOR.pending;
 
       const customIcon = L.divIcon({
-        className: "custom-gis-marker",
-        html: `<div class="relative group cursor-pointer">
-                <div class="w-7 h-7 rounded-full ${colorClass} ring-4 text-white flex items-center justify-center shadow-lg transition-transform transform group-hover:scale-125">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                </div>
+        className: "river-report-marker",
+        html: `<div style="
+                width: 28px; height: 28px; border-radius: 9999px;
+                background:${config.color}; border:3px solid white;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+                display: flex; align-items: center; justify-content: center;
+              " class="transition-transform hover:scale-125 cursor-pointer">
+                <div style="width:8px; height:8px; border-radius:9999px; background:white;"></div>
               </div>`,
         iconSize: [28, 28],
-        iconAnchor: [14, 28],
+        iconAnchor: [14, 14],
       });
 
       const popupHtml = `
@@ -231,19 +438,15 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
           ${
             spot.image
               ? `<div class="relative h-24 w-full rounded-xl overflow-hidden mb-2">
-                  <img src="${spot.image}" alt="${spot.title}" class="w-full h-full object-cover" />
+                  <img src="${spot.image}" alt="${spot.judul}" class="w-full h-full object-cover" />
                  </div>`
               : ""
           }
-          <div class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${statusBadgeBg} mb-1">
-            ${statusBadgeText}
+          <div class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${config.badgeBg} mb-1">
+            ${config.label}
           </div>
-          <h4 class="font-extrabold text-xs text-slate-900 leading-tight mb-1">${
-            spot.title
-          }</h4>
-          <p class="text-[10px] text-slate-500 font-medium mb-2">${
-            spot.riverName
-          }</p>
+          <h4 class="font-extrabold text-xs text-slate-900 leading-tight mb-1">${spot.judul}</h4>
+          <p class="text-[10px] text-slate-500 font-medium mb-2">${spot.lokasi}</p>
           <div class="flex items-center justify-between text-[10px] text-slate-600 font-bold border-t border-slate-100 pt-1.5">
             <span>👍 ${spot.upvotes} Dukungan</span>
             <span class="text-sky-600">${spot.timeAgo}</span>
@@ -252,17 +455,17 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
       `;
 
       const marker = L.marker([spot.lat, spot.lng], { icon: customIcon });
-      marker.bindPopup(popupHtml, { closeButton: false, offset: [0, -20] });
+      marker.bindPopup(popupHtml, { closeButton: false, offset: [0, -10] });
       marker.on("click", () => {
         setSelectedSpot({
           lat: spot.lat,
           lng: spot.lng,
-          riverName: spot.riverName,
+          riverName: spot.lokasi,
         });
       });
       markersGroup.addLayer(marker);
     });
-  }, [activeFilter, searchQuery]);
+  }, [activeFilter]);
 
   // Locate User's Browser GPS Position
   const handleLocateUser = () => {
@@ -296,14 +499,10 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
     );
   };
 
-  // Confirm Location & Scroll to Report Form
+  // Confirm Location & Trigger Callback
   const handleConfirmLocation = () => {
     if (selectedSpot && onSelectLocation) {
       onSelectLocation(selectedSpot);
-    }
-    const formElement = document.getElementById("form-pelaporan");
-    if (formElement) {
-      formElement.scrollIntoView({ behavior: "smooth" });
     }
   };
 
@@ -321,15 +520,15 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
           <div>
             <div className="flex items-center gap-2">
               <h3 className="text-sm sm:text-base font-extrabold text-white">
-                Peta Kondisi & Titik Laporan Sungai Live (GIS)
+                Peta Status Segmen Sungai & Laporan (GeoJSON GIS)
               </h3>
               <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">
                 <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Live GIS
+                Live Vectors
               </span>
             </div>
             <p className="text-[11px] text-slate-400 font-medium">
-              Klik lokasi pada peta atau pilih penanda untuk langsung melaporkan titik pencemaran.
+              Garis sungai berwarna sesuai status pencemaran. Klik segmen atau penanda titik untuk melaporkan.
             </p>
           </div>
         </div>
@@ -337,15 +536,15 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
         {/* Filter Controls */}
         <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           {[
-            { id: "all", label: "Semua Titik" },
-            { id: "verified", label: "Terverifikasi 🔴" },
-            { id: "processing", label: "Diproses 🔵" },
-            { id: "completed", label: "Selesai 🟢" },
+            { id: "semua", label: "Semua Titik" },
+            { id: "terverifikasi", label: "Terverifikasi 🔴" },
+            { id: "diproses", label: "Diproses 🔵" },
+            { id: "selesai", label: "Selesai 🟢" },
           ].map((tab) => (
             <button
               key={tab.id}
               onClick={() => setActiveFilter(tab.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
                 activeFilter === tab.id
                   ? "bg-[#0284C7] text-white shadow-md"
                   : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"
@@ -359,7 +558,7 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
       </div>
 
       {/* Leaflet Map Canvas Container */}
-      <div className="relative w-full h-[450px] sm:h-[500px]">
+      <div className="relative w-full h-[460px] sm:h-[520px]">
         
         {/* Leaflet Container Div */}
         <div ref={mapContainerRef} className="w-full h-full z-0" />
@@ -403,26 +602,42 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
       </div>
 
       {/* Map Legend Footer Bar */}
-      <div className="p-4 bg-slate-50 border-t border-slate-200/80 flex flex-wrap items-center justify-between gap-4 text-xs">
-        <div className="flex items-center gap-4 text-slate-600 font-medium">
-          <span className="font-bold text-slate-800">Legenda Penanda:</span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#F97316]" /> Pending
+      <div className="p-4 bg-slate-50 border-t border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+        
+        {/* Polyline River Colors Legend */}
+        <div className="flex flex-wrap items-center gap-3 text-slate-700 font-medium">
+          <span className="font-extrabold text-slate-900 flex items-center gap-1">
+            <Layers className="w-3.5 h-3.5 text-[#0284C7]" />
+            Garis Sungai:
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" /> Terverifikasi
+            <span className="w-4 h-1.5 rounded bg-[#22c55e]" /> Normal / Clean
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#3B82F6]" /> Diproses DLH
+            <span className="w-4 h-1.5 rounded bg-[#ef4444]" /> Tercemar / Bahaya
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#22C55E]" /> Selesai
+            <span className="w-4 h-1.5 rounded bg-[#f97316]" /> Banyak Sampah
           </span>
         </div>
 
-        <div className="text-slate-500 font-medium text-[11px]">
-          Radius Deteksi Duplikasi Spasial: <strong className="text-slate-800">&lt;500 meter (PostGIS)</strong>
+        {/* Marker Points Legend */}
+        <div className="flex flex-wrap items-center gap-3 text-slate-600 font-medium border-t md:border-t-0 border-slate-200 pt-2 md:pt-0">
+          <span className="font-extrabold text-slate-900">Titik Laporan:</span>
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#f97316]" /> Pending
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]" /> Terverifikasi
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#3b82f6]" /> Diproses
+          </span>
+          <span className="flex items-center gap-1">
+            <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e]" /> Selesai
+          </span>
         </div>
+
       </div>
 
     </div>

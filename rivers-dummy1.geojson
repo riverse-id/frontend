@@ -1,0 +1,130 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sungai-ciliwung-01",
+        "nama_sungai": "Kali Ciliwung - Segmen Kalibata",
+        "status": "default",
+        "keterangan": "Belum ada laporan pencemaran pada segmen ini"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [106.8451, -6.2615],
+          [106.8465, -6.2580],
+          [106.8480, -6.2540],
+          [106.8495, -6.2500],
+          [106.8510, -6.2460]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sungai-ciliwung-02",
+        "nama_sungai": "Kali Ciliwung - Segmen Manggarai",
+        "status": "tercemar",
+        "keterangan": "Laporan limbah cair terverifikasi, bau menyengat"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [106.8510, -6.2460],
+          [106.8525, -6.2420],
+          [106.8540, -6.2380],
+          [106.8555, -6.2340]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sungai-cipinang-01",
+        "nama_sungai": "Kali Cipinang - Segmen Jatinegara",
+        "status": "sampah",
+        "keterangan": "Banyak laporan sampah plastik menumpuk"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [106.8700, -6.2350],
+          [106.8730, -6.2320],
+          [106.8760, -6.2290],
+          [106.8790, -6.2260]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sungai-cipinang-02",
+        "nama_sungai": "Kali Cipinang - Segmen Rawa Terate",
+        "status": "default",
+        "keterangan": "Belum ada laporan pencemaran pada segmen ini"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [106.8790, -6.2260],
+          [106.8820, -6.2225],
+          [106.8850, -6.2190]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sungai-kalimalang-01",
+        "nama_sungai": "Kalimalang - Segmen Bintara",
+        "status": "sampah",
+        "keterangan": "Sampah plastik menumpuk di area perumahan Bintara"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [106.9550, -6.2400],
+          [106.9600, -6.2380],
+          [106.9650, -6.2360],
+          [106.9700, -6.2340]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sungai-pesanggrahan-01",
+        "nama_sungai": "Kali Pesanggrahan - Segmen Bintaro",
+        "status": "tercemar",
+        "keterangan": "Laporan limbah cair terverifikasi DLH"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [106.7300, -6.2820],
+          [106.7330, -6.2780],
+          [106.7360, -6.2740],
+          [106.7390, -6.2700]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sungai-pesanggrahan-02",
+        "nama_sungai": "Kali Pesanggrahan - Segmen Ulujami",
+        "status": "default",
+        "keterangan": "Belum ada laporan pencemaran pada segmen ini"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [106.7390, -6.2700],
+          [106.7420, -6.2660],
+          [106.7450, -6.2620]
+        ]
+      }
+    }
+  ]
+}
