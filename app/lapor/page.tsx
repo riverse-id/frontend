@@ -25,6 +25,7 @@ import {
   PlusCircle
 } from "lucide-react";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import dynamic from "next/dynamic";
 
 const RiverGISMap = dynamic(() => import("../components/RiverGISMap"), {
@@ -538,6 +539,9 @@ export default function LaporPage() {
           </div>
         </div>
       )}
+
+      {/* FOOTER SECTION */}
+      <Footer />
     </div>
   );
 }
