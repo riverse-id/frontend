@@ -227,7 +227,7 @@ export default function DinasDashboard() {
       {/* ============================================================ */}
       {/* 1. LEFT SIDEBAR NAVIGATION                                   */}
       {/* ============================================================ */}
-      <aside className="w-full md:w-64 bg-white border-r border-slate-200/80 flex flex-col flex-shrink-0 z-30 min-h-[100vh]">
+      <aside className="w-full md:w-64 bg-white border-r border-slate-200/80 flex flex-col flex-shrink-0 z-30 md:sticky md:top-0 md:h-screen md:overflow-y-auto">
         {/* Brand Logo & Title */}
         <div className="p-6 border-b border-slate-100 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
