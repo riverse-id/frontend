@@ -39,6 +39,7 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
     { id: "tentang-kami", label: "Tentang Kami", href: "#tentang-kami" },
     { id: "partner", label: "Partner", href: "#partner" },
     { id: "kontak", label: "Kontak", href: "#kontak" },
+    { id: "lapor", label: "Buat Laporan", href: "/lapor", isCta: true },
   ];
 
   return (
@@ -68,9 +69,21 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
           </a>
 
           {/* Navigation Links with Glass Pill Highlight */}
-          <nav className="hidden md:flex items-center gap-2">
+          <nav className="flex items-center gap-1.5">
             {NAV_ITEMS.map((item) => {
               const isActive = activeNav === item.id;
+              if (item.isCta) {
+                return (
+                  <a
+                    key={item.id}
+                    href={item.href}
+                    className="ml-1 px-4 py-1.5 rounded-full text-xs font-bold bg-[#0284C7] text-white hover:bg-[#0284C7]/90 shadow-md shadow-[#0284C7]/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-1.5"
+                  >
+                    <PlusCircle className="w-3.5 h-3.5" />
+                    <span>{item.label}</span>
+                  </a>
+                );
+              }
               return (
                 <a
                   key={item.id}
@@ -88,16 +101,6 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
             })}
           </nav>
 
-          {/* Right Action Button */}
-          <div className="flex items-center gap-3">
-            <a
-              href="/lapor"
-              className="flex items-center gap-2 px-5 py-2 rounded-full border-2 border-[#0284C7] text-[#0284C7] text-xs font-bold hover:bg-[#0284C7] hover:text-white shadow-sm transition-all hover:scale-105 active:scale-95"
-            >
-              <PlusCircle className="w-3.5 h-3.5" />
-              <span>Buat Laporan</span>
-            </a>
-          </div>
         </div>
       </div>
     </header>
