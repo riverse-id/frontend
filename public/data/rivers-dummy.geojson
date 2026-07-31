@@ -4,35 +4,105 @@
     {
       "type": "Feature",
       "properties": {
-        "id": "sungai-ciliwung-01",
-        "nama_sungai": "Kali Ciliwung - Segmen Kalibata",
-        "status": "default",
-        "keterangan": "Belum ada laporan pencemaran pada segmen ini"
+        "id": "cakung-drain-01",
+        "nama_sungai": "Cakung Drain",
+        "status": "tercemar",
+        "keterangan": "Drainase kawasan 9.85 km (Hulu: Jaktim 6°10'58.80\"S 106°55'43.44\"E, Hilir: Jakut 6°5'51.60\"S 106°56'23.16\"E)"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [106.8451, -6.2615],
-          [106.8465, -6.2580],
-          [106.8480, -6.2540],
-          [106.8495, -6.2500],
-          [106.8510, -6.2460]
+          [106.9287, -6.1830],
+          [106.9320, -6.1450],
+          [106.9360, -6.1150],
+          [106.9398, -6.0977]
         ]
       }
     },
     {
       "type": "Feature",
       "properties": {
-        "id": "sungai-ciliwung-02",
-        "nama_sungai": "Kali Ciliwung - Segmen Manggarai",
-        "status": "tercemar",
-        "keterangan": "Laporan limbah cair terverifikasi, bau menyengat"
+        "id": "kali-cakung-01",
+        "nama_sungai": "Kali Cakung",
+        "status": "sampah",
+        "keterangan": "Panjang 39.59 km (Hulu: Bekasi 6°22'13.61\"S 106°55'44.58\"E, Hilir: BKT Jakut 6°5'54.49\"S 106°56'24.45\"E)"
       },
       "geometry": {
         "type": "LineString",
         "coordinates": [
-          [106.8510, -6.2460],
-          [106.8525, -6.2420],
+          [106.9291, -6.3704],
+          [106.9310, -6.2800],
+          [106.9350, -6.1900],
+          [106.9401, -6.0985]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kali-angke-01",
+        "nama_sungai": "Kali Angke",
+        "status": "tercemar",
+        "keterangan": "Panjang 82.94 km (Hulu: Bogor 6°34'58.14\"S 106°46'43.26\"E, Hilir: Jakbar 6°9'57.06\"S 106°44'54.42\"E)"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [106.7787, -6.5828],
+          [106.7650, -6.4200],
+          [106.7550, -6.2800],
+          [106.7510, -6.2000],
+          [106.7485, -6.1659]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kali-jatikramat-01",
+        "nama_sungai": "Kali Jatikramat",
+        "status": "default",
+        "keterangan": "Panjang 13.75 km (Hulu: Bekasi 6°19'3.06\"S 106°55'31.50\"E, Hilir: Jaktim 6°13'44.71\"S 106°55'34.32\"E)"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [106.9254, -6.3175],
+          [106.9258, -6.2700],
+          [106.9262, -6.2291]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "kali-buaran-01",
+        "nama_sungai": "Kali Buaran",
+        "status": "sampah",
+        "keterangan": "Panjang 11.34 km (Melintasi Bekasi & Jaktim, Hilir: 6°11'1.64\"S 106°55'43.76\"E)"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [106.9230, -6.2550],
+          [106.9260, -6.2150],
+          [106.9288, -6.1838]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "id": "sungai-ciliwung-01",
+        "nama_sungai": "Kali Ciliwung - Segmen Manggarai",
+        "status": "tercemar",
+        "keterangan": "Laporan limbah cair terverifikasi, bau menyengat & busa industri."
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [106.8451, -6.2615],
+          [106.8480, -6.2540],
           [106.8540, -6.2380],
           [106.8555, -6.2340]
         ]
@@ -44,7 +114,7 @@
         "id": "sungai-cipinang-01",
         "nama_sungai": "Kali Cipinang - Segmen Jatinegara",
         "status": "sampah",
-        "keterangan": "Banyak laporan sampah plastik menumpuk"
+        "keterangan": "Banyak laporan sampah plastik rumah tangga menumpuk di bantaran."
       },
       "geometry": {
         "type": "LineString",
@@ -53,76 +123,6 @@
           [106.8730, -6.2320],
           [106.8760, -6.2290],
           [106.8790, -6.2260]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "sungai-cipinang-02",
-        "nama_sungai": "Kali Cipinang - Segmen Rawa Terate",
-        "status": "default",
-        "keterangan": "Belum ada laporan pencemaran pada segmen ini"
-      },
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [106.8790, -6.2260],
-          [106.8820, -6.2225],
-          [106.8850, -6.2190]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "sungai-kalimalang-01",
-        "nama_sungai": "Kalimalang - Segmen Bintara",
-        "status": "sampah",
-        "keterangan": "Sampah plastik menumpuk di area perumahan Bintara"
-      },
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [106.9550, -6.2400],
-          [106.9600, -6.2380],
-          [106.9650, -6.2360],
-          [106.9700, -6.2340]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "sungai-pesanggrahan-01",
-        "nama_sungai": "Kali Pesanggrahan - Segmen Bintaro",
-        "status": "tercemar",
-        "keterangan": "Laporan limbah cair terverifikasi DLH"
-      },
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [106.7300, -6.2850],
-          [106.7350, -6.2820],
-          [106.7400, -6.2780],
-          [106.7450, -6.2740]
-        ]
-      }
-    },
-    {
-      "type": "Feature",
-      "properties": {
-        "id": "sungai-pesanggrahan-02",
-        "nama_sungai": "Kali Pesanggrahan - Segmen Kebon Jeruk",
-        "status": "default",
-        "keterangan": "Segmen terpantau normal"
-      },
-      "geometry": {
-        "type": "LineString",
-        "coordinates": [
-          [106.7450, -6.2740],
-          [106.7500, -6.2700],
-          [106.7550, -6.2650]
         ]
       }
     }
