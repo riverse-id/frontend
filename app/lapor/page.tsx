@@ -281,20 +281,20 @@ export default function LaporPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/75 backdrop-blur-md overflow-y-auto animate-fadeIn">
           <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200/90 overflow-hidden my-auto max-h-[90vh] flex flex-col">
             
-            {/* Modal Header Bar */}
-            <div className="p-5 sm:p-6 bg-slate-900 text-white flex items-center justify-between border-b border-slate-800 flex-shrink-0">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-[#0284C7] text-white flex items-center justify-center flex-shrink-0">
+            {/* Modal Header Bar (Clean Light Theme per DESIGN.md) */}
+            <div className="p-6 sm:p-7 bg-white border-b border-slate-100 flex items-center justify-between flex-shrink-0">
+              <div className="flex items-center gap-3.5">
+                <div className="w-11 h-11 rounded-2xl bg-sky-50 border border-sky-100 text-[#0284C7] flex items-center justify-center flex-shrink-0 shadow-xs">
                   <PlusCircle className="w-5 h-5" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-extrabold text-white">Formulir Pelaporan Pencemaran Sungai</h3>
-                  <p className="text-xs text-sky-200 font-medium">Lengkapi detail laporan pencemaran secara presisi</p>
+                  <h3 className="text-base sm:text-xl font-bold text-slate-900 tracking-tight">Formulir Pelaporan Pencemaran Sungai</h3>
+                  <p className="text-xs text-slate-500 font-medium">Isi detail kejadian pencemaran secara presisi untuk verifikasi komunitas & DLH</p>
                 </div>
               </div>
               <button
                 onClick={() => setShowFormModal(false)}
-                className="w-9 h-9 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer"
+                className="w-9 h-9 rounded-full bg-slate-100/80 hover:bg-slate-200/80 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-all cursor-pointer"
                 title="Tutup Formulir"
               >
                 <X className="w-5 h-5" />
@@ -370,14 +370,16 @@ export default function LaporPage() {
                   </div>
                 </div>
               ) : (
-                /* MAIN pelaporan FORM */
-                <form onSubmit={handleSubmit} className="space-y-8">
+                /* MAIN FORM */
+                <form onSubmit={handleSubmit} className="space-y-7">
                   {/* 1. Kategori Pencemaran */}
                   <div>
-                    <label className="block text-sm font-extrabold text-slate-900 mb-1">
-                      1. Pilih Kategori Pencemaran <span className="text-rose-500">*</span>
-                    </label>
-                    <p className="text-xs text-slate-500 mb-4">Pilih jenis masalah pencemaran sungai yang Anda temukan di lokasi.</p>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-sky-100 text-[#0284C7] text-xs font-bold">1</span>
+                      <h4 className="text-sm font-bold text-slate-900">Pilih Kategori Pencemaran</h4>
+                      <span className="text-rose-500 text-xs font-bold">*</span>
+                    </div>
+                    <p className="text-xs text-slate-500 ml-8 mb-4">Pilih jenis masalah pencemaran sungai yang Anda temukan di lokasi.</p>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                       {POLLUTION_CATEGORIES.map((cat) => {
@@ -387,19 +389,22 @@ export default function LaporPage() {
                           <div
                             key={cat.id}
                             onClick={() => setCategory(cat.id)}
-                            className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3.5 ${
+                            className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3.5 relative ${
                               isSelected
-                                ? "border-[#0284C7] bg-sky-50/50 shadow-md shadow-sky-500/5"
+                                ? "border-[#0284C7] bg-sky-50/70 shadow-sm ring-2 ring-[#0284C7]/15"
                                 : "border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                             }`}
                           >
                             <div className={`p-2.5 rounded-xl bg-gradient-to-br ${cat.color} border`}>
                               <Icon className="w-5 h-5" />
                             </div>
-                            <div>
-                              <h4 className="font-extrabold text-xs text-slate-900">{cat.title}</h4>
-                              <p className="text-[11px] text-slate-500 leading-snug mt-0.5">{cat.desc}</p>
+                            <div className="pr-6">
+                              <h4 className="font-bold text-xs text-slate-900">{cat.title}</h4>
+                              <p className="text-[11px] text-slate-500 leading-snug mt-0.5 font-normal">{cat.desc}</p>
                             </div>
+                            {isSelected && (
+                              <CheckCircle2 className="w-4 h-4 text-[#0284C7] absolute top-3.5 right-3.5" />
+                            )}
                           </div>
                         );
                       })}
@@ -408,17 +413,19 @@ export default function LaporPage() {
 
                   {/* 2. Lokasi & Segmen Sungai */}
                   <div>
-                    <label className="block text-sm font-extrabold text-slate-900 mb-1">
-                      2. Lokasi & Segmen Sungai <span className="text-rose-500">*</span>
-                    </label>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-sky-100 text-[#0284C7] text-xs font-bold">2</span>
+                      <h4 className="text-sm font-bold text-slate-900">Lokasi & Segmen Sungai</h4>
+                      <span className="text-rose-500 text-xs font-bold">*</span>
+                    </div>
 
-                    <div className="space-y-3">
+                    <div className="ml-8 space-y-3.5 mt-3">
                       <div>
                         <span className="block text-xs font-bold text-slate-700 mb-1.5">Wilayah / Segmen Sungai:</span>
                         <select
                           value={riverSegment}
                           onChange={(e) => setRiverSegment(e.target.value)}
-                          className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
+                          className="w-full px-4 py-3 rounded-2xl border border-slate-200/90 bg-slate-50/50 text-xs font-medium text-slate-800 focus:bg-white focus:border-[#0284C7] focus:ring-4 focus:ring-[#0284C7]/10 transition-all outline-none"
                         >
                           {RIVER_SEGMENTS.map((seg) => (
                             <option key={seg} value={seg}>
@@ -434,13 +441,13 @@ export default function LaporPage() {
                           type="button"
                           onClick={handleGetLocation}
                           disabled={isLocating}
-                          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-xl bg-sky-50 border border-sky-200 text-[#0284C7] text-xs font-bold hover:bg-sky-100 transition-all cursor-pointer"
+                          className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-sky-50 hover:bg-sky-100/80 border border-sky-200/80 text-[#0284C7] text-xs font-bold transition-all cursor-pointer active:scale-95"
                         >
                           <Zap className={`w-4 h-4 ${isLocating ? "animate-spin" : ""}`} />
                           <span>{isLocating ? "Mendeteksi Koordinat GPS..." : "Gunakan Titik GPS Presisi"}</span>
                         </button>
                         {gpsLocation && (
-                          <div className="mt-2 p-2.5 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-semibold flex items-center gap-2">
+                          <div className="mt-2 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200/80 text-emerald-800 text-xs font-semibold flex items-center gap-2">
                             <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
                             <span className="truncate">{gpsLocation}</span>
                           </div>
@@ -454,7 +461,7 @@ export default function LaporPage() {
                           value={address}
                           onChange={(e) => setAddress(e.target.value)}
                           placeholder="Contoh: Dekat Jembatan Merah Rt 04/02, belakang pabrik..."
-                          className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0284C7]"
+                          className="w-full px-4 py-3 rounded-2xl border border-slate-200/90 bg-slate-50/50 text-xs font-medium text-slate-800 focus:bg-white focus:border-[#0284C7] focus:ring-4 focus:ring-[#0284C7]/10 transition-all outline-none"
                         />
                       </div>
                     </div>
@@ -462,54 +469,61 @@ export default function LaporPage() {
 
                   {/* 3. Detail Kejadian */}
                   <div>
-                    <label className="block text-sm font-extrabold text-slate-900 mb-1">
-                      3. Detail Deskripsi Pencemaran <span className="text-rose-500">*</span>
-                    </label>
-                    <textarea
-                      rows={3}
-                      required
-                      value={description}
-                      onChange={(e) => setDescription(e.target.value)}
-                      placeholder="Jelaskan kondisi pencemaran yang terjadi (misal: air menghitam sejak tadi pagi, tumpukan sampah plastik menyumbat aliran...)"
-                      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0284C7] resize-none"
-                    />
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-sky-100 text-[#0284C7] text-xs font-bold">3</span>
+                      <h4 className="text-sm font-bold text-slate-900">Detail Deskripsi Pencemaran</h4>
+                      <span className="text-rose-500 text-xs font-bold">*</span>
+                    </div>
+                    <div className="ml-8 mt-2">
+                      <textarea
+                        rows={3}
+                        required
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        placeholder="Jelaskan kondisi pencemaran yang terjadi (misal: air menghitam sejak tadi pagi, tumpukan sampah plastik menyumbat aliran...)"
+                        className="w-full px-4 py-3 rounded-2xl border border-slate-200/90 bg-slate-50/50 text-xs font-medium text-slate-800 focus:bg-white focus:border-[#0284C7] focus:ring-4 focus:ring-[#0284C7]/10 transition-all outline-none resize-none"
+                      />
+                    </div>
                   </div>
 
                   {/* 4. Unggah Foto Bukti */}
                   <div>
-                    <label className="block text-sm font-extrabold text-slate-900 mb-1">
-                      4. Unggah Foto Bukti Lapangan
-                    </label>
-                    
-                    <div className="mt-2 flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200 border-dashed rounded-2xl bg-slate-50/50 hover:bg-slate-50 transition-colors relative cursor-pointer">
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageChange}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                      />
-                      <div className="space-y-1 text-center">
-                        <Camera className="mx-auto h-8 w-8 text-slate-400" />
-                        <div className="flex text-xs text-slate-600 font-semibold justify-center">
-                          <span className="text-[#0284C7]">Pilih foto</span>
-                          <span className="pl-1">atau tarik berkas ke sini</span>
-                        </div>
-                        <p className="text-[10px] text-slate-400">PNG, JPG hingga 10MB</p>
-                      </div>
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="inline-flex items-center justify-center w-6 h-6 rounded-lg bg-sky-100 text-[#0284C7] text-xs font-bold">4</span>
+                      <h4 className="text-sm font-bold text-slate-900">Unggah Foto Bukti Lapangan</h4>
                     </div>
-
-                    {previewImage && (
-                      <div className="mt-3 relative rounded-xl overflow-hidden border border-slate-200 max-h-48">
-                        <img src={previewImage} alt="Preview Bukti" className="w-full h-full object-cover" />
-                        <button
-                          type="button"
-                          onClick={() => setPreviewImage(null)}
-                          className="absolute top-2 right-2 p-1.5 rounded-full bg-slate-900/80 text-white hover:bg-rose-600 transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                    
+                    <div className="ml-8 mt-2">
+                      <div className="flex justify-center px-6 pt-5 pb-6 border-2 border-slate-200/90 border-dashed rounded-2xl bg-slate-50/50 hover:bg-sky-50/30 hover:border-[#0284C7] transition-all relative cursor-pointer group">
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageChange}
+                          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        />
+                        <div className="space-y-1 text-center">
+                          <Camera className="mx-auto h-7 w-7 text-slate-400 group-hover:text-[#0284C7] transition-colors" />
+                          <div className="flex text-xs text-slate-600 font-semibold justify-center">
+                            <span className="text-[#0284C7]">Pilih foto</span>
+                            <span className="pl-1">atau tarik berkas ke sini</span>
+                          </div>
+                          <p className="text-[10px] text-slate-400">PNG, JPG hingga 10MB</p>
+                        </div>
                       </div>
-                    )}
+
+                      {previewImage && (
+                        <div className="mt-3 relative rounded-2xl overflow-hidden border border-slate-200 max-h-48 shadow-sm">
+                          <img src={previewImage} alt="Preview Bukti" className="w-full h-full object-cover" />
+                          <button
+                            type="button"
+                            onClick={() => setPreviewImage(null)}
+                            className="absolute top-2.5 right-2.5 p-1.5 rounded-full bg-slate-900/80 text-white hover:bg-rose-600 transition-colors shadow-md"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
 
                   {/* Submit Button */}
@@ -517,7 +531,7 @@ export default function LaporPage() {
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="w-full flex items-center justify-center gap-2 py-4 px-6 rounded-2xl bg-gradient-to-r from-[#0284C7] to-[#38BDF8] hover:brightness-110 text-white font-extrabold text-base shadow-xl shadow-[#0284C7]/25 active:scale-[0.99] transition-all disabled:opacity-70 cursor-pointer"
+                      className="w-full flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl bg-[#0284C7] hover:bg-[#0284C7]/90 text-white font-bold text-sm shadow-xl shadow-[#0284C7]/25 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-70 cursor-pointer"
                     >
                       {isSubmitting ? (
                         <>
