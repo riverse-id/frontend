@@ -46,7 +46,7 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
     { id: "beranda", label: "Beranda", href: "/#beranda" },
     { id: "tentang-kami", label: "Tentang Kami", href: "/#tentang-kami" },
     { id: "partner", label: "Partner", href: "/#partner" },
-    { id: "kontak", label: "Kontak", href: "/#kontak" },
+    { id: "laporan-saya", label: "Laporan Saya", href: "/laporan-saya" },
     { id: "lapor", label: "Buat Laporan", href: "/lapor" },
   ];
 
