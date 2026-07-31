@@ -656,67 +656,94 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
     };
   }, []);
 
-  // Update Report Point Markers on Filter Change
+  // Update GeoJSON Rivers & Report Point Markers on Filter Change
   useEffect(() => {
-    if (!mapInstanceRef.current || !markersGroupRef.current) return;
+    if (!mapInstanceRef.current) return;
 
-    const markersGroup = markersGroupRef.current;
-    markersGroup.clearLayers();
+    // 1. Filter GeoJSON River Polylines
+    if (geojsonLayerRef.current) {
+      geojsonLayerRef.current.clearLayers();
 
-    const filtered = REPORT_MARKERS.filter((item) => {
-      if (activeFilter === "semua") return true;
-      return item.status === activeFilter;
-    });
-
-    filtered.forEach((spot) => {
-      const config = REPORT_STATUS_COLOR[spot.status] || REPORT_STATUS_COLOR.pending;
-
-      const customIcon = L.divIcon({
-        className: "river-report-marker",
-        html: `<div style="
-                width: 28px; height: 28px; border-radius: 9999px;
-                background:${config.color}; border:3px solid white;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.35);
-                display: flex; align-items: center; justify-content: center;
-              " class="transition-transform hover:scale-125 cursor-pointer">
-                <div style="width:8px; height:8px; border-radius:9999px; background:white;"></div>
-              </div>`,
-        iconSize: [28, 28],
-        iconAnchor: [14, 14],
+      const filteredFeatures = GEOJSON_RIVER_DATA.features.filter((feature: any) => {
+        const status = feature.properties?.status;
+        if (activeFilter === "semua") return true;
+        if (activeFilter === "tercemar") return status === "tercemar";
+        if (activeFilter === "sampah") return status === "sampah";
+        if (activeFilter === "selesai") return status === "default";
+        if (activeFilter === "diproses") return status === "tercemar" || status === "sampah";
+        return true;
       });
 
-      const popupHtml = `
-        <div class="p-1 max-w-[220px] font-sans">
-          ${
-            spot.image
-              ? `<div class="relative h-24 w-full rounded-xl overflow-hidden mb-2">
-                  <img src="${spot.image}" alt="${spot.judul}" class="w-full h-full object-cover" />
-                 </div>`
-              : ""
-          }
-          <div class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${config.badgeBg} mb-1">
-            ${config.label}
-          </div>
-          <h4 class="font-extrabold text-xs text-slate-900 leading-tight mb-1">${spot.judul}</h4>
-          <p class="text-[10px] text-slate-500 font-medium mb-2">${spot.lokasi}</p>
-          <div class="flex items-center justify-between text-[10px] text-slate-600 font-bold border-t border-slate-100 pt-1.5">
-            <span>👍 ${spot.upvotes} Dukungan</span>
-            <span class="text-sky-600">${spot.timeAgo}</span>
-          </div>
-        </div>
-      `;
+      geojsonLayerRef.current.addData({
+        type: "FeatureCollection",
+        features: filteredFeatures,
+      } as any);
+    }
 
-      const marker = L.marker([spot.lat, spot.lng], { icon: customIcon });
-      marker.bindPopup(popupHtml, { closeButton: false, offset: [0, -10] });
-      marker.on("click", () => {
-        setSelectedSpot({
-          lat: spot.lat,
-          lng: spot.lng,
-          riverName: spot.lokasi,
+    // 2. Filter Report Point Markers
+    if (markersGroupRef.current) {
+      const markersGroup = markersGroupRef.current;
+      markersGroup.clearLayers();
+
+      const filteredMarkers = REPORT_MARKERS.filter((item) => {
+        if (activeFilter === "semua") return true;
+        if (activeFilter === "tercemar") return item.status === "terverifikasi" || item.status === "pending";
+        if (activeFilter === "sampah") return item.status === "pending";
+        if (activeFilter === "diproses") return item.status === "diproses";
+        if (activeFilter === "selesai") return item.status === "selesai";
+        return true;
+      });
+
+      filteredMarkers.forEach((spot) => {
+        const config = REPORT_STATUS_COLOR[spot.status] || REPORT_STATUS_COLOR.pending;
+
+        const customIcon = L.divIcon({
+          className: "river-report-marker",
+          html: `<div style="
+                  width: 28px; height: 28px; border-radius: 9999px;
+                  background:${config.color}; border:3px solid white;
+                  box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+                  display: flex; align-items: center; justify-content: center;
+                " class="transition-transform hover:scale-125 cursor-pointer">
+                  <div style="width:8px; height:8px; border-radius:9999px; background:white;"></div>
+                </div>`,
+          iconSize: [28, 28],
+          iconAnchor: [14, 14],
         });
+
+        const popupHtml = `
+          <div class="p-1 max-w-[220px] font-sans">
+            ${
+              spot.image
+                ? `<div class="relative h-24 w-full rounded-xl overflow-hidden mb-2">
+                    <img src="${spot.image}" alt="${spot.judul}" class="w-full h-full object-cover" />
+                   </div>`
+                : ""
+            }
+            <div class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${config.badgeBg} mb-1">
+              ${config.label}
+            </div>
+            <h4 class="font-extrabold text-xs text-slate-900 leading-tight mb-1">${spot.judul}</h4>
+            <p class="text-[10px] text-slate-500 font-medium mb-2">${spot.lokasi}</p>
+            <div class="flex items-center justify-between text-[10px] text-slate-600 font-bold border-t border-slate-100 pt-1.5">
+              <span>👍 ${spot.upvotes} Dukungan</span>
+              <span class="text-sky-600">${spot.timeAgo}</span>
+            </div>
+          </div>
+        `;
+
+        const marker = L.marker([spot.lat, spot.lng], { icon: customIcon });
+        marker.bindPopup(popupHtml, { closeButton: false, offset: [0, -10] });
+        marker.on("click", () => {
+          setSelectedSpot({
+            lat: spot.lat,
+            lng: spot.lng,
+            riverName: spot.lokasi,
+          });
+        });
+        markersGroup.addLayer(marker);
       });
-      markersGroup.addLayer(marker);
-    });
+    }
   }, [activeFilter]);
 
   // Locate User's Browser GPS Position
@@ -788,10 +815,11 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
         {/* Filter Controls */}
         <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 scrollbar-none">
           {[
-            { id: "semua", label: "Semua Titik" },
-            { id: "terverifikasi", label: "Terverifikasi 🔴" },
+            { id: "semua", label: "Semua Data" },
+            { id: "tercemar", label: "Tercemar 🔴" },
+            { id: "sampah", label: "Banyak Sampah 🟠" },
             { id: "diproses", label: "Diproses 🔵" },
-            { id: "selesai", label: "Selesai 🟢" },
+            { id: "selesai", label: "Bersih / Selesai 🟢" },
           ].map((tab) => (
             <button
               key={tab.id}
