@@ -57,7 +57,7 @@ function getRiverStyle(feature: any) {
 }
 
 // =======================================================================
-// DATA SEGMEN GEOJSON SPASIAL DENGAN KOORDINAT DOKUMEN RESMI
+// DATA SEGMEN GEOJSON SPASIAL DENGAN 18 JALUR SUNGAI UTAMA JABODETABEK
 // =======================================================================
 const GEOJSON_RIVER_DATA = {
   type: "FeatureCollection",
@@ -65,46 +65,124 @@ const GEOJSON_RIVER_DATA = {
     {
       type: "Feature",
       properties: {
-        id: "cakung-drain-01",
-        nama_sungai: "Cakung Drain",
-        status: "tercemar",
-        keterangan: "Panjang 9.85 km (Hulu: Jaktim 6°10'58.80\"S 106°55'43.44\"E, Hilir: Jakut 6°5'51.60\"S 106°56'23.16\"E)",
+        id: "ciliwung-hulu",
+        nama_sungai: "Kali Ciliwung - Segmen Hulu (Depok - Jagakarsa)",
+        status: "default",
+        keterangan: "Kondisi air terpantau jernih, konservasi vegetasi bantaran terjaga.",
       },
       geometry: {
         type: "LineString",
         coordinates: [
-          [106.9287, -6.183],
-          [106.932, -6.145],
-          [106.936, -6.115],
-          [106.9398, -6.0977],
+          [106.828, -6.365],
+          [106.833, -6.345],
+          [106.838, -6.325],
+          [106.842, -6.305],
+          [106.845, -6.28],
         ],
       },
     },
     {
       type: "Feature",
       properties: {
-        id: "kali-cakung-01",
-        nama_sungai: "Kali Cakung",
+        id: "ciliwung-tengah",
+        nama_sungai: "Kali Ciliwung - Segmen Tengah (Kalibata - Tebet)",
         status: "sampah",
-        keterangan: "Panjang 39.59 km (Hulu: Bekasi 6°22'13.61\"S 106°55'44.58\"E, Hilir: BKT Jakut 6°5'54.49\"S 106°56'24.45\"E)",
+        keterangan: "Banyak laporan timbulan sampah rumah tangga & plastik di pinggir bantaran.",
       },
       geometry: {
         type: "LineString",
         coordinates: [
-          [106.9291, -6.3704],
-          [106.931, -6.28],
-          [106.935, -6.19],
-          [106.9401, -6.0985],
+          [106.845, -6.28],
+          [106.8465, -6.262],
+          [106.848, -6.25],
+          [106.851, -6.242],
+          [106.854, -6.235],
         ],
       },
     },
     {
       type: "Feature",
       properties: {
-        id: "kali-angke-01",
-        nama_sungai: "Kali Angke",
+        id: "ciliwung-hilir",
+        nama_sungai: "Kali Ciliwung - Segmen Hilir (Manggarai - Pasar Baru - Ancol)",
         status: "tercemar",
-        keterangan: "Panjang 82.94 km (Hulu: Bogor 6°34'58.14\"S 106°46'43.26\"E, Hilir: Jakbar 6°9'57.06\"S 106°44'54.42\"E)",
+        keterangan: "Laporan limbah cair industri terverifikasi DLH, air keruh hitam dan berbau.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.854, -6.235],
+          [106.849, -6.21],
+          [106.838, -6.18],
+          [106.834, -6.155],
+          [106.832, -6.128],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "bkb-01",
+        nama_sungai: "Banjir Kanal Barat (BKB) - Segmen Manggarai to Pluit",
+        status: "tercemar",
+        keterangan: "Saluran pembuangan utama kota. Indikasi limbah minyak dan sedimen tebal.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.849, -6.21],
+          [106.822, -6.202],
+          [106.802, -6.185],
+          [106.792, -6.155],
+          [106.795, -6.118],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "bkt-01",
+        nama_sungai: "Banjir Kanal Timur (BKT) - Segmen Cipinang to Marunda",
+        status: "default",
+        keterangan: "Saluran banjir timur dalam kondisi pemeliharaan rutin, air lancar.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.878, -6.228],
+          [106.905, -6.222],
+          [106.945, -6.185],
+          [106.962, -6.145],
+          [106.968, -6.105],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "pesanggrahan-01",
+        nama_sungai: "Kali Pesanggrahan - Segmen Bintaro to Kebon Jeruk",
+        status: "sampah",
+        keterangan: "Penumpukan ranting pohon dan sampah rantai makanan pasca hujan deras.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.76, -6.34],
+          [106.748, -6.305],
+          [106.74, -6.275],
+          [106.755, -6.225],
+          [106.758, -6.175],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "angke-01",
+        nama_sungai: "Kali Angke - Segmen Tangerang to Cengkareng",
+        status: "tercemar",
+        keterangan: "Buangan limbah tekstil usaha lokal. Keruh kebiruan di segmen Cengkareng.",
       },
       geometry: {
         type: "LineString",
@@ -120,10 +198,156 @@ const GEOJSON_RIVER_DATA = {
     {
       type: "Feature",
       properties: {
-        id: "kali-jatikramat-01",
-        nama_sungai: "Kali Jatikramat",
+        id: "cisadane-01",
+        nama_sungai: "Kali Cisadane - Segmen Serpong to Kota Tangerang",
         status: "default",
-        keterangan: "Panjang 13.75 km (Hulu: Bekasi 6°19'3.06\"S 106°55'31.50\"E, Hilir: Jaktim 6°13'44.71\"S 106°55'34.32\"E)",
+        keterangan: "Debit air stabil, pengawasan rutin komunitas pecinta sungai.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.66, -6.33],
+          [106.645, -6.27],
+          [106.63, -6.21],
+          [106.625, -6.16],
+          [106.635, -6.11],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "sunter-01",
+        nama_sungai: "Kali Sunter - Segmen Kelapa Gading to Danau Sunter",
+        status: "sampah",
+        keterangan: "Tumpukan plastik dan pembendungan sampah sementara di perbatasan.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.89, -6.26],
+          [106.885, -6.22],
+          [106.88, -6.18],
+          [106.872, -6.14],
+          [106.88, -6.11],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "cipinang-01",
+        nama_sungai: "Kali Cipinang - Segmen Ciracas to Jatinegara",
+        status: "tercemar",
+        keterangan: "Bau tidak sedap dan endapan lumpur hitam akibat pembuangan domestik.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.87, -6.32],
+          [106.872, -6.28],
+          [106.875, -6.24],
+          [106.878, -6.228],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "krukut-01",
+        nama_sungai: "Kali Krukut - Segmen Cilandak to Tanah Abang",
+        status: "default",
+        keterangan: "Aliran air cukup lancar pasca pengerukan polder oleh DLH.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.805, -6.31],
+          [106.81, -6.27],
+          [106.815, -6.23],
+          [106.818, -6.195],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "grogol-01",
+        nama_sungai: "Kali Grogol - Segmen Kebayoran to Muara Karang",
+        status: "sampah",
+        keterangan: "Penumpukan sampah plastik di jembatan penyeberangan Grogol.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.785, -6.25],
+          [106.788, -6.21],
+          [106.79, -6.17],
+          [106.785, -6.12],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "mookervart-01",
+        nama_sungai: "Kali Mookervart - Segmen Batu Ceper to Kalideres",
+        status: "tercemar",
+        keterangan: "Pencemaran limbah cair industri perbatasan Tangerang-Jakarta.",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.64, -6.175],
+          [106.68, -6.16],
+          [106.72, -6.152],
+          [106.75, -6.15],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "cakung-drain-01",
+        nama_sungai: "Cakung Drain - Segmen Jaktim to Jakut",
+        status: "tercemar",
+        keterangan: "Drainase kawasan 9.85 km (Hulu: Jaktim 6°10'58.80\"S, Hilir: Jakut 6°5'51.60\"S)",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.9287, -6.183],
+          [106.932, -6.145],
+          [106.936, -6.115],
+          [106.9398, -6.0977],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "kali-cakung-01",
+        nama_sungai: "Kali Cakung - Segmen Bekasi to BKT",
+        status: "sampah",
+        keterangan: "Panjang 39.59 km (Hulu: Bekasi 6°22'13.61\"S, Hilir: BKT Jakut 6°5'54.49\"S)",
+      },
+      geometry: {
+        type: "LineString",
+        coordinates: [
+          [106.9291, -6.3704],
+          [106.931, -6.28],
+          [106.935, -6.19],
+          [106.9401, -6.0985],
+        ],
+      },
+    },
+    {
+      type: "Feature",
+      properties: {
+        id: "kali-jatikramat-01",
+        nama_sungai: "Kali Jatikramat - Segmen Bekasi to Jaktim",
+        status: "default",
+        keterangan: "Panjang 13.75 km (Hulu: Bekasi 6°19'3.06\"S, Hilir: Jaktim 6°13'44.71\"S)",
       },
       geometry: {
         type: "LineString",
@@ -138,9 +362,9 @@ const GEOJSON_RIVER_DATA = {
       type: "Feature",
       properties: {
         id: "kali-buaran-01",
-        nama_sungai: "Kali Buaran",
+        nama_sungai: "Kali Buaran - Segmen Bekasi to Jaktim",
         status: "sampah",
-        keterangan: "Panjang 11.34 km (Melintasi Bekasi & Jaktim, Hilir: 6°11'1.64\"S 106°55'43.76\"E)",
+        keterangan: "Panjang 11.34 km (Melintasi Bekasi & Jaktim, Hilir: 6°11'1.64\"S)",
       },
       geometry: {
         type: "LineString",
@@ -154,36 +378,19 @@ const GEOJSON_RIVER_DATA = {
     {
       type: "Feature",
       properties: {
-        id: "sungai-ciliwung-01",
-        nama_sungai: "Kali Ciliwung - Segmen Manggarai",
+        id: "kali-bekasi-01",
+        nama_sungai: "Kali Bekasi - Segmen Bantargebang to Babelan",
         status: "tercemar",
-        keterangan: "Laporan limbah cair terverifikasi, bau menyengat & busa industri.",
+        keterangan: "Busa limbah terdeteksi di segmen bendung Bekasi.",
       },
       geometry: {
         type: "LineString",
         coordinates: [
-          [106.8451, -6.2615],
-          [106.848, -6.254],
-          [106.854, -6.238],
-          [106.8555, -6.234],
-        ],
-      },
-    },
-    {
-      type: "Feature",
-      properties: {
-        id: "sungai-cipinang-01",
-        nama_sungai: "Kali Cipinang - Segmen Jatinegara",
-        status: "sampah",
-        keterangan: "Banyak laporan sampah plastik rumah tangga menumpuk di bantaran.",
-      },
-      geometry: {
-        type: "LineString",
-        coordinates: [
-          [106.87, -6.235],
-          [106.873, -6.232],
-          [106.876, -6.229],
-          [106.879, -6.226],
+          [106.99, -6.35],
+          [106.998, -6.28],
+          [107.002, -6.23],
+          [107.012, -6.17],
+          [107.025, -6.12],
         ],
       },
     },
@@ -208,7 +415,7 @@ interface ReportMarker {
 const REPORT_MARKERS: ReportMarker[] = [
   {
     id: "rpt-001",
-    lat: -6.238,
+    lat: -6.235,
     lng: 106.854,
     status: "terverifikasi",
     judul: "Limbah Cair Diduga Industri",
@@ -241,14 +448,54 @@ const REPORT_MARKERS: ReportMarker[] = [
   },
   {
     id: "rpt-004",
-    lat: -6.282,
-    lng: 106.73,
+    lat: -6.275,
+    lng: 106.74,
     status: "pending",
-    judul: "Laporan Baru Menunggu Verifikasi",
+    judul: "Sampah Plastik Menyumbat Jembatan",
     lokasi: "Kali Pesanggrahan - Segmen Bintaro",
     upvotes: 35,
     timeAgo: "2 jam yang lalu",
     image: "/assets/sungai/20200812-Sungai-Ciliwung-1_ratio-16x9.jpg",
+  },
+  {
+    id: "rpt-005",
+    lat: -6.18,
+    lng: 106.936,
+    status: "terverifikasi",
+    judul: "Tumpukan Sampah & Pendangkalan",
+    lokasi: "Cakung Drain - Segmen Jaktim",
+    upvotes: 87,
+    timeAgo: "1 jam yang lalu",
+  },
+  {
+    id: "rpt-006",
+    lat: -6.21,
+    lng: 106.63,
+    status: "selesai",
+    judul: "Monitoring Kualitas Air Normal",
+    lokasi: "Kali Cisadane - Segmen Tangerang",
+    upvotes: 154,
+    timeAgo: "3 jam yang lalu",
+  },
+  {
+    id: "rpt-007",
+    lat: -6.16,
+    lng: 106.68,
+    status: "diproses",
+    judul: "Busa & Limbah Industri Tekstil",
+    lokasi: "Kali Mookervart - Segmen Batu Ceper",
+    upvotes: 112,
+    timeAgo: "20 menit yang lalu",
+  },
+  {
+    id: "rpt-008",
+    lat: -6.23,
+    lng: 107.002,
+    status: "terverifikasi",
+    judul: "Limbah Berbusa Putih Pekat",
+    lokasi: "Kali Bekasi - Segmen Bendung Bekasi",
+    upvotes: 178,
+    timeAgo: "15 menit yang lalu",
   },
 ];
 
@@ -298,10 +545,10 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
   useEffect(() => {
     if (!mapContainerRef.current || mapInstanceRef.current) return;
 
-    // Center on Jakarta River Basin
+    // Center on Greater Jakarta River Basin
     const map = L.map(mapContainerRef.current, {
-      center: [-6.24, 106.84],
-      zoom: 12,
+      center: [-6.22, 106.84],
+      zoom: 11,
       zoomControl: false,
     });
 
@@ -360,6 +607,11 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
         });
       },
     }).addTo(map);
+
+    // Auto-fit bounds to display all rivers in Jabodetabek
+    if (geojsonLayer.getBounds().isValid()) {
+      map.fitBounds(geojsonLayer.getBounds().pad(0.05));
+    }
 
     geojsonLayerRef.current = geojsonLayer;
 
