@@ -100,7 +100,7 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
           {/* Right Action Button: Portal Dinas (Login DLH) */}
           <div className="flex items-center gap-3 flex-shrink-0">
             <a
-              href="#dashboard-dlh"
+              href="/dinas"
               className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0284C7] text-white text-xs font-bold shadow-md shadow-[#0284C7]/20 hover:bg-[#0284C7]/90 transition-all hover:scale-105 active:scale-95"
             >
               <ShieldCheck className="w-4 h-4 text-sky-200" />
