@@ -23,6 +23,19 @@ import {
   UserCheck
 } from "lucide-react";
 import Navbar from "../components/Navbar";
+import dynamic from "next/dynamic";
+
+const RiverGISMap = dynamic(() => import("../components/RiverGISMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[450px] bg-slate-900 rounded-3xl flex items-center justify-center text-white border border-slate-800 shadow-xl">
+      <div className="flex flex-col items-center gap-3">
+        <div className="w-8 h-8 border-4 border-sky-400 border-t-transparent rounded-full animate-spin" />
+        <span className="text-xs font-bold">Memuat Peta GIS Spasial Leaflet...</span>
+      </div>
+    </div>
+  ),
+});
 
 const POLLUTION_CATEGORIES = [
   {
@@ -104,6 +117,12 @@ export default function LaporPage() {
       setGpsLocation("-6.2088, 106.8456 (Sesuai Peta GIS)");
       setIsLocating(false);
     }
+  };
+
+  // Handle Location Selection from Leaflet GIS Map
+  const handleMapSelectLocation = (location: { lat: number; lng: number; riverName: string }) => {
+    setGpsLocation(`${location.lat}, ${location.lng} (Titik Spasial Peta Leaflet)`);
+    setAddress(location.riverName);
   };
 
   // Handle Photo Upload Simulation
@@ -290,9 +309,16 @@ export default function LaporPage() {
       </section>
 
       {/* ============================================================ */}
+      {/* LEAFLET GIS SPATIAL MAP SECTION                              */}
+      {/* ============================================================ */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mt-10 relative z-20 mb-12">
+        <RiverGISMap onSelectLocation={handleMapSelectLocation} />
+      </section>
+
+      {/* ============================================================ */}
       {/* MAIN FORM CONTENT AREA                                       */}
       {/* ============================================================ */}
-      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <main id="form-pelaporan" className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8 scroll-mt-24">
 
         {/* Form Container or Success Confirmation */}
         {isSubmitted ? (
