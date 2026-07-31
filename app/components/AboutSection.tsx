@@ -63,9 +63,6 @@ export default function AboutSection() {
           </p>
         </div>
 
-        {/* Seam Concealer Blur Strip */}
-        <div className="absolute bottom-0 left-0 right-0 h-2 bg-white/50 blur-md z-[2] pointer-events-none" />
-
         {/* Landai 2-Curve River Wave Shape Divider */}
         <svg
           className="absolute -bottom-1 left-0 w-full h-20 sm:h-28 z-[1] pointer-events-none"
@@ -77,9 +74,6 @@ export default function AboutSection() {
             fill="white"
           />
         </svg>
-
-        {/* Bottom Easing Fade Overlay */}
-        <div className="absolute bottom-0 inset-x-0 h-40 bg-gradient-to-b from-transparent via-[#0284C7]/15 to-white pointer-events-none z-[2]" />
       </div>
 
       {/* ============================================================ */}
