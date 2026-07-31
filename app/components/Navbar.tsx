@@ -68,8 +68,8 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
             </div>
           </a>
 
-          {/* Navigation Links with Glass Pill Highlight */}
-          <nav className="flex items-center gap-1.5">
+          {/* Navigation Links (Centered in Middle) */}
+          <nav className="flex items-center justify-center gap-1.5 flex-1">
             {NAV_ITEMS.map((item) => {
               const isActive = activeNav === item.id;
               if (item.isCta) {
@@ -77,7 +77,7 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
                   <a
                     key={item.id}
                     href={item.href}
-                    className="ml-1 px-4 py-1.5 rounded-full text-xs font-bold bg-[#0284C7] text-white hover:bg-[#0284C7]/90 shadow-md shadow-[#0284C7]/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-1.5"
+                    className="ml-1.5 px-4 py-1.5 rounded-full text-xs font-bold bg-[#0284C7] text-white hover:bg-[#0284C7]/90 shadow-md shadow-[#0284C7]/20 transition-all hover:scale-105 active:scale-95 flex items-center gap-1.5"
                   >
                     <PlusCircle className="w-3.5 h-3.5" />
                     <span>{item.label}</span>
@@ -100,6 +100,9 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
               );
             })}
           </nav>
+
+          {/* Right Spacer for Perfect Visual Centering */}
+          <div className="hidden lg:block w-36 flex-shrink-0" />
 
         </div>
       </div>
