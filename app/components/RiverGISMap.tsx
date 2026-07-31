@@ -779,34 +779,34 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
   };
 
   return (
-    <div className="w-full bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden">
+    <div className="w-full bg-white rounded-[32px] border border-slate-200/80 shadow-2xl shadow-slate-200/60 overflow-hidden font-sans transition-all">
       
-      {/* Map Control Header Bar */}
-      <div className="p-4 sm:p-5 bg-slate-900 text-white flex flex-col md:flex-row items-center justify-between gap-4 border-b border-slate-800">
+      {/* Map Control Header Bar (Clean Light Theme per DESIGN.md) */}
+      <div className="p-5 sm:p-6 bg-white border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         
-        {/* Title & Status Indicator */}
-        <div className="flex items-center gap-3 w-full md:w-auto">
-          <div className="w-10 h-10 rounded-2xl bg-[#0284C7]/20 border border-[#0284C7]/40 text-[#38BDF8] flex items-center justify-center flex-shrink-0">
+        {/* Title & Live Status Indicator */}
+        <div className="flex items-center gap-3.5">
+          <div className="w-10 h-10 rounded-2xl bg-sky-50 border border-sky-100 text-[#0284C7] flex items-center justify-center flex-shrink-0 shadow-sm">
             <MapPin className="w-5 h-5" />
           </div>
           <div>
-            <div className="flex items-center gap-2">
-              <h3 className="text-sm sm:text-base font-extrabold text-white">
-                Peta Status Segmen Sungai & Laporan (GeoJSON GIS)
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+                Peta Status Sungai & Laporan GIS
               </h3>
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 text-[10px] font-bold">
-                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[11px] font-semibold">
+                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
                 Live Vectors
               </span>
             </div>
-            <p className="text-[11px] text-slate-400 font-medium">
-              Garis sungai berwarna sesuai status pencemaran. Klik segmen atau penanda titik untuk melaporkan.
+            <p className="text-xs text-slate-500 font-normal mt-0.5">
+              Klik alur sungai atau penanda titik untuk memantau & membuat laporan lokasi presisi.
             </p>
           </div>
         </div>
 
-        {/* Filter Controls */}
-        <div className="flex items-center gap-2 w-full md:w-auto overflow-x-auto pb-1 md:pb-0 scrollbar-none">
+        {/* Filter Tab Controls (Pills Container) */}
+        <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-100/90 border border-slate-200/60 overflow-x-auto scrollbar-none self-start lg:self-auto">
           {[
             { id: "semua", label: "Semua Data" },
             { id: "tercemar", label: "Tercemar 🔴" },
@@ -816,10 +816,10 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
             <button
               key={tab.id}
               onClick={() => setActiveFilter(tab.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap transition-all cursor-pointer ${
+              className={`px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
                 activeFilter === tab.id
-                  ? "bg-[#0284C7] text-white shadow-md"
-                  : "bg-slate-800 text-slate-300 hover:bg-slate-700 hover:text-white"
+                  ? "bg-[#0284C7] text-white font-semibold shadow-sm ring-2 ring-[#0284C7]/20"
+                  : "text-slate-600 hover:text-slate-900 hover:bg-white/80"
               }`}
             >
               {tab.label}
@@ -830,7 +830,7 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
       </div>
 
       {/* Leaflet Map Canvas Container */}
-      <div className="relative w-full h-[460px] sm:h-[520px]">
+      <div className="relative w-full h-[480px] sm:h-[540px] bg-slate-50">
         
         {/* Leaflet Container Div */}
         <div ref={mapContainerRef} className="w-full h-full z-0" />
@@ -839,7 +839,7 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
         <button
           onClick={handleLocateUser}
           disabled={isLocating}
-          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/95 backdrop-blur-md text-slate-900 text-xs font-bold shadow-lg border border-slate-200/90 hover:bg-sky-50 hover:text-[#0284C7] transition-all cursor-pointer"
+          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/95 backdrop-blur-md text-slate-800 text-xs font-semibold shadow-lg shadow-slate-200/50 border border-slate-200/80 hover:bg-sky-50 hover:text-[#0284C7] transition-all cursor-pointer active:scale-95"
         >
           <Crosshair className={`w-4 h-4 text-[#0284C7] ${isLocating ? "animate-spin" : ""}`} />
           <span>{isLocating ? "Mencari GPS..." : "Deteksi Lokasi Saya"}</span>
@@ -847,23 +847,23 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
 
         {/* Selected Location Action Bar (Bottom Floating Overlay) */}
         {selectedSpot && (
-          <div className="absolute bottom-4 left-4 right-4 sm:left-auto sm:right-4 z-10 max-w-md bg-slate-900/95 backdrop-blur-xl text-white p-4 rounded-2xl shadow-2xl border border-slate-700/80 animate-slideUp flex flex-col sm:flex-row items-center justify-between gap-3">
+          <div className="absolute bottom-5 left-4 right-4 sm:left-auto sm:right-5 z-10 max-w-md bg-slate-900/90 backdrop-blur-xl text-white p-4 rounded-2xl shadow-2xl border border-slate-800 animate-slideUp flex flex-col sm:flex-row items-center justify-between gap-3.5">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl bg-[#0284C7] text-white flex items-center justify-center flex-shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-[#0284C7] text-white flex items-center justify-center flex-shrink-0 shadow-md">
                 <MapPin className="w-4 h-4" />
               </div>
               <div>
-                <span className="block text-[10px] text-sky-300 font-extrabold uppercase tracking-wider">
+                <span className="block text-[10px] text-sky-300 font-semibold uppercase tracking-wider">
                   Titik Spasial Terpilih
                 </span>
-                <span className="block text-xs font-bold text-white truncate max-w-[200px]">
+                <span className="block text-xs font-semibold text-white truncate max-w-[200px]">
                   {selectedSpot.riverName}
                 </span>
               </div>
             </div>
             <button
               onClick={handleConfirmLocation}
-              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#0284C7] text-white text-xs font-bold hover:bg-[#0284C7]/90 transition-all flex items-center justify-center gap-1.5 shadow-md hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#0284C7] text-white text-xs font-semibold hover:bg-[#0284C7]/90 transition-all flex items-center justify-center gap-1.5 shadow-md shadow-sky-900/30 hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
             >
               <span>Lapor Titik Ini</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -873,36 +873,36 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
 
       </div>
 
-      {/* Map Legend Footer Bar */}
-      <div className="p-4 bg-slate-50 border-t border-slate-200/80 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs">
+      {/* Map Legend Footer Bar (Clean & Minimalist per DESIGN.md) */}
+      <div className="p-4 px-6 bg-slate-50/90 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs font-medium text-slate-600">
         
         {/* Polyline River Colors Legend */}
-        <div className="flex flex-wrap items-center gap-3 text-slate-700 font-medium">
-          <span className="font-extrabold text-slate-900 flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-4">
+          <span className="font-bold text-slate-900 flex items-center gap-1.5">
             <Layers className="w-3.5 h-3.5 text-[#0284C7]" />
             Garis Sungai:
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-4 h-1.5 rounded bg-[#22c55e]" /> Normal / Clean
+          <span className="flex items-center gap-1.5 text-slate-700">
+            <span className="w-3.5 h-1.5 rounded-full bg-[#22c55e]" /> Normal / Clean
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-4 h-1.5 rounded bg-[#ef4444]" /> Tercemar / Bahaya
+          <span className="flex items-center gap-1.5 text-slate-700">
+            <span className="w-3.5 h-1.5 rounded-full bg-[#ef4444]" /> Tercemar / Bahaya
           </span>
-          <span className="flex items-center gap-1.5">
-            <span className="w-4 h-1.5 rounded bg-[#f97316]" /> Banyak Sampah
+          <span className="flex items-center gap-1.5 text-slate-700">
+            <span className="w-3.5 h-1.5 rounded-full bg-[#f97316]" /> Banyak Sampah
           </span>
         </div>
 
         {/* Marker Points Legend */}
-        <div className="flex flex-wrap items-center gap-3 text-slate-600 font-medium border-t md:border-t-0 border-slate-200 pt-2 md:pt-0">
-          <span className="font-extrabold text-slate-900">Titik Laporan:</span>
-          <span className="flex items-center gap-1">
+        <div className="flex flex-wrap items-center gap-4 border-t md:border-t-0 border-slate-200/80 pt-2.5 md:pt-0">
+          <span className="font-bold text-slate-900">Titik Laporan:</span>
+          <span className="flex items-center gap-1.5 text-slate-700">
             <span className="w-2.5 h-2.5 rounded-full bg-[#f97316]" /> Pending
           </span>
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1.5 text-slate-700">
             <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]" /> Terverifikasi
           </span>
-          <span className="flex items-center gap-1">
+          <span className="flex items-center gap-1.5 text-slate-700">
             <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e]" /> Selesai
           </span>
         </div>
