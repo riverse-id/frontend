@@ -428,7 +428,7 @@ const REPORT_MARKERS: ReportMarker[] = [
     id: "rpt-002",
     lat: -6.25,
     lng: 106.848,
-    status: "diproses",
+    status: "terverifikasi",
     judul: "Bau Menyengat & Air Keruh",
     lokasi: "Kali Ciliwung - Segmen Kalibata",
     upvotes: 98,
@@ -481,7 +481,7 @@ const REPORT_MARKERS: ReportMarker[] = [
     id: "rpt-007",
     lat: -6.16,
     lng: 106.68,
-    status: "diproses",
+    status: "terverifikasi",
     judul: "Busa & Limbah Industri Tekstil",
     lokasi: "Kali Mookervart - Segmen Batu Ceper",
     upvotes: 112,
@@ -509,11 +509,6 @@ const REPORT_STATUS_COLOR: Record<string, { color: string; label: string; badgeB
     color: "#ef4444",
     label: "Terverifikasi 🔴",
     badgeBg: "bg-rose-50 text-rose-800 border-rose-200",
-  },
-  diproses: {
-    color: "#3b82f6",
-    label: "Diproses DLH 🔵",
-    badgeBg: "bg-blue-50 text-blue-800 border-blue-200",
   },
   selesai: {
     color: "#22c55e",
@@ -670,7 +665,6 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
         if (activeFilter === "tercemar") return status === "tercemar";
         if (activeFilter === "sampah") return status === "sampah";
         if (activeFilter === "selesai") return status === "default";
-        if (activeFilter === "diproses") return status === "tercemar" || status === "sampah";
         return true;
       });
 
@@ -687,9 +681,8 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
 
       const filteredMarkers = REPORT_MARKERS.filter((item) => {
         if (activeFilter === "semua") return true;
-        if (activeFilter === "tercemar") return item.status === "terverifikasi" || item.status === "pending";
+        if (activeFilter === "tercemar") return item.status === "terverifikasi";
         if (activeFilter === "sampah") return item.status === "pending";
-        if (activeFilter === "diproses") return item.status === "diproses";
         if (activeFilter === "selesai") return item.status === "selesai";
         return true;
       });
@@ -818,7 +811,6 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
             { id: "semua", label: "Semua Data" },
             { id: "tercemar", label: "Tercemar 🔴" },
             { id: "sampah", label: "Banyak Sampah 🟠" },
-            { id: "diproses", label: "Diproses 🔵" },
             { id: "selesai", label: "Bersih / Selesai 🟢" },
           ].map((tab) => (
             <button
@@ -909,9 +901,6 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
           </span>
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]" /> Terverifikasi
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#3b82f6]" /> Diproses
           </span>
           <span className="flex items-center gap-1">
             <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e]" /> Selesai
