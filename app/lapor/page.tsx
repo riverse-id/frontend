@@ -245,69 +245,9 @@ export default function LaporPage() {
               <span className="text-[#0284C7]">Terbaik di Indonesia</span>
             </h1>
 
-            <p className="text-xs sm:text-sm lg:text-base text-slate-600 leading-relaxed font-medium max-w-xl mx-auto mb-8">
+            <p className="text-xs sm:text-sm lg:text-base text-slate-600 leading-relaxed font-medium max-w-xl mx-auto mb-2">
               Laporkan semua aspek pencemaran sungai dari nol hingga terverifikasi. Bebas hambatan, tanpa login, dan langsung terhubung dengan Dinas Lingkungan Hidup.
             </p>
-
-            {/* Search Input Box */}
-            <div className="relative max-w-lg mx-auto mb-6">
-              <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
-                <Info className="w-4 h-4" />
-              </div>
-              <input
-                type="text"
-                placeholder="Cari segmen sungai, jenis limbah, atau patokan lokasi..."
-                className="w-full pl-10 pr-4 py-3.5 rounded-2xl border border-slate-200 bg-white/95 shadow-sm text-xs font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0284C7] focus:bg-white"
-              />
-            </div>
-
-            {/* Category Filter Pills */}
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <button
-                type="button"
-                onClick={() => setCategory("sampah")}
-                className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
-                  category === "sampah"
-                    ? "bg-[#0284C7] text-white shadow-sm"
-                    : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
-                }`}
-              >
-                Sampah Plastik
-              </button>
-              <button
-                type="button"
-                onClick={() => setCategory("limbah-cair")}
-                className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
-                  category === "limbah-cair"
-                    ? "bg-[#0284C7] text-white shadow-sm"
-                    : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
-                }`}
-              >
-                Limbah Cair
-              </button>
-              <button
-                type="button"
-                onClick={() => setCategory("bau-warna")}
-                className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
-                  category === "bau-warna"
-                    ? "bg-[#0284C7] text-white shadow-sm"
-                    : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
-                }`}
-              >
-                Bau Air
-              </button>
-              <button
-                type="button"
-                onClick={() => setCategory("tanggul")}
-                className={`px-4 py-2 rounded-full text-xs font-bold transition-all ${
-                  category === "tanggul"
-                    ? "bg-[#0284C7] text-white shadow-sm"
-                    : "bg-white border border-slate-200 text-slate-700 hover:bg-slate-50"
-                }`}
-              >
-                Kerusakan Tanggul
-              </button>
-            </div>
           </div>
         </div>
       </section>
