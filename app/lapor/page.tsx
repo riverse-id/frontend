@@ -161,16 +161,16 @@ export default function LaporPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 font-sans pb-24 selection:bg-[#0284C7] selection:text-white">
+    <div className="min-h-screen bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] text-slate-800 font-sans pb-24 selection:bg-[#0284C7] selection:text-white">
       {/* ============================================================ */}
       {/* FLOATING GLASSMORPHISM NAVBAR                                 */}
       {/* ============================================================ */}
       <Navbar />
 
       {/* ============================================================ */}
-      {/* HERO SECTION: Full-Bleed Edge-to-Edge Grid Paper Background   */}
+      {/* HERO SECTION                                                 */}
       {/* ============================================================ */}
-      <section className="relative w-full bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] border-b border-slate-200/80 pt-28 sm:pt-32 pb-16 sm:pb-20 overflow-hidden">
+      <section className="relative w-full pt-28 sm:pt-32 pb-8 sm:pb-12 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
           
           {/* Floating Tilted Cards with Smooth Organic Bobbing Animations */}
