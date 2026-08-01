@@ -313,12 +313,12 @@ export default function LaporPage() {
           {/* Main Hero Header Content */}
           <div className="max-w-3xl mx-auto relative z-20">
             <h1 className="text-3xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-[#0284C7] leading-tight mb-4">
-              Pusat Pelaporan Sungai <br className="hidden sm:block" />
-              <span className="text-[#0284C7]">Terbaik di Indonesia</span>
+              Satu Laporan Warga, <br className="hidden sm:block" />
+              <span className="text-[#0284C7]">Satu Langkah Selamatkan Sungai</span>
             </h1>
 
-            <p className="text-xs sm:text-sm lg:text-base text-slate-600 leading-relaxed font-medium max-w-xl mx-auto mb-2">
-              Laporkan semua aspek pencemaran sungai dari nol hingga terverifikasi. Bebas hambatan, tanpa login, dan langsung terhubung dengan Dinas Lingkungan Hidup.
+            <p className="text-xs sm:text-sm lg:text-base text-slate-600 leading-relaxed font-medium max-w-2xl mx-auto mb-2">
+              Sampaikan laporan pencemaran secara akurat dalam hitungan menit. Tanpa proses rumit, langsung terverifikasi dan diproses oleh Dinas Lingkungan Hidup.
             </p>
           </div>
         </div>
