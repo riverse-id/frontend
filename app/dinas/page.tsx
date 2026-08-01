@@ -39,7 +39,8 @@ import {
   ThumbsUp,
   FileCheck,
   ArrowLeft,
-  PlusCircle
+  PlusCircle,
+  Menu
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useToast } from "../components/ToastProvider";
@@ -127,6 +128,7 @@ export default function DinasDashboard() {
   const [activeTab, setActiveTab] = useState<string>("semua");
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedRegion, setSelectedRegion] = useState<string>("semua");
+  const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
 
   // Modals
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
@@ -452,31 +454,48 @@ export default function DinasDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 font-sans flex flex-col md:flex-row selection:bg-[#0284C7] selection:text-white">
+    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 font-sans flex flex-col lg:flex-row selection:bg-[#0284C7] selection:text-white relative">
       
-      {/* 1. LEFT SIDEBAR NAVIGATION */}
-      <aside className="w-full md:w-64 bg-white border-r border-slate-200/80 flex flex-col flex-shrink-0 z-30 md:sticky md:top-0 md:h-screen md:overflow-y-auto">
-        <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+      {/* Dark Mobile Backdrop Overlay */}
+      {isMobileSidebarOpen && (
+        <div
+          onClick={() => setIsMobileSidebarOpen(false)}
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 lg:hidden"
+        />
+      )}
+
+      {/* 1. LEFT SIDEBAR NAVIGATION (Mobile Sliding Drawer & Desktop Fixed) */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200/80 flex flex-col flex-shrink-0 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:z-30 lg:w-64 lg:h-screen lg:overflow-y-auto ${isMobileSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"}`}>
+        <div className="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3 group">
             <Image
               src="/assets/logo-new.png"
               alt="RIVERSE Logo"
               width={44}
               height={44}
-              className="h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              className="h-10 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
               priority
             />
             <div className="flex flex-col">
-              <span className="font-extrabold text-xl tracking-tight text-[#0F172A] leading-none">
+              <span className="font-extrabold text-lg sm:text-xl tracking-tight text-[#0F172A] leading-none">
                 RIVERSE
               </span>
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">PORTAL DINAS DLH</span>
             </div>
           </Link>
+
+          {/* Close Sidebar Button on Mobile */}
+          <button
+            onClick={() => setIsMobileSidebarOpen(false)}
+            className="lg:hidden p-1.5 rounded-xl bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer"
+            aria-label="Tutup Sidebar"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
         {/* Sidebar Links */}
-        <div className="p-4 flex-1 space-y-6">
+        <div className="p-4 flex-1 space-y-6 overflow-y-auto">
           <div>
             <span className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider px-3 mb-2">
               Menu Utama Dinas
@@ -496,6 +515,7 @@ export default function DinasDashboard() {
                     key={item.id}
                     onClick={() => {
                       setActiveNav(item.id);
+                      setIsMobileSidebarOpen(false);
                     }}
                     className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
                       isActive
@@ -517,7 +537,10 @@ export default function DinasDashboard() {
               Konfigurasi Sistem
             </span>
             <button
-              onClick={() => setShowConfigModal(true)}
+              onClick={() => {
+                setShowConfigModal(true);
+                setIsMobileSidebarOpen(false);
+              }}
               className="w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-bold text-slate-700 hover:bg-slate-100/80 transition-all border border-slate-200 cursor-pointer"
             >
               <span className="flex items-center gap-2.5">
@@ -552,14 +575,25 @@ export default function DinasDashboard() {
       <main className="flex-1 flex flex-col min-w-0 min-h-screen">
         
         {/* TOP HEADER BAR */}
-        <header className="bg-white border-b border-slate-200/80 px-6 py-4 flex items-center justify-between gap-4 sticky top-0 z-20 shadow-xs">
-          <div>
-            <h1 className="text-lg sm:text-xl font-extrabold text-slate-900 tracking-tight">
-              Dashboard Pengawasan & Penanganan Sungai
-            </h1>
-            <p className="text-xs text-slate-500 font-medium hidden sm:block">
-              Dinas Lingkungan Hidup (DLH) Provinsi DKI Jakarta
-            </p>
+        <header className="bg-white border-b border-slate-200/80 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between gap-3 sticky top-0 z-20 shadow-xs">
+          <div className="flex items-center gap-3">
+            {/* Mobile Sidebar Hamburger Toggle */}
+            <button
+              onClick={() => setIsMobileSidebarOpen(true)}
+              className="lg:hidden p-2 rounded-xl bg-slate-100 text-slate-700 hover:text-[#0284C7] hover:bg-slate-200 transition-all cursor-pointer"
+              aria-label="Buka Menu Sidebar"
+            >
+              <Menu className="w-5 h-5" />
+            </button>
+
+            <div>
+              <h1 className="text-base sm:text-xl font-extrabold text-slate-900 tracking-tight">
+                Dashboard Pengawasan & Penanganan Sungai
+              </h1>
+              <p className="text-xs text-slate-500 font-medium hidden sm:block">
+                Dinas Lingkungan Hidup (DLH) Provinsi DKI Jakarta
+              </p>
+            </div>
           </div>
 
           <div className="flex items-center gap-3">

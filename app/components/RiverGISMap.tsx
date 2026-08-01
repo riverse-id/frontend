@@ -805,24 +805,24 @@ export default function RiverGISMap({
 
       {/* Map Control Header Bar (Clean Light Theme per DESIGN.md) */}
       {showHeader && (
-        <div className="p-5 sm:p-6 bg-white border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="p-4 sm:p-6 bg-white border-b border-slate-100 flex flex-col xl:flex-row xl:items-center justify-between gap-4 overflow-hidden max-w-full">
 
           {/* Title & Live Status Indicator */}
-          <div className="flex items-center gap-3.5">
+          <div className="flex items-center gap-3.5 min-w-0">
             <div>
               <div className="flex items-center gap-2.5 flex-wrap">
                 <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
                   Peta Status Sungai & Laporan GIS
                 </h3>
               </div>
-              <p className="text-xs text-slate-500 font-normal mt-0.5">
+              <p className="text-xs text-slate-500 font-normal mt-0.5 leading-snug">
                 Klik alur sungai atau penanda titik untuk memantau & membuat laporan lokasi presisi.
               </p>
             </div>
           </div>
 
           {/* Filter Tab Controls (Pills Container) */}
-          <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-slate-100/90 border border-slate-200/80 overflow-x-auto scrollbar-none self-start lg:self-auto shadow-inner">
+          <div className="w-full xl:w-auto flex items-center gap-1.5 p-1.5 rounded-2xl bg-slate-100/90 border border-slate-200/80 overflow-x-auto scrollbar-none shadow-inner max-w-full min-w-0">
             {[
               { id: "semua", label: "Semua Data", dot: "bg-sky-400" },
               { id: "tercemar", label: "Tercemar", dot: "bg-rose-500" },
@@ -834,7 +834,7 @@ export default function RiverGISMap({
                 <button
                   key={tab.id}
                   onClick={() => setActiveFilter(tab.id)}
-                  className={`relative px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-2 ${
+                  className={`relative px-3.5 sm:px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-2 shrink-0 ${
                     isSelected
                       ? "bg-[#0284C7] text-white shadow-md shadow-sky-500/20 ring-2 ring-[#0284C7]/30 scale-[1.02]"
                       : "text-slate-600 hover:text-slate-900 hover:bg-white/90"
@@ -853,7 +853,7 @@ export default function RiverGISMap({
       )}
 
       {/* Leaflet Map Canvas Container */}
-      <div className={`relative w-full bg-slate-50 ${showHeader ? "h-[480px] sm:h-[540px]" : "h-full"}`}>
+      <div className={`relative w-full bg-slate-50 ${showHeader ? "h-[420px] sm:h-[500px] lg:h-[540px]" : "h-full"}`}>
 
         {/* Leaflet Container Div */}
         <div ref={mapContainerRef} className="w-full h-full z-0" />
@@ -862,31 +862,31 @@ export default function RiverGISMap({
         <button
           onClick={handleLocateUser}
           disabled={isLocating}
-          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/95 backdrop-blur-md text-slate-800 text-xs font-semibold shadow-lg shadow-slate-200/50 border border-slate-200/80 hover:bg-sky-50 hover:text-[#0284C7] transition-all cursor-pointer active:scale-95"
+          className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3.5 sm:px-4 py-2.5 rounded-2xl bg-white/95 backdrop-blur-md text-slate-800 text-xs font-semibold shadow-lg shadow-slate-200/50 border border-slate-200/80 hover:bg-sky-50 hover:text-[#0284C7] transition-all cursor-pointer active:scale-95 max-w-[calc(100%-2rem)] truncate"
         >
-          <Crosshair className={`w-4 h-4 text-[#0284C7] ${isLocating ? "animate-spin" : ""}`} />
-          <span>{isLocating ? "Mencari GPS..." : "Deteksi Lokasi Saya"}</span>
+          <Crosshair className={`w-4 h-4 text-[#0284C7] shrink-0 ${isLocating ? "animate-spin" : ""}`} />
+          <span className="truncate">{isLocating ? "Mencari GPS..." : "Deteksi Lokasi Saya"}</span>
         </button>
 
         {/* Selected Location Action Bar (Bottom Floating Overlay) */}
         {selectedSpot && (
-          <div className="absolute bottom-5 left-4 right-4 sm:left-auto sm:right-5 z-10 max-w-md bg-slate-900/90 backdrop-blur-xl text-white p-4 rounded-2xl shadow-2xl border border-slate-800 animate-slideUp flex flex-col sm:flex-row items-center justify-between gap-3.5">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-[#0284C7] text-white flex items-center justify-center flex-shrink-0 shadow-md">
+          <div className="absolute bottom-4 sm:bottom-5 left-3 right-3 sm:left-auto sm:right-5 z-10 max-w-full sm:max-w-md bg-slate-900/90 backdrop-blur-xl text-white p-3.5 sm:p-4 rounded-2xl shadow-2xl border border-slate-800 animate-slideUp flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-3.5">
+            <div className="flex items-center gap-3 w-full sm:w-auto min-w-0">
+              <div className="w-9 h-9 rounded-xl bg-[#0284C7] text-white flex items-center justify-center shrink-0 shadow-md">
                 <MapPin className="w-4 h-4" />
               </div>
-              <div>
+              <div className="min-w-0 flex-1">
                 <span className="block text-[10px] text-sky-300 font-semibold uppercase tracking-wider">
                   Titik Spasial Terpilih
                 </span>
-                <span className="block text-xs font-semibold text-white truncate max-w-[200px]">
+                <span className="block text-xs font-semibold text-white truncate max-w-full sm:max-w-[200px]">
                   {selectedSpot.riverName}
                 </span>
               </div>
             </div>
             <button
               onClick={handleConfirmLocation}
-              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#0284C7] text-white text-xs font-semibold hover:bg-[#0284C7]/90 transition-all flex items-center justify-center gap-1.5 shadow-md shadow-sky-900/30 hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
+              className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-[#0284C7] text-white text-xs font-semibold hover:bg-[#0284C7]/90 transition-all flex items-center justify-center gap-1.5 shadow-md shadow-sky-900/30 hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap shrink-0"
             >
               <span>Lapor Titik Ini</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -897,36 +897,36 @@ export default function RiverGISMap({
       </div>
 
       {/* Map Legend Footer Bar (Clean & Minimalist per DESIGN.md) */}
-      <div className="p-4 px-6 bg-slate-50/90 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs font-medium text-slate-600">
+      <div className="p-3.5 sm:p-4 px-4 sm:px-6 bg-slate-50/90 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs font-medium text-slate-600 max-w-full overflow-hidden">
 
         {/* Polyline River Colors Legend */}
-        <div className="flex flex-wrap items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <span className="font-bold text-slate-900 flex items-center gap-1.5">
             <Layers className="w-3.5 h-3.5 text-[#0284C7]" />
             Garis Sungai:
           </span>
-          <span className="flex items-center gap-1.5 text-slate-700">
-            <span className="w-3.5 h-1.5 rounded-full bg-[#22c55e]" /> Normal / Clean
+          <span className="flex items-center gap-1.5 text-slate-700 text-[11px] sm:text-xs">
+            <span className="w-3 h-1.5 rounded-full bg-[#22c55e]" /> Normal / Clean
           </span>
-          <span className="flex items-center gap-1.5 text-slate-700">
-            <span className="w-3.5 h-1.5 rounded-full bg-[#ef4444]" /> Tercemar / Bahaya
+          <span className="flex items-center gap-1.5 text-slate-700 text-[11px] sm:text-xs">
+            <span className="w-3 h-1.5 rounded-full bg-[#ef4444]" /> Tercemar / Bahaya
           </span>
-          <span className="flex items-center gap-1.5 text-slate-700">
-            <span className="w-3.5 h-1.5 rounded-full bg-[#f97316]" /> Banyak Sampah
+          <span className="flex items-center gap-1.5 text-slate-700 text-[11px] sm:text-xs">
+            <span className="w-3 h-1.5 rounded-full bg-[#f97316]" /> Banyak Sampah
           </span>
         </div>
 
         {/* Marker Points Legend */}
-        <div className="flex flex-wrap items-center gap-4 border-t md:border-t-0 border-slate-200/80 pt-2.5 md:pt-0">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4 border-t md:border-t-0 border-slate-200/80 pt-2.5 md:pt-0">
           <span className="font-bold text-slate-900">Titik Laporan:</span>
-          <span className="flex items-center gap-1.5 text-slate-700">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#f97316]" /> Pending
+          <span className="flex items-center gap-1.5 text-slate-700 text-[11px] sm:text-xs">
+            <span className="w-2 h-2 rounded-full bg-[#f97316]" /> Pending
           </span>
-          <span className="flex items-center gap-1.5 text-slate-700">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#ef4444]" /> Terverifikasi
+          <span className="flex items-center gap-1.5 text-slate-700 text-[11px] sm:text-xs">
+            <span className="w-2 h-2 rounded-full bg-[#ef4444]" /> Terverifikasi
           </span>
-          <span className="flex items-center gap-1.5 text-slate-700">
-            <span className="w-2.5 h-2.5 rounded-full bg-[#22c55e]" /> Selesai
+          <span className="flex items-center gap-1.5 text-slate-700 text-[11px] sm:text-xs">
+            <span className="w-2 h-2 rounded-full bg-[#22c55e]" /> Selesai
           </span>
         </div>
 
