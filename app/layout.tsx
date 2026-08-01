@@ -6,6 +6,14 @@ import { ToastProvider } from "./components/ToastProvider";
 export const metadata: Metadata = {
   title: "RIVERSE — Platform Monitoring & Pelaporan Sungai Crowdsourced",
   description: "Sistem Pemantauan Pencemaran Sungai Real-Time Berbasis Partisipasi Publik dan Dinas Lingkungan Hidup",
+  icons: {
+    icon: [
+      { url: "/assets/logo-new.png" },
+      { url: "/assets/logo-new.png", type: "image/png" }
+    ],
+    shortcut: "/assets/logo-new.png",
+    apple: "/assets/logo-new.png",
+  },
 };
 
 export default function RootLayout({
