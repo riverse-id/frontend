@@ -270,7 +270,7 @@ export default function LaporPage() {
             <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-xl transition-shadow">
               <div className="flex flex-col text-left">
                 <span className="font-extrabold text-lg text-slate-900 leading-none">10.000+</span>
-                <span className="text-[10px] text-slate-500 font-semibold mt-1">Relawan Warga</span>
+                <span className="text-[10px] text-slate-500 font-semibold mt-1">Partisipasi Warga</span>
               </div>
               <div className="h-8 w-8 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center">
                 <UserCheck className="w-4 h-4" />
@@ -285,8 +285,8 @@ export default function LaporPage() {
           >
             <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-xl transition-shadow">
               <div className="flex flex-col text-left">
-                <span className="font-extrabold text-lg text-slate-900 leading-none">24 Jam</span>
-                <span className="text-[10px] text-slate-500 font-semibold mt-1">Respon Cepat DLH</span>
+                <span className="font-extrabold text-lg text-slate-900 leading-none">24/7</span>
+                <span className="text-[10px] text-slate-500 font-semibold mt-1">Respon Siaga DLH</span>
               </div>
               <div className="h-8 w-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center">
                 <Clock className="w-4 h-4" />
@@ -301,8 +301,8 @@ export default function LaporPage() {
           >
             <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-xl transition-shadow">
               <div className="flex flex-col text-left">
-                <span className="font-extrabold text-lg text-slate-900 leading-none">100% Spasial</span>
-                <span className="text-[10px] text-slate-500 font-semibold mt-1">Geofencing GIS</span>
+                <span className="font-extrabold text-lg text-slate-900 leading-none">100% Akurat</span>
+                <span className="text-[10px] text-slate-500 font-semibold mt-1">Akurasi Lokasi GIS</span>
               </div>
               <div className="h-8 w-8 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center">
                 <MapPin className="w-4 h-4" />
