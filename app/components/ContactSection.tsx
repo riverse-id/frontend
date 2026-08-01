@@ -18,7 +18,10 @@ import {
   X,
 } from "lucide-react";
 
+import { useToast } from "./ToastProvider";
+
 export default function ContactSection() {
+  const { showToast } = useToast();
   const [formData, setFormData] = useState({
     name: "",
     emailOrPhone: "",
@@ -29,21 +32,11 @@ export default function ContactSection() {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState(false);
-  const [showToast, setShowToast] = useState(false);
-
-  // Auto-dismiss popup after 10 seconds (10000ms)
-  React.useEffect(() => {
-    if (showToast) {
-      const timer = setTimeout(() => {
-        setShowToast(false);
-      }, 10000);
-      return () => clearTimeout(timer);
-    }
-  }, [showToast]);
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText("kontak@riverse.id");
     setCopiedEmail(true);
+    showToast("Alamat email kontak@riverse.id berhasil disalin ke clipboard!", "info");
     setTimeout(() => setCopiedEmail(false), 2000);
   };
 
@@ -54,7 +47,7 @@ export default function ContactSection() {
     // Simulate API network call
     setTimeout(() => {
       setIsSubmitting(false);
-      setShowToast(true);
+      showToast("Pesan Anda telah berhasil dikirim ke email support resmi RIVERSE (kontak@riverse.id)!", "success");
       setFormData({
         name: "",
         emailOrPhone: "",
@@ -305,53 +298,6 @@ export default function ContactSection() {
 
         </div>
       </div>
-
-      {/* SLIDE-IN POPUP NOTIFICATION FROM BOTTOM */}
-      <AnimatePresence>
-        {showToast && (
-          <motion.div
-            initial={{ y: 120, opacity: 0, scale: 0.9 }}
-            animate={{ y: 0, opacity: 1, scale: 1 }}
-            exit={{ y: 120, opacity: 0, scale: 0.9 }}
-            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="fixed bottom-6 right-6 z-50 max-w-md w-[calc(100vw-3rem)] p-5 rounded-3xl bg-white text-slate-900 shadow-2xl border border-slate-200/90 flex flex-col gap-3 overflow-hidden"
-          >
-            <div className="flex items-start gap-4">
-
-              <div className="flex-1 pr-2">
-                <div className="flex items-center gap-2 mb-1">
-                  <span className="font-extrabold text-sm text-slate-900">Pesan Berhasil Terkirim!</span>
-                </div>
-                <p className="text-xs text-slate-600 font-medium leading-relaxed mb-2">
-                  Pesan Anda telah berhasil dikirim ke email support resmi RIVERSE (
-                  <span className="text-[#0284C7] font-bold underline decoration-sky-300">kontak@riverse.id</span>).
-                </p>
-                <span className="text-[10px] text-slate-500 font-semibold block">
-                  Tim teknis & operasional kami akan membalas pesan Anda dalam kurun waktu 1x24 jam.
-                </span>
-              </div>
-
-              <button
-                onClick={() => setShowToast(false)}
-                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-all cursor-pointer flex-shrink-0"
-                title="Tutup Notifikasi"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* 10-Second Auto-Dismiss Animated Progress Bar */}
-            <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden mt-1">
-              <motion.div
-                initial={{ width: "100%" }}
-                animate={{ width: "0%" }}
-                transition={{ duration: 10, ease: "linear" }}
-                className="h-full bg-[#0284C7]"
-              />
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </section>
   );
 }

@@ -59,7 +59,7 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4">
         {/* Glassmorphism Floating Pill Bar Container */}
-        <div className="flex items-center justify-between rounded-full bg-white/70 backdrop-blur-xl backdrop-saturate-180 px-6 py-2.5 shadow-[0_8px_32px_rgba(2,132,199,0.12)] border border-white/60 transition-all duration-300">
+        <div className="flex items-center justify-between rounded-full bg-white/75 backdrop-blur-xl backdrop-saturate-180 px-6 py-2.5 shadow-lg shadow-slate-900/5 border border-white/70 transition-all duration-300">
           
           {/* Logo & Brand */}
           <a href="#beranda" className="flex items-center gap-3 cursor-pointer group flex-shrink-0">

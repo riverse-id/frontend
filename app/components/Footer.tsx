@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-html-link-for-pages */
 import React from "react";
 import Image from "next/image";
 import { Mail } from "lucide-react";
@@ -43,9 +44,6 @@ export default function Footer() {
           <span className="text-sm font-bold text-white uppercase tracking-wider">
             Hubungi Kami
           </span>
-          <p className="text-xs text-slate-400">
-            Tim Pengembang RIVERSE — Lomba Inovasi Sistem GIS & Lingkungan
-          </p>
           <div className="flex items-center gap-2 text-xs text-sky-400 font-medium">
             <Mail className="w-4 h-4" />
             <span>kontak@riverse.id</span>

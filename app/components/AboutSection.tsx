@@ -1,11 +1,40 @@
 "use client";
 
-import React from "react";
+import React, { useRef } from "react";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { Sparkles, ShieldCheck, Waves, Users, MapPin } from "lucide-react";
 
 export default function AboutSection() {
+  const tiltCardRef = useRef<HTMLDivElement>(null);
+  const x = useMotionValue(0);
+  const y = useMotionValue(0);
+
+  const mouseXSpring = useSpring(x, { stiffness: 250, damping: 25 });
+  const mouseYSpring = useSpring(y, { stiffness: 250, damping: 25 });
+
+  const rotateX = useTransform(mouseYSpring, [-0.5, 0.5], ["9deg", "-9deg"]);
+  const rotateY = useTransform(mouseXSpring, [-0.5, 0.5], ["-9deg", "9deg"]);
+
+  const handleCardMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!tiltCardRef.current) return;
+    const rect = tiltCardRef.current.getBoundingClientRect();
+    const width = rect.width;
+    const height = rect.height;
+    const mouseX = e.clientX - rect.left;
+    const mouseY = e.clientY - rect.top;
+
+    const xPct = mouseX / width - 0.5;
+    const yPct = mouseY / height - 0.5;
+
+    x.set(xPct);
+    y.set(yPct);
+  };
+
+  const handleCardMouseLeave = () => {
+    x.set(0);
+    y.set(0);
+  };
   return (
     <section id="tentang-kami" className="relative bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] pt-0 pb-24 overflow-hidden">
       
@@ -170,13 +199,25 @@ export default function AboutSection() {
       </div>
 
       {/* ============================================================ */}
-      {/* BOTTOM SECTION: 2-Column (Image Left, Mission Text Right)    */}
+      {/* BOTTOM SECTION: 2-Column 3D Interactive Tilt Card            */}
       {/* ============================================================ */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-xl shadow-slate-200/40">
-          
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 perspective-[1000px]">
+        <motion.div
+          ref={tiltCardRef}
+          onMouseMove={handleCardMouseMove}
+          onMouseLeave={handleCardMouseLeave}
+          style={{
+            rotateX,
+            rotateY,
+            transformStyle: "preserve-3d",
+          }}
+          className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-xl shadow-slate-200/40 hover:shadow-2xl hover:shadow-[#0284C7]/20 hover:border-sky-400/60 transition-shadow duration-300 cursor-pointer"
+        >
           {/* Image Left */}
-          <div className="md:col-span-5 relative h-64 sm:h-80 w-full rounded-2xl overflow-hidden shadow-lg border border-sky-100">
+          <div
+            style={{ transform: "translateZ(30px)" }}
+            className="md:col-span-5 relative h-64 sm:h-80 w-full rounded-2xl overflow-hidden shadow-lg border border-sky-100 transition-transform duration-300"
+          >
             <Image
               src="/assets/sungai/Potret Lautan Sampah di Teluk Jakarta.jpeg"
               alt="Tim Pemantau Sungai"
@@ -187,7 +228,10 @@ export default function AboutSection() {
           </div>
 
           {/* Text Right */}
-          <div className="md:col-span-7 space-y-4">
+          <div
+            style={{ transform: "translateZ(25px)" }}
+            className="md:col-span-7 space-y-4 transition-transform duration-300"
+          >
             <h4 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] leading-snug">
               Kami Mempercepat Transformasi Tata Kelola Sungai Indonesia
             </h4>
@@ -196,7 +240,7 @@ export default function AboutSection() {
             </p>
           </div>
 
-        </div>
+        </motion.div>
       </div>
 
     </section>

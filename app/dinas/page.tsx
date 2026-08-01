@@ -42,6 +42,7 @@ import {
   PlusCircle
 } from "lucide-react";
 import dynamic from "next/dynamic";
+import { useToast } from "../components/ToastProvider";
 import { INITIAL_OFFICERS, MOCK_REPORTS, MOCK_AUDIT_LOGS, INITIAL_SYSTEM_CONFIG, getStoredReports, saveStoredReports } from "../../lib/store";
 import { Report, Officer, AuditLog, SystemConfig, OfficerRole, ReportStatus } from "../../lib/types";
 
@@ -64,6 +65,7 @@ const getInitials = (name: string): string => {
 };
 
 export default function DinasDashboard() {
+  const { showToast } = useToast();
   // Authentication State
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [nipInput, setNipInput] = useState<string>("19880512 201201 1 004");
@@ -82,6 +84,7 @@ export default function DinasDashboard() {
     setTimeout(() => {
       setIsAuthenticating(false);
       setIsLoggedIn(true);
+      showToast("Akses Petugas Dinas DLH berhasil dikonfirmasi!", "success");
     }, 500);
   };
 
@@ -94,6 +97,7 @@ export default function DinasDashboard() {
     setTimeout(() => {
       setIsAuthenticating(false);
       setIsLoggedIn(true);
+      showToast("Login Petugas Dinas DLH Berhasil!", "success");
     }, 600);
   };
 
@@ -250,6 +254,7 @@ export default function DinasDashboard() {
       setIsSaving(false);
       setShowActionModal(false);
       setSelectedReport(null);
+      showToast("Status penanganan laporan berhasil diperbarui!", "success");
     }, 700);
   };
 

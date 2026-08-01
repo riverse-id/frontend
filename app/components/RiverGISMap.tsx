@@ -552,6 +552,12 @@ export default function RiverGISMap({
       center: [-6.22, 106.84],
       zoom: 11,
       zoomControl: false,
+      dragging: interactive,
+      touchZoom: interactive,
+      scrollWheelZoom: interactive,
+      doubleClickZoom: interactive,
+      boxZoom: interactive,
+      keyboard: interactive,
     });
 
     // High-Definition CartoDB Tile Layer
@@ -565,8 +571,10 @@ export default function RiverGISMap({
       }
     ).addTo(map);
 
-    // Zoom Controls top-right
-    L.control.zoom({ position: "topright" }).addTo(map);
+    // Zoom Controls top-right (Only when interactive is true)
+    if (interactive) {
+      L.control.zoom({ position: "topright" }).addTo(map);
+    }
 
     // Add GeoJSON River Segments Layer (Vector Polylines)
     const geojsonLayer = L.geoJSON(GEOJSON_RIVER_DATA as any, {
@@ -575,38 +583,40 @@ export default function RiverGISMap({
         const { nama_sungai, status, keterangan } = feature.properties;
         const statusConfig = RIVER_STATUS_STYLE[status] || RIVER_STATUS_STYLE.default;
 
-        layer.bindPopup(
-          `<div class="p-1 max-w-[210px] font-sans">
-            <div class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${statusConfig.badgeBg} mb-1.5">
-              ${statusConfig.label}
-            </div>
-            <h4 class="font-extrabold text-xs text-slate-900 leading-tight mb-1">${nama_sungai}</h4>
-            <p class="text-[11px] text-slate-600 font-medium leading-relaxed">${keterangan || ""}</p>
-          </div>`,
-          { closeButton: false, offset: [0, -5] }
-        );
+        if (interactive) {
+          layer.bindPopup(
+            `<div class="p-1 max-w-[210px] font-sans">
+              <div class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${statusConfig.badgeBg} mb-1.5">
+                ${statusConfig.label}
+              </div>
+              <h4 class="font-extrabold text-xs text-slate-900 leading-tight mb-1">${nama_sungai}</h4>
+              <p class="text-[11px] text-slate-600 font-medium leading-relaxed">${keterangan || ""}</p>
+            </div>`,
+            { closeButton: false, offset: [0, -5] }
+          );
 
-        // Hover Effect on River Vector Polylines
-        layer.on({
-          mouseover: (e) => {
-            const l = e.target;
-            l.setStyle({ weight: 10, opacity: 1 });
-            if (l.bringToFront) l.bringToFront();
-          },
-          mouseout: (e) => {
-            geojsonLayer.resetStyle(e.target);
-          },
-          click: (e) => {
-            const { lat, lng } = e.latlng;
-            const formattedLat = parseFloat(lat.toFixed(4));
-            const formattedLng = parseFloat(lng.toFixed(4));
-            setSelectedSpot({
-              lat: formattedLat,
-              lng: formattedLng,
-              riverName: nama_sungai,
-            });
-          },
-        });
+          // Hover Effect on River Vector Polylines
+          layer.on({
+            mouseover: (e) => {
+              const l = e.target;
+              l.setStyle({ weight: 10, opacity: 1 });
+              if (l.bringToFront) l.bringToFront();
+            },
+            mouseout: (e) => {
+              geojsonLayer.resetStyle(e.target);
+            },
+            click: (e) => {
+              const { lat, lng } = e.latlng;
+              const formattedLat = parseFloat(lat.toFixed(4));
+              const formattedLng = parseFloat(lng.toFixed(4));
+              setSelectedSpot({
+                lat: formattedLat,
+                lng: formattedLng,
+                riverName: nama_sungai,
+              });
+            },
+          });
+        }
       },
     }).addTo(map);
 
@@ -622,35 +632,37 @@ export default function RiverGISMap({
     markersGroupRef.current = markersGroup;
     mapInstanceRef.current = map;
 
-    // Map Click Listener for custom pin placement
-    map.on("click", (e: L.LeafletMouseEvent) => {
-      const { lat, lng } = e.latlng;
-      const formattedLat = parseFloat(lat.toFixed(4));
-      const formattedLng = parseFloat(lng.toFixed(4));
-      const estRiverName = `Lokasi Titik Spasial (${formattedLat}, ${formattedLng})`;
+    // Map Click Listener for custom pin placement (Only when interactive is true)
+    if (interactive) {
+      map.on("click", (e: L.LeafletMouseEvent) => {
+        const { lat, lng } = e.latlng;
+        const formattedLat = parseFloat(lat.toFixed(4));
+        const formattedLng = parseFloat(lng.toFixed(4));
+        const estRiverName = `Lokasi Titik Spasial (${formattedLat}, ${formattedLng})`;
 
-      setSelectedSpot({
-        lat: formattedLat,
-        lng: formattedLng,
-        riverName: estRiverName,
-      });
-
-      if (selectedPinRef.current) {
-        selectedPinRef.current.setLatLng([lat, lng]);
-      } else {
-        const customPinIcon = L.divIcon({
-          className: "custom-selected-pin",
-          html: `<div class="w-8 h-8 rounded-full bg-[#0284C7] ring-4 ring-[#0284C7]/30 text-white flex items-center justify-center shadow-2xl animate-bounce">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
-                </div>`,
-          iconSize: [32, 32],
-          iconAnchor: [16, 32],
+        setSelectedSpot({
+          lat: formattedLat,
+          lng: formattedLng,
+          riverName: estRiverName,
         });
 
-        const newMarker = L.marker([lat, lng], { icon: customPinIcon }).addTo(map);
-        selectedPinRef.current = newMarker;
-      }
-    });
+        if (selectedPinRef.current) {
+          selectedPinRef.current.setLatLng([lat, lng]);
+        } else {
+          const customPinIcon = L.divIcon({
+            className: "custom-selected-pin",
+            html: `<div class="w-8 h-8 rounded-full bg-[#0284C7] ring-4 ring-[#0284C7]/30 text-white flex items-center justify-center shadow-2xl animate-bounce">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+                  </div>`,
+            iconSize: [32, 32],
+            iconAnchor: [16, 32],
+          });
+
+          const newMarker = L.marker([lat, lng], { icon: customPinIcon }).addTo(map);
+          selectedPinRef.current = newMarker;
+        }
+      });
+    }
 
     return () => {
       map.remove();
@@ -734,14 +746,16 @@ export default function RiverGISMap({
         `;
 
         const marker = L.marker([spot.lat, spot.lng], { icon: customIcon });
-        marker.bindPopup(popupHtml, { closeButton: false, offset: [0, -10] });
-        marker.on("click", () => {
-          setSelectedSpot({
-            lat: spot.lat,
-            lng: spot.lng,
-            riverName: spot.lokasi,
+        if (interactive) {
+          marker.bindPopup(popupHtml, { closeButton: false, offset: [0, -10] });
+          marker.on("click", () => {
+            setSelectedSpot({
+              lat: spot.lat,
+              lng: spot.lng,
+              riverName: spot.lokasi,
+            });
           });
-        });
+        }
         markersGroup.addLayer(marker);
       });
     }

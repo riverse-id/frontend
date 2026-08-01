@@ -41,6 +41,7 @@ import {
 } from "../../lib/store";
 import { Report, ReportCategory } from "../../lib/types";
 import dynamic from "next/dynamic";
+import { useToast } from "../components/ToastProvider";
 
 const RiverGISMap = dynamic(() => import("../components/RiverGISMap"), {
   ssr: false,
@@ -95,6 +96,7 @@ const RIVER_SEGMENTS = [
 ];
 
 export default function LaporPage() {
+  const { showToast } = useToast();
   // Form States
   const [category, setCategory] = useState("sampah");
   const [riverSegment, setRiverSegment] = useState(RIVER_SEGMENTS[0]);
@@ -137,6 +139,7 @@ export default function LaporPage() {
     const updated = voteReport(reportId);
     if (updated) {
       setReports(getStoredReports());
+      showToast("Dukungan laporan (+1 Vote) berhasil ditambahkan!", "success");
       if (selectedDetailReport && selectedDetailReport.id === reportId) {
         setSelectedDetailReport(updated);
       }
@@ -153,16 +156,19 @@ export default function LaporPage() {
           const lng = position.coords.longitude.toFixed(5);
           setGpsLocation(`${lat}, ${lng} (Lokasi GPS Presisi)`);
           setIsLocating(false);
+          showToast("Koordinat lokasi GPS presisi berhasil didapatkan!", "info");
         },
         () => {
           // Fallback simulation if denied or mock
           setGpsLocation("-6.2352, 106.8543 (Sesuai Peta GIS)");
           setIsLocating(false);
+          showToast("Lokasi diset ke titik GIS default (-6.2352, 106.8543)", "info");
         }
       );
     } else {
       setGpsLocation("-6.2352, 106.8543 (Sesuai Peta GIS)");
       setIsLocating(false);
+      showToast("Lokasi diset ke titik GIS default (-6.2352, 106.8543)", "info");
     }
   };
 
@@ -171,6 +177,7 @@ export default function LaporPage() {
     setGpsLocation(`${location.lat}, ${location.lng} (Titik Spasial Peta Leaflet)`);
     setAddress(location.riverName);
     setShowFormModal(true);
+    showToast(`Lokasi ${location.riverName} dipilih dari Peta Spasial GIS!`, "info");
   };
 
   // Handle Photo Upload Simulation (Persistent Base64 Data URL)
@@ -181,6 +188,7 @@ export default function LaporPage() {
       reader.onloadend = () => {
         if (typeof reader.result === "string") {
           setPreviewImage(reader.result);
+          showToast("Foto bukti pencemaran sungai berhasil diunggah!", "success");
         }
       };
       reader.readAsDataURL(file);
@@ -226,6 +234,7 @@ export default function LaporPage() {
       setReports(getStoredReports());
       setIsSubmitting(false);
       setIsSubmitted(true);
+      showToast(`Laporan ${result.ticketNo} berhasil dikirim ke sistem RIVERSE!`, "success");
     }, 1000);
   };
 
