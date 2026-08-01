@@ -33,7 +33,7 @@ export default function PartnerSection() {
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white to-transparent pointer-events-none z-10" />
       <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 mb-12">
-        <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
           Kolaborasi Strategis untuk Kelestarian Sungai
         </h2>
         <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-xl mx-auto font-medium">

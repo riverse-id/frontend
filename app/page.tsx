@@ -43,7 +43,7 @@ export default function Home() {
             <div className="absolute -top-24 -right-24 w-72 h-72 bg-[#0284C7]/10 rounded-full blur-3xl pointer-events-none" />
 
             <div className="max-w-2xl relative z-10">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0F172A] tracking-tight leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
                 Lihat Pencemaran Sungai? <br className="hidden sm:block" />
                 <span className="text-[#0284C7]">Laporkan Sekarang!</span>
               </h2>

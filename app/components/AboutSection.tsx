@@ -79,7 +79,7 @@ export default function AboutSection() {
 
         {/* Content Wrapper Layer */}
         <div className="relative z-10 px-4 sm:px-6 lg:px-8 pt-32 pb-40 max-w-4xl mx-auto text-center">
-          <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
             Mewujudkan Sungai Indonesia <br className="hidden sm:block" />
             <span className="text-white drop-shadow-sm">Bersih, Transparan & Berkelanjutan</span>
           </h2>
@@ -183,7 +183,7 @@ export default function AboutSection() {
       {/* ============================================================ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
         <div className="max-w-3xl mb-8">
-          <h3 className="text-2xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
+          <h3 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
             Solusi Digital untuk Perlindungan & Kelestarian Sungai Kita
           </h3>
         </div>

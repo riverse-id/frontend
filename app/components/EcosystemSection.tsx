@@ -254,7 +254,7 @@ export default function EcosystemSection() {
       <div className="max-w-7xl mx-auto relative z-10 px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
             4 Langkah Mudah Laporkan Pencemaran Sungai
           </h2>
           <p className="mt-4 text-sm sm:text-base text-slate-600 leading-relaxed font-medium">

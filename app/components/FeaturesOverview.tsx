@@ -35,7 +35,7 @@ export default function FeaturesOverview() {
           
           {/* LEFT COLUMN: Bold Blue Headline, Copywriting, CTA Button */}
           <div className="lg:col-span-6 flex flex-col items-start space-y-6">
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#0284C7] leading-[1.12] tracking-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0284C7] leading-tight tracking-tight">
               Lapor Sungai Tercemar Cuma 5 Menit!
             </h2>
 
