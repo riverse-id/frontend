@@ -79,7 +79,7 @@ export default function FeaturesOverview() {
               </div>
 
               {/* Card 2: GIS Status Indicator */}
-              <div className="rounded-2xl bg-white p-3.5 shadow-xl border border-sky-100 transform hover:-translate-y-1 transition-transform">
+              <div className="rounded-2xl bg-white p-3.5 shadow-xl border border-sky-100 hover:border-sky-400/70 hover:shadow-2xl hover:shadow-[#0284C7]/25 transform hover:-translate-y-1 transition-all cursor-pointer">
                 <div className="flex items-center gap-1.5 mb-2.5 text-[#0F172A] text-xs font-bold">
                   <ShieldCheck className="w-4 h-4 text-[#0284C7]" />
                   <span>Status GIS Palette</span>
@@ -101,7 +101,7 @@ export default function FeaturesOverview() {
               </div>
 
               {/* Card 3: Geofencing & Anti-Spam */}
-              <div className="rounded-2xl bg-white p-3.5 shadow-xl border border-sky-100 transform hover:-translate-y-1 transition-transform">
+              <div className="rounded-2xl bg-white p-3.5 shadow-xl border border-sky-100 hover:border-sky-400/70 hover:shadow-2xl hover:shadow-[#0284C7]/25 transform hover:-translate-y-1 transition-all cursor-pointer">
                 <div className="flex items-center gap-1.5 mb-2 text-[#0F172A] text-xs font-bold">
                   <Navigation className="w-4 h-4 text-[#0284C7]" />
                   <span>Smart Geofencing</span>

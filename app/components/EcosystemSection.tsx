@@ -140,7 +140,7 @@ function FlipStepCard({
       onClick={onToggle}
     >
       <motion.div
-        className="relative w-full h-full rounded-3xl shadow-sm hover:shadow-xl transition-all duration-300"
+        className="relative w-full h-full rounded-3xl shadow-sm hover:shadow-2xl hover:shadow-[#0284C7]/25 transition-all duration-300"
         style={{ transformStyle: "preserve-3d" }}
         animate={{ rotateY: isFlipped ? 180 : 0 }}
         transition={{ duration: 0.6, ease: [0.23, 1, 0.32, 1] }}
@@ -149,7 +149,7 @@ function FlipStepCard({
         {/* SISI DEPAN (FRONT CARD - CLEAN WITHOUT ICON BOXES) */}
         {/* ========================================================================= */}
         <div
-          className="absolute inset-0 w-full h-full rounded-3xl p-6 sm:p-7 bg-white border border-slate-200/90 flex flex-col justify-between overflow-hidden"
+          className="absolute inset-0 w-full h-full rounded-3xl p-6 sm:p-7 bg-white border border-slate-200/90 group-hover:border-sky-400/70 flex flex-col justify-between overflow-hidden transition-colors"
           style={{ backfaceVisibility: "hidden" }}
         >
           {/* Subtle Ambient Hover Backdrop */}

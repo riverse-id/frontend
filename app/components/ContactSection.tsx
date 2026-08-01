@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Mail,
   Phone,
@@ -14,6 +15,7 @@ import {
   MessageSquare,
   Building2,
   Sparkles,
+  X,
 } from "lucide-react";
 
 export default function ContactSection() {
@@ -25,9 +27,19 @@ export default function ContactSection() {
     message: "",
   });
 
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copiedEmail, setCopiedEmail] = useState(false);
+  const [showToast, setShowToast] = useState(false);
+
+  // Auto-dismiss popup after 10 seconds (10000ms)
+  React.useEffect(() => {
+    if (showToast) {
+      const timer = setTimeout(() => {
+        setShowToast(false);
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [showToast]);
 
   const handleCopyEmail = () => {
     navigator.clipboard.writeText("kontak@riverse.id");
@@ -42,7 +54,7 @@ export default function ContactSection() {
     // Simulate API network call
     setTimeout(() => {
       setIsSubmitting(false);
-      setIsSubmitted(true);
+      setShowToast(true);
       setFormData({
         name: "",
         emailOrPhone: "",
@@ -61,6 +73,7 @@ export default function ContactSection() {
       {/* Top & Bottom Gradient Fades for Seamless Section Transition */}
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white to-transparent pointer-events-none z-10" />
       <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
+
       {/* Background Glow */}
       <div className="absolute top-1/2 right-0 -translate-y-1/2 w-96 h-96 bg-[#0284C7]/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -116,7 +129,7 @@ export default function ContactSection() {
             </div>
 
             {/* Combined Card: Office Address, Official Email & System Status */}
-            <div className="rounded-3xl p-6 sm:p-7 bg-white border border-slate-200/90 shadow-lg shadow-slate-200/40 space-y-5">
+            <div className="rounded-3xl p-6 sm:p-7 bg-white border border-slate-200/90 shadow-lg shadow-slate-200/40 space-y-5 hover:shadow-2xl hover:shadow-[#0284C7]/20 hover:border-sky-400/70 hover:-translate-y-1 transition-all">
               {/* Office Address */}
               <div className="flex items-start gap-4">
                 <div className="w-11 h-11 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center flex-shrink-0 mt-0.5">
@@ -184,34 +197,14 @@ export default function ContactSection() {
           </div>
 
           {/* RIGHT COLUMN: Interactive Form (7 Cols) */}
-          <div className="lg:col-span-7 rounded-3xl p-6 sm:p-10 bg-white border border-slate-200/90 shadow-xl shadow-slate-200/40 relative">
+          <div className="lg:col-span-7 rounded-3xl p-6 sm:p-10 bg-white border border-slate-200/90 shadow-xl shadow-slate-200/40 relative hover:shadow-2xl hover:shadow-[#0284C7]/20 hover:border-sky-400/70 transition-all">
             <h3 className="text-2xl font-extrabold text-[#0F172A] mb-2">
               Kirim Pesan atau Pertanyaan
             </h3>
             <p className="text-xs text-slate-600 mb-8 font-medium">
               Isi formulir di bawah ini. Tim teknis dan operasional kami akan membalas pesan Anda dalam kurun waktu 1x24 jam.
             </p>
-
-            {isSubmitted ? (
-              <div className="p-8 rounded-2xl bg-emerald-50 border border-emerald-200 text-center space-y-4 animate-fadeIn">
-                <div className="w-16 h-16 rounded-full bg-emerald-500 text-white flex items-center justify-center mx-auto shadow-lg shadow-emerald-500/30">
-                  <CheckCircle2 className="w-9 h-9" />
-                </div>
-                <h4 className="text-xl font-extrabold text-emerald-900">
-                  Pesan Anda Berhasil Terkirim!
-                </h4>
-                <p className="text-xs text-emerald-700 leading-relaxed max-w-md mx-auto font-medium">
-                  Terima kasih telah menghubungi RIVERSE. Tim kami telah menerima pesan Anda dan akan merespon melalui email atau telepon yang disematkan.
-                </p>
-                <button
-                  onClick={() => setIsSubmitted(false)}
-                  className="px-6 py-2.5 rounded-full bg-emerald-600 text-white text-xs font-bold hover:bg-emerald-700 transition-all shadow-md"
-                >
-                  Kirim Pesan Lain
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-5">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   {/* Name Input */}
                   <div>
@@ -308,11 +301,57 @@ export default function ContactSection() {
                   )}
                 </button>
               </form>
-            )}
           </div>
 
         </div>
       </div>
+
+      {/* SLIDE-IN POPUP NOTIFICATION FROM BOTTOM */}
+      <AnimatePresence>
+        {showToast && (
+          <motion.div
+            initial={{ y: 120, opacity: 0, scale: 0.9 }}
+            animate={{ y: 0, opacity: 1, scale: 1 }}
+            exit={{ y: 120, opacity: 0, scale: 0.9 }}
+            transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+            className="fixed bottom-6 right-6 z-50 max-w-md w-[calc(100vw-3rem)] p-5 rounded-3xl bg-white text-slate-900 shadow-2xl border border-slate-200/90 flex flex-col gap-3 overflow-hidden"
+          >
+            <div className="flex items-start gap-4">
+
+              <div className="flex-1 pr-2">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-extrabold text-sm text-slate-900">Pesan Berhasil Terkirim!</span>
+                </div>
+                <p className="text-xs text-slate-600 font-medium leading-relaxed mb-2">
+                  Pesan Anda telah berhasil dikirim ke email support resmi RIVERSE (
+                  <span className="text-[#0284C7] font-bold underline decoration-sky-300">kontak@riverse.id</span>).
+                </p>
+                <span className="text-[10px] text-slate-500 font-semibold block">
+                  Tim teknis & operasional kami akan membalas pesan Anda dalam kurun waktu 1x24 jam.
+                </span>
+              </div>
+
+              <button
+                onClick={() => setShowToast(false)}
+                className="w-8 h-8 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-500 hover:text-slate-900 flex items-center justify-center transition-all cursor-pointer flex-shrink-0"
+                title="Tutup Notifikasi"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* 10-Second Auto-Dismiss Animated Progress Bar */}
+            <div className="w-full h-1 bg-slate-100 rounded-full overflow-hidden mt-1">
+              <motion.div
+                initial={{ width: "100%" }}
+                animate={{ width: "0%" }}
+                transition={{ duration: 10, ease: "linear" }}
+                className="h-full bg-[#0284C7]"
+              />
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }

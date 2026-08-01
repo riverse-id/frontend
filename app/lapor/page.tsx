@@ -258,7 +258,7 @@ export default function LaporPage() {
             transition={{ repeat: Infinity, duration: 4.2, ease: "easeInOut" }}
             className="hidden lg:block absolute left-2 xl:left-8 top-6 -rotate-6 hover:rotate-0 transition-transform duration-300 z-10 cursor-pointer"
           >
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-xl transition-shadow">
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-2xl hover:shadow-[#0284C7]/25 hover:border-sky-400/70 hover:scale-105 transition-all">
               <div className="flex flex-col text-left">
                 <span className="font-extrabold text-lg text-slate-900 leading-none">5.000+</span>
                 <span className="text-[10px] text-slate-500 font-semibold mt-1">Laporan Terverifikasi</span>
@@ -274,7 +274,7 @@ export default function LaporPage() {
             transition={{ repeat: Infinity, duration: 5.0, ease: "easeInOut" }}
             className="hidden lg:block absolute right-2 xl:right-8 top-6 rotate-6 hover:rotate-0 transition-transform duration-300 z-10 cursor-pointer"
           >
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-xl transition-shadow">
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-2xl hover:shadow-[#0284C7]/25 hover:border-sky-400/70 hover:scale-105 transition-all">
               <div className="flex flex-col text-left">
                 <span className="font-extrabold text-lg text-slate-900 leading-none">10.000+</span>
                 <span className="text-[10px] text-slate-500 font-semibold mt-1">Partisipasi Warga</span>
@@ -290,7 +290,7 @@ export default function LaporPage() {
             transition={{ repeat: Infinity, duration: 4.8, ease: "easeInOut" }}
             className="hidden lg:block absolute left-4 xl:left-10 bottom-2 -rotate-3 hover:rotate-0 transition-transform duration-300 z-10 cursor-pointer"
           >
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-xl transition-shadow">
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-2xl hover:shadow-[#0284C7]/25 hover:border-sky-400/70 hover:scale-105 transition-all">
               <div className="flex flex-col text-left">
                 <span className="font-extrabold text-lg text-slate-900 leading-none">24/7</span>
                 <span className="text-[10px] text-slate-500 font-semibold mt-1">Respon Siaga DLH</span>
@@ -306,7 +306,7 @@ export default function LaporPage() {
             transition={{ repeat: Infinity, duration: 5.4, ease: "easeInOut" }}
             className="hidden lg:block absolute right-4 xl:right-10 bottom-4 rotate-3 hover:rotate-0 transition-transform duration-300 z-10 cursor-pointer"
           >
-            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-xl transition-shadow">
+            <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-2xl hover:shadow-[#0284C7]/25 hover:border-sky-400/70 hover:scale-105 transition-all">
               <div className="flex flex-col text-left">
                 <span className="font-extrabold text-lg text-slate-900 leading-none">100% Akurat</span>
                 <span className="text-[10px] text-slate-500 font-semibold mt-1">Akurasi Lokasi GIS</span>
@@ -379,7 +379,7 @@ export default function LaporPage() {
             return (
               <div
                 key={rpt.id}
-                className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs transition-all hover:shadow-lg hover:border-sky-300 flex flex-col justify-between"
+                className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs transition-all hover:shadow-2xl hover:shadow-[#0284C7]/20 hover:border-sky-400/70 hover:-translate-y-1 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-3">

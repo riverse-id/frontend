@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import CursorGlow from "./components/CursorGlow";
 
 export const metadata: Metadata = {
   title: "RIVERSE — Platform Monitoring & Pelaporan Sungai Crowdsourced",
@@ -16,7 +17,8 @@ export default function RootLayout({
       lang="id"
       className="font-sans h-full antialiased scroll-smooth"
     >
-      <body className="min-h-full flex flex-col bg-white text-zinc-900 selection:bg-[#0284C7] selection:text-white">
+      <body className="min-h-full flex flex-col bg-white text-zinc-900 selection:bg-[#0284C7] selection:text-white relative">
+        <CursorGlow />
         {children}
       </body>
     </html>
