@@ -9,11 +9,24 @@ import {
   Users,
   Navigation,
 } from "lucide-react";
+import dynamic from "next/dynamic";
+
+const RiverGISMap = dynamic(() => import("./RiverGISMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-52 sm:h-60 bg-slate-900 rounded-xl flex items-center justify-center text-white border border-slate-800">
+      <div className="flex flex-col items-center gap-2">
+        <div className="w-5 h-5 border-2 border-sky-400 border-t-transparent rounded-full animate-spin" />
+        <span className="text-[10px] font-bold text-sky-200">Memuat Interactive GIS Map...</span>
+      </div>
+    </div>
+  ),
+});
 
 export default function FeaturesOverview() {
   return (
-    <section id="beranda" className="relative bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] py-20 lg:py-28 px-4 sm:px-6 lg:px-8 overflow-hidden">
-      <div className="mx-auto max-w-7xl relative z-10">
+    <section id="beranda" className="relative bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] pt-32 sm:pt-40 lg:pt-48 pb-20 sm:pb-28 lg:pb-36 min-h-[85vh] flex items-center overflow-hidden">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10 w-full">
         
         {/* ============================================================ */}
         {/* HERO SHOWCASE SECTION (Beranda Hero)                          */}
@@ -23,14 +36,14 @@ export default function FeaturesOverview() {
           {/* LEFT COLUMN: Bold Blue Headline, Copywriting, CTA Button */}
           <div className="lg:col-span-6 flex flex-col items-start space-y-6">
             <h2 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-[#0284C7] leading-[1.12] tracking-tight">
-              Laporkan & Pantau <br />
-              Sungai dalam <br />
-              5 Menit!
+              Lapor Sungai Tercemar Cuma 5 Menit!
             </h2>
 
-            <p className="text-slate-600 text-sm sm:text-base leading-relaxed font-medium max-w-xl">
-              Tingkatkan kepedulian lingkungan dan raih penanganan sungai lebih cepat dengan platform GIS profesional. Sistem verifikasi komunitas & geofencing presisi membuat laporan warga terpercaya dan siap direspons langsung oleh Dinas Lingkungan Hidup. Wujudkan aksi nyata penyelamatan sungai hanya dengan satu langkah mudah.
-            </p>
+            <div className="text-slate-600 text-sm sm:text-base leading-relaxed font-medium max-w-xl space-y-3">
+              <p>
+                Bantu jaga sungai dengan teknologi GIS presisi. Potret, laporkan, dan pantau penanganannya oleh Dinas Lingkungan Hidup secara real-time tanpa proses rumit.
+              </p>
+            </div>
 
             <div className="pt-2">
               <a
@@ -47,7 +60,7 @@ export default function FeaturesOverview() {
           <div className="lg:col-span-6 relative w-full perspective-[1200px]">
             <div className="relative grid grid-cols-2 gap-4 [transform:rotateY(-12deg)_rotateX(7deg)_rotateZ(2deg)] sm:[transform:rotateY(-15deg)_rotateX(9deg)_rotateZ(3deg)] hover:[transform:rotateY(-4deg)_rotateX(3deg)_rotateZ(1deg)] transition-transform duration-700 ease-out">
               
-              {/* Card 1: Interactive GIS Map Preview */}
+              {/* Card 1: Live Interactive GIS Map */}
               <div className="col-span-2 rounded-2xl bg-white p-4 shadow-2xl border border-sky-100 backdrop-blur-md transform hover:-translate-y-1 transition-transform">
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-2">
@@ -60,23 +73,8 @@ export default function FeaturesOverview() {
                     Real-Time GIS
                   </span>
                 </div>
-                <div className="relative h-44 w-full rounded-xl overflow-hidden bg-slate-900">
-                  <Image
-                    src="/assets/sungai/Pencemaran Teluk Jakarta oleh Paracetamol.jpg"
-                    alt="Pencemaran Teluk Jakarta"
-                    fill
-                    className="object-cover opacity-85"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A] via-transparent to-transparent" />
-                  <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-white">
-                    <div>
-                      <span className="block text-xs font-bold truncate">Pencemaran Teluk Jakarta</span>
-                      <span className="text-[10px] text-sky-300">Jakarta Utara • Radius 500m</span>
-                    </div>
-                    <span className="px-2.5 py-1 rounded-md bg-rose-500 text-white text-[10px] font-bold shadow">
-                      Terverifikasi 🔴
-                    </span>
-                  </div>
+                <div className="relative h-44 sm:h-52 w-full rounded-xl overflow-hidden shadow-inner border border-slate-200 pointer-events-none select-none">
+                  <RiverGISMap interactive={false} showHeader={false} />
                 </div>
               </div>
 
@@ -87,17 +85,17 @@ export default function FeaturesOverview() {
                   <span>Status GIS Palette</span>
                 </div>
                 <div className="space-y-1.5 text-[10px]">
-                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-slate-50 border border-slate-100">
-                    <span className="font-semibold text-slate-800">Pending 🟠</span>
-                    <span className="text-slate-500">Warga</span>
+                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-rose-50 border border-rose-100">
+                    <span className="font-semibold text-rose-900">Tercemar 🔴</span>
+                    <span className="text-rose-700">Limbah / Bahaya</span>
                   </div>
-                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-blue-50 border border-blue-100">
-                    <span className="font-semibold text-blue-900">Diproses 🔵</span>
-                    <span className="text-blue-700">Dinas DLH</span>
+                  <div className="flex items-center justify-between p-1.5 rounded-lg bg-amber-50 border border-amber-100">
+                    <span className="font-semibold text-amber-900">Banyak Sampah 🟠</span>
+                    <span className="text-amber-700">Plastik / Pemukiman</span>
                   </div>
                   <div className="flex items-center justify-between p-1.5 rounded-lg bg-emerald-50 border border-emerald-100">
-                    <span className="font-semibold text-emerald-900">Selesai 🟢</span>
-                    <span className="text-emerald-700">Closed-Loop</span>
+                    <span className="font-semibold text-emerald-900">Bersih / Selesai 🟢</span>
+                    <span className="text-emerald-700">Normal / Terawat</span>
                   </div>
                 </div>
               </div>
@@ -110,7 +108,7 @@ export default function FeaturesOverview() {
                 </div>
                 <div className="relative h-20 w-full rounded-lg overflow-hidden mb-2">
                   <Image
-                    src="/assets/sungai/20200812-Sungai-Ciliwung-1_ratio-16x9.jpg"
+                    src="/assets/sungai/antarafoto-bantaran-sungai-penuh-sampah-230624-adm-1.jpg"
                     alt="Penumpukan Sampah"
                     fill
                     className="object-cover"
@@ -132,10 +130,10 @@ export default function FeaturesOverview() {
                     Verifikasi Komunitas
                   </span>
                   <span className="text-xs sm:text-sm font-bold block mt-0.5">
-                    Kalkulasi Rumus W = U + (α × S)
+                    Prioritas & Upvote Komunitas
                   </span>
                   <span className="text-[11px] text-sky-100/90 block mt-0.5">
-                    Otomatis eskalasi status ke Dinas DLH
+                    Laporan berdukungan warga otomatis dieskalasi ke Dinas DLH
                   </span>
                 </div>
                 <div className="h-10 w-10 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center flex-shrink-0 border border-white/20">

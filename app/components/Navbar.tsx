@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
-import { ShieldCheck } from "lucide-react";
+import { LogIn } from "lucide-react";
 
 import { usePathname } from "next/navigation";
 
@@ -17,12 +17,13 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
 
   useEffect(() => {
     if (pathname === "/lapor") {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setActiveNav("lapor");
       return;
     }
 
     const handleScroll = () => {
-      const sections = ["beranda", "tentang-kami", "partner", "kontak"];
+      const sections = ["beranda", "tentang-kami", "cara-kerja", "partner", "kontak"];
       const scrollPosition = window.scrollY + 200;
 
       for (const sectionId of sections) {
@@ -45,8 +46,9 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
   const NAV_ITEMS = [
     { id: "beranda", label: "Beranda", href: "/#beranda" },
     { id: "tentang-kami", label: "Tentang Kami", href: "/#tentang-kami" },
+    { id: "cara-kerja", label: "Cara Kerja", href: "/#cara-kerja" },
     { id: "partner", label: "Partner", href: "/#partner" },
-    { id: "laporan-saya", label: "Laporan Saya", href: "/laporan-saya" },
+    { id: "kontak", label: "Kontak", href: "/#kontak" },
     { id: "lapor", label: "Buat Laporan", href: "/lapor" },
   ];
 
@@ -62,7 +64,7 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
           {/* Logo & Brand */}
           <a href="#beranda" className="flex items-center gap-3 cursor-pointer group flex-shrink-0">
             <Image
-              src="/assets/logo.png"
+              src="/assets/logo-new.png"
               alt="RIVERSE Logo"
               width={48}
               height={48}
@@ -71,7 +73,7 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
             />
             <div className="flex flex-col">
               <span className="font-extrabold text-xl tracking-tight text-[#0F172A]">
-                RIVER<span className="text-[#0284C7]">SE</span>
+                RIVERSE
               </span>
             </div>
           </a>
@@ -97,14 +99,13 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
             })}
           </nav>
 
-          {/* Right Action Button: Portal Dinas (Login DLH) */}
+          {/* Right Action Button: Login Portal Dinas */}
           <div className="flex items-center gap-3 flex-shrink-0">
             <a
               href="/dinas"
-              className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-[#0284C7] text-white text-xs font-bold shadow-md shadow-[#0284C7]/20 hover:bg-[#0284C7]/90 transition-all hover:scale-105 active:scale-95"
+              className="flex items-center gap-2 px-5.5 py-2.5 rounded-full bg-[#0284C7] text-white text-xs font-bold shadow-md shadow-[#0284C7]/20 hover:bg-[#0284C7]/90 transition-all hover:scale-105 active:scale-95"
             >
-              <ShieldCheck className="w-4 h-4 text-sky-200" />
-              <span>Portal Dinas</span>
+              <span>Masuk</span>
             </a>
           </div>
 

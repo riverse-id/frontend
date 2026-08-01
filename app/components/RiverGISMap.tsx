@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import React, { useEffect, useState, useRef } from "react";
@@ -422,7 +423,7 @@ const REPORT_MARKERS: ReportMarker[] = [
     lokasi: "Kali Ciliwung - Segmen Manggarai",
     upvotes: 142,
     timeAgo: "10 menit yang lalu",
-    image: "/assets/sungai/Pencemaran Teluk Jakarta oleh Paracetamol.jpg",
+    image: "/assets/sungai/026016200_1633163690-20211002-Pencemaran_Teluk_Jakarta_oleh_Paracetamol-1.jpg",
   },
   {
     id: "rpt-002",
@@ -444,7 +445,7 @@ const REPORT_MARKERS: ReportMarker[] = [
     lokasi: "Kali Cipinang - Segmen Jatinegara",
     upvotes: 210,
     timeAgo: "Dibersihkan kemarin",
-    image: "/assets/sungai/sungai ciliwung bening.jpg",
+    image: "/assets/sungai/_ (1).jpeg",
   },
   {
     id: "rpt-004",
@@ -455,7 +456,7 @@ const REPORT_MARKERS: ReportMarker[] = [
     lokasi: "Kali Pesanggrahan - Segmen Bintaro",
     upvotes: 35,
     timeAgo: "2 jam yang lalu",
-    image: "/assets/sungai/20200812-Sungai-Ciliwung-1_ratio-16x9.jpg",
+    image: "/assets/sungai/pencemaran-teluk-jakarta-9r95-dom.jpg",
   },
   {
     id: "rpt-005",
@@ -517,11 +518,17 @@ const REPORT_STATUS_COLOR: Record<string, { color: string; label: string; badgeB
   },
 };
 
-interface RiverGISMapProps {
+export interface RiverGISMapProps {
   onSelectLocation?: (location: { lat: number; lng: number; riverName: string }) => void;
+  interactive?: boolean;
+  showHeader?: boolean;
 }
 
-export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
+export default function RiverGISMap({
+  onSelectLocation,
+  interactive = true,
+  showHeader = true,
+}: RiverGISMapProps) {
   const mapContainerRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<L.Map | null>(null);
   const geojsonLayerRef = useRef<L.GeoJSON | null>(null);
@@ -659,6 +666,7 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
     if (geojsonLayerRef.current) {
       geojsonLayerRef.current.clearLayers();
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const filteredFeatures = GEOJSON_RIVER_DATA.features.filter((feature: any) => {
         const status = feature.properties?.status;
         if (activeFilter === "semua") return true;
@@ -671,6 +679,7 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
       geojsonLayerRef.current.addData({
         type: "FeatureCollection",
         features: filteredFeatures,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       } as any);
     }
 
@@ -706,13 +715,12 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
 
         const popupHtml = `
           <div class="p-1 max-w-[220px] font-sans">
-            ${
-              spot.image
-                ? `<div class="relative h-24 w-full rounded-xl overflow-hidden mb-2">
+            ${spot.image
+            ? `<div class="relative h-24 w-full rounded-xl overflow-hidden mb-2">
                     <img src="${spot.image}" alt="${spot.judul}" class="w-full h-full object-cover" />
                    </div>`
-                : ""
-            }
+            : ""
+          }
             <div class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-extrabold border ${config.badgeBg} mb-1">
               ${config.label}
             </div>
@@ -779,59 +787,60 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
   };
 
   return (
-    <div className="w-full bg-white rounded-[32px] border border-slate-200/80 shadow-2xl shadow-slate-200/60 overflow-hidden font-sans transition-all">
-      
+    <div className={`w-full h-full bg-white font-sans transition-all ${showHeader ? "rounded-[32px] border border-slate-200/80 shadow-2xl shadow-slate-200/60 overflow-hidden" : ""}`}>
+
       {/* Map Control Header Bar (Clean Light Theme per DESIGN.md) */}
-      <div className="p-5 sm:p-6 bg-white border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
-        
-        {/* Title & Live Status Indicator */}
-        <div className="flex items-center gap-3.5">
-          <div className="w-10 h-10 rounded-2xl bg-sky-50 border border-sky-100 text-[#0284C7] flex items-center justify-center flex-shrink-0 shadow-sm">
-            <MapPin className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-2.5 flex-wrap">
-              <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
-                Peta Status Sungai & Laporan GIS
-              </h3>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200/80 text-[11px] font-semibold">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                Live Vectors
-              </span>
+      {showHeader && (
+        <div className="p-5 sm:p-6 bg-white border-b border-slate-100 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+
+          {/* Title & Live Status Indicator */}
+          <div className="flex items-center gap-3.5">
+            <div>
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <h3 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight">
+                  Peta Status Sungai & Laporan GIS
+                </h3>
+              </div>
+              <p className="text-xs text-slate-500 font-normal mt-0.5">
+                Klik alur sungai atau penanda titik untuk memantau & membuat laporan lokasi presisi.
+              </p>
             </div>
-            <p className="text-xs text-slate-500 font-normal mt-0.5">
-              Klik alur sungai atau penanda titik untuk memantau & membuat laporan lokasi presisi.
-            </p>
           </div>
-        </div>
 
-        {/* Filter Tab Controls (Pills Container) */}
-        <div className="flex items-center gap-1 p-1 rounded-2xl bg-slate-100/90 border border-slate-200/60 overflow-x-auto scrollbar-none self-start lg:self-auto">
-          {[
-            { id: "semua", label: "Semua Data" },
-            { id: "tercemar", label: "Tercemar 🔴" },
-            { id: "sampah", label: "Banyak Sampah 🟠" },
-            { id: "selesai", label: "Bersih / Selesai 🟢" },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveFilter(tab.id)}
-              className={`px-3.5 py-1.5 rounded-xl text-xs font-medium whitespace-nowrap transition-all cursor-pointer ${
-                activeFilter === tab.id
-                  ? "bg-[#0284C7] text-white font-semibold shadow-sm ring-2 ring-[#0284C7]/20"
-                  : "text-slate-600 hover:text-slate-900 hover:bg-white/80"
-              }`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+          {/* Filter Tab Controls (Pills Container) */}
+          <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-slate-100/90 border border-slate-200/80 overflow-x-auto scrollbar-none self-start lg:self-auto shadow-inner">
+            {[
+              { id: "semua", label: "Semua Data", dot: "bg-sky-400" },
+              { id: "tercemar", label: "Tercemar", dot: "bg-rose-500" },
+              { id: "sampah", label: "Banyak Sampah", dot: "bg-amber-500" },
+              { id: "selesai", label: "Bersih / Selesai", dot: "bg-emerald-500" },
+            ].map((tab) => {
+              const isSelected = activeFilter === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setActiveFilter(tab.id)}
+                  className={`relative px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap transition-all duration-200 cursor-pointer flex items-center gap-2 ${
+                    isSelected
+                      ? "bg-[#0284C7] text-white shadow-md shadow-sky-500/20 ring-2 ring-[#0284C7]/30 scale-[1.02]"
+                      : "text-slate-600 hover:text-slate-900 hover:bg-white/90"
+                  }`}
+                >
+                  {isSelected && (
+                    <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                  )}
+                  <span>{tab.label}</span>
+                </button>
+              );
+            })}
+          </div>
 
-      </div>
+        </div>
+      )}
 
       {/* Leaflet Map Canvas Container */}
-      <div className="relative w-full h-[480px] sm:h-[540px] bg-slate-50">
-        
+      <div className={`relative w-full bg-slate-50 ${showHeader ? "h-[480px] sm:h-[540px]" : "h-full"}`}>
+
         {/* Leaflet Container Div */}
         <div ref={mapContainerRef} className="w-full h-full z-0" />
 
@@ -875,7 +884,7 @@ export default function RiverGISMap({ onSelectLocation }: RiverGISMapProps) {
 
       {/* Map Legend Footer Bar (Clean & Minimalist per DESIGN.md) */}
       <div className="p-4 px-6 bg-slate-50/90 border-t border-slate-100 flex flex-col md:flex-row md:items-center justify-between gap-3 text-xs font-medium text-slate-600">
-        
+
         {/* Polyline River Colors Legend */}
         <div className="flex flex-wrap items-center gap-4">
           <span className="font-bold text-slate-900 flex items-center gap-1.5">

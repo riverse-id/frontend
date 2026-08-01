@@ -5,7 +5,6 @@ import {
   Mail,
   Phone,
   MapPin,
-  Clock,
   Send,
   CheckCircle2,
   Copy,
@@ -57,8 +56,11 @@ export default function ContactSection() {
   return (
     <section
       id="kontak"
-      className="relative bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] py-20 lg:py-28 px-4 sm:px-6 lg:px-8 border-t border-sky-100 overflow-hidden"
+      className="relative scroll-mt-24 bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] py-20 lg:py-28 overflow-hidden"
     >
+      {/* Top & Bottom Gradient Fades for Seamless Section Transition */}
+      <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white to-transparent pointer-events-none z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
       {/* Background Glow */}
       <div className="absolute top-1/2 right-0 -translate-y-1/2 w-96 h-96 bg-[#0284C7]/5 rounded-full blur-3xl pointer-events-none" />
 
@@ -80,10 +82,10 @@ export default function ContactSection() {
 
         {/* 2-Column Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
-          
+
           {/* LEFT COLUMN: Contact Cards & Emergency Info (5 Cols) */}
           <div className="lg:col-span-5 space-y-6">
-            
+
             {/* Emergency Callout Card */}
             <div className="relative rounded-3xl p-6 sm:p-7 bg-gradient-to-br from-[#0284C7] via-[#0284C7] to-[#0F172A] text-white shadow-xl overflow-hidden">
               <div className="absolute top-0 right-0 -mr-6 -mt-6 w-32 h-32 rounded-full bg-white/10 blur-xl pointer-events-none" />
@@ -117,59 +119,69 @@ export default function ContactSection() {
               </div>
             </div>
 
-            {/* Official Email Card */}
-            <div className="rounded-3xl p-6 bg-white border border-slate-200/90 shadow-lg shadow-slate-200/40 flex items-center justify-between group hover:border-[#0284C7]/50 transition-all">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center group-hover:bg-[#0284C7] group-hover:text-white transition-colors">
-                  <Mail className="w-6 h-6" />
-                </div>
-                <div>
-                  <span className="block text-xs font-bold text-slate-500 uppercase tracking-wider">Email Resmi</span>
-                  <span className="text-base font-extrabold text-[#0F172A]">kontak@riverse.id</span>
-                </div>
-              </div>
-              <button
-                onClick={handleCopyEmail}
-                className="p-3 rounded-xl bg-slate-100 text-slate-600 hover:bg-[#0284C7]/10 hover:text-[#0284C7] transition-all flex items-center gap-1.5 text-xs font-semibold"
-                title="Salin Email"
-              >
-                {copiedEmail ? (
-                  <>
-                    <Check className="w-4 h-4 text-emerald-600" />
-                    <span className="text-emerald-600 font-bold hidden sm:inline">Tersalin</span>
-                  </>
-                ) : (
-                  <>
-                    <Copy className="w-4 h-4" />
-                    <span className="hidden sm:inline">Salin</span>
-                  </>
-                )}
-              </button>
-            </div>
-
-            {/* Operational Location & System Status */}
-            <div className="rounded-3xl p-6 bg-white border border-slate-200/90 shadow-lg shadow-slate-200/40 space-y-4">
+            {/* Combined Card: Office Address, Official Email & System Status */}
+            <div className="rounded-3xl p-6 sm:p-7 bg-white border border-slate-200/90 shadow-lg shadow-slate-200/40 space-y-5">
+              {/* Office Address */}
               <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#0284C7] flex items-center justify-center flex-shrink-0 mt-0.5">
+                <div className="w-11 h-11 rounded-2xl bg-sky-50 text-[#0284C7] flex items-center justify-center flex-shrink-0 mt-0.5">
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-bold text-[#0F172A]">Kantor & Pusat Komando Spasial</h4>
-                  <p className="text-xs text-slate-600 leading-relaxed mt-1">
-                    Gedung Dinas Lingkungan Hidup & Pusat Data GIS RIVERSE, Jl. Ciliwung No. 45, Jakarta Selatan.
+                  <h4 className="text-sm font-extrabold text-[#0F172A]">Kantor Riverse</h4>
+                  <p className="text-xs text-slate-600 leading-relaxed mt-1 font-medium">
+                    Universitas Amikom Yogyakarta, Jl. Ring Road Utara, Condongcatur, Depok, Sleman, DIY Yogyakarta 55281.
                   </p>
                 </div>
               </div>
 
-              <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2 text-slate-600 font-medium">
-                  <Clock className="w-4 h-4 text-[#0284C7]" />
-                  <span>Sistem GIS Spasial</span>
+              {/* Official Email */}
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-between group">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#0284C7] flex items-center justify-center group-hover:bg-[#0284C7] group-hover:text-white transition-colors flex-shrink-0">
+                    <Mail className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Email Resmi</span>
+                    <span className="text-sm sm:text-base font-extrabold text-[#0F172A]">kontak@riverse.id</span>
+                  </div>
                 </div>
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200">
-                  <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                  Aktif 24/7
-                </span>
+                <button
+                  onClick={handleCopyEmail}
+                  className="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-[#0284C7]/10 hover:text-[#0284C7] transition-all flex items-center gap-1.5 text-xs font-semibold"
+                  title="Salin Email"
+                >
+                  {copiedEmail ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-600" />
+                      <span className="text-emerald-600 font-bold hidden sm:inline">Tersalin</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">Salin</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Office Phone */}
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-between group">
+                <div className="flex items-center gap-3.5">
+                  <div className="w-10 h-10 rounded-xl bg-sky-50 text-[#0284C7] flex items-center justify-center group-hover:bg-[#0284C7] group-hover:text-white transition-colors flex-shrink-0">
+                    <Phone className="w-5 h-5" />
+                  </div>
+                  <div>
+                    <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Telepon Kantor</span>
+                    <span className="text-sm sm:text-base font-extrabold text-[#0F172A]">(0274) 884201</span>
+                  </div>
+                </div>
+                <a
+                  href="tel:+62274884201"
+                  className="px-3 py-2 rounded-xl bg-slate-100 text-slate-600 hover:bg-[#0284C7]/10 hover:text-[#0284C7] transition-all flex items-center gap-1.5 text-xs font-semibold"
+                  title="Panggil Nomor Kantor"
+                >
+                  <span>Panggil</span>
+                </a>
               </div>
             </div>
 

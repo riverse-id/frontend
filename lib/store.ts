@@ -1,4 +1,4 @@
-import { Report, Officer, AuditLog, SystemConfig, ReportStatus } from "./types";
+import { Report, Officer, AuditLog, SystemConfig, ReportStatus, ReportCategory } from "./types";
 
 export const INITIAL_SYSTEM_CONFIG: SystemConfig = {
   globalThreshold: 50,
@@ -218,3 +218,255 @@ export const MOCK_AUDIT_LOGS: AuditLog[] = [
     details: "Vote mencapai 64/50 (+142 Urgency Score). Status otomatis menjadi Terverifikasi 🔴.",
   },
 ];
+
+/**
+ * Calculate distance in meters between two lat/lng coordinates (Haversine Formula)
+ */
+export function calculateDistanceMeters(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const R = 6371e3; // Earth radius in meters
+  const rad = Math.PI / 180;
+  const dLat = (lat2 - lat1) * rad;
+  const dLon = (lon2 - lon1) * rad;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c);
+}
+
+const STORAGE_KEY = "riverse_reports_db_v1";
+
+export function getStoredReports(): Report[] {
+  if (typeof window === "undefined") return MOCK_REPORTS;
+  try {
+    const data = localStorage.getItem(STORAGE_KEY);
+    if (data) {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        const sanitized = parsed.map((r: Report) => ({
+          ...r,
+          beforeImages: (r.beforeImages || []).map((img) =>
+            img.startsWith("blob:") ? "/assets/sungai/Pencemaran Teluk Jakarta oleh Paracetamol.jpg" : img
+          ),
+          afterImage: r.afterImage?.startsWith("blob:")
+            ? "/assets/sungai/sungai ciliwung bening.jpg"
+            : r.afterImage,
+          subReports: (r.subReports || []).map((sub) => ({
+            ...sub,
+            images: (sub.images || []).map((img) =>
+              img.startsWith("blob:") ? "/assets/sungai/Mengerikan! Ini Penampakan Pencemaran Sungai di Jakarta.jpeg" : img
+            ),
+          })),
+        }));
+        return sanitized;
+      }
+    }
+  } catch (e) {
+    console.error("Failed to read stored reports:", e);
+  }
+  return MOCK_REPORTS;
+}
+
+export function saveStoredReports(reports: Report[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(reports));
+    window.dispatchEvent(new Event("riverse_reports_updated"));
+  } catch (e) {
+    console.error("Failed to save reports:", e);
+  }
+}
+
+export interface CreateReportInput {
+  category: ReportCategory;
+  categoryLabel: string;
+  riverName: string;
+  locationDetail: string;
+  description: string;
+  reporterName: string;
+  isAnonymous: boolean;
+  lat: number;
+  lng: number;
+  image?: string;
+  radiusMetersThreshold?: number;
+}
+
+export interface SubmissionResult {
+  isAggregated: boolean;
+  ticketNo: string;
+  report: Report;
+  aggregatedDistanceMeters?: number;
+  message: string;
+}
+
+/**
+ * Submit a Citizen Report with Smart Geofencing Duplicate Aggregation (Radius <= 500m)
+ */
+export function submitCitizenReport(input: CreateReportInput): SubmissionResult {
+  const currentReports = getStoredReports();
+  const radiusLimit = input.radiusMetersThreshold || 500;
+
+  // Find active report within 500 meters radius
+  let nearbyIndex = -1;
+  let minDistance = Infinity;
+
+  currentReports.forEach((r, idx) => {
+    if (r.status === "selesai" || r.status === "ditolak") return;
+    const distance = calculateDistanceMeters(input.lat, input.lng, r.lat, r.lng);
+    if (distance <= radiusLimit && distance < minDistance) {
+      minDistance = distance;
+      nearbyIndex = idx;
+    }
+  });
+
+  const nowFormatted = new Date().toISOString().replace("T", " ").substring(0, 16);
+  const reporterDisplayName = input.isAnonymous ? "Warga Anonim" : input.reporterName.trim() || "Warga Komunitas";
+
+  if (nearbyIndex !== -1) {
+    // -------------------------------------------------------------
+    // DUPLICATE GEOFENCE AGGREGATION DETECTED (Radius <= 500m)
+    // -------------------------------------------------------------
+    const existing = currentReports[nearbyIndex];
+    const distMeters = minDistance;
+
+    const newSubReport = {
+      id: `sub-${Date.now()}`,
+      reporterName: reporterDisplayName,
+      category: input.category,
+      categoryLabel: input.categoryLabel,
+      description: input.description,
+      images: input.image ? [input.image] : ["/assets/sungai/Pencemaran Teluk Jakarta oleh Paracetamol.jpg"],
+      createdAt: new Date().toISOString(),
+      lat: input.lat,
+      lng: input.lng,
+    };
+
+    const updatedBeforeImages = [...existing.beforeImages];
+    if (input.image && !updatedBeforeImages.includes(input.image)) {
+      updatedBeforeImages.push(input.image);
+    }
+
+    const updatedUpvotes = existing.upvotes + 1;
+    const updatedUrgency = existing.urgencyScore + 15;
+    const shouldVerify = updatedUpvotes >= existing.voteThreshold && existing.status === "pending";
+
+    const updatedReport: Report = {
+      ...existing,
+      upvotes: updatedUpvotes,
+      urgencyScore: updatedUrgency,
+      status: shouldVerify ? "terverifikasi" : existing.status,
+      beforeImages: updatedBeforeImages,
+      subReports: [newSubReport, ...(existing.subReports || [])],
+      updatedAt: new Date().toISOString(),
+      timeline: [
+        ...existing.timeline,
+        {
+          status: shouldVerify ? "terverifikasi" : existing.status,
+          label: `Sub-Laporan Komunitas Digabungkan (Radius ${distMeters}m)`,
+          timestamp: nowFormatted,
+          actor: reporterDisplayName,
+          note: input.description,
+        },
+      ],
+    };
+
+    currentReports[nearbyIndex] = updatedReport;
+    saveStoredReports(currentReports);
+
+    return {
+      isAggregated: true,
+      ticketNo: existing.ticketNo,
+      report: updatedReport,
+      aggregatedDistanceMeters: distMeters,
+      message: `Smart Geofencing Radius (${distMeters}m <= 500m): Laporan Anda otomatis digabungkan dengan Tiket Laporan terdekat #${existing.ticketNo}. Bukti foto & jumlah dukungan warga bertambah!`,
+    };
+  } else {
+    // -------------------------------------------------------------
+    // NEW REPORT TICKET CREATION (Distance > 500m)
+    // -------------------------------------------------------------
+    const newTicketNo = `DLH-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
+    const newReport: Report = {
+      id: `rpt-${Date.now()}`,
+      ticketNo: newTicketNo,
+      riverName: input.riverName,
+      region: "DKI Jakarta & Sekitar",
+      category: input.category,
+      categoryLabel: input.categoryLabel,
+      locationDetail: input.locationDetail || "Bantaran Sungai",
+      lat: input.lat,
+      lng: input.lng,
+      description: input.description,
+      reporterName: reporterDisplayName,
+      isAnonymous: input.isAnonymous,
+      upvotes: 1,
+      voteThreshold: 50,
+      urgencyScore: 10,
+      status: "pending",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      beforeImages: input.image ? [input.image] : ["/assets/sungai/Mengerikan! Ini Penampakan Pencemaran Sungai di Jakarta.jpeg"],
+      subReports: [],
+      timeline: [
+        {
+          status: "pending",
+          label: "Laporan Dibuat Warga (Mengumpulkan Vote)",
+          timestamp: nowFormatted,
+          actor: reporterDisplayName,
+        },
+      ],
+    };
+
+    const newReportsList = [newReport, ...currentReports];
+    saveStoredReports(newReportsList);
+
+    return {
+      isAggregated: false,
+      ticketNo: newTicketNo,
+      report: newReport,
+      message: `Laporan baru berhasil terdaftar di peta spasial RIVERSE dengan nomor tiket ${newTicketNo}.`,
+    };
+  }
+}
+
+/**
+ * Vote on a report (+1 upvote)
+ */
+export function voteReport(reportId: string): Report | null {
+  const currentReports = getStoredReports();
+  const index = currentReports.findIndex((r) => r.id === reportId);
+  if (index === -1) return null;
+
+  const r = currentReports[index];
+  const newUpvotes = r.upvotes + 1;
+  const newUrgency = r.urgencyScore + 2;
+  const shouldVerify = newUpvotes >= r.voteThreshold && r.status === "pending";
+  const nowFormatted = new Date().toISOString().replace("T", " ").substring(0, 16);
+
+  const updated: Report = {
+    ...r,
+    upvotes: newUpvotes,
+    urgencyScore: newUrgency,
+    status: shouldVerify ? "terverifikasi" : r.status,
+    updatedAt: new Date().toISOString(),
+    timeline: shouldVerify
+      ? [
+          ...r.timeline,
+          {
+            status: "terverifikasi",
+            label: "Mencapai Threshold (Auto Verifikasi DLH)",
+            timestamp: nowFormatted,
+            actor: "Sistem Otomatis Spasial",
+          },
+        ]
+      : r.timeline,
+  };
+
+  currentReports[index] = updated;
+  saveStoredReports(currentReports);
+  return updated;
+}

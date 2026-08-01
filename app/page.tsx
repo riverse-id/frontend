@@ -6,7 +6,7 @@ import EcosystemSection from "./components/EcosystemSection";
 import PartnerSection from "./components/PartnerSection";
 import ContactSection from "./components/ContactSection";
 import Image from "next/image";
-import { MapPin, ShieldCheck, Mail } from "lucide-react";
+import { ArrowRight, MapPin, ShieldCheck, Mail } from "lucide-react";
 import Footer from "./components/Footer";
 
 export default function Home() {
@@ -30,40 +30,37 @@ export default function Home() {
       {/* 6. Contact & Emergency Callout Section ("Kontak") */}
       <ContactSection />
 
-      {/* 7. Interactive Map CTA Banner */}
-      <section id="peta-gis" className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-[#0F172A] via-[#1E293B] to-[#0284C7] text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(56,189,248,0.25),transparent_50%)] pointer-events-none" />
+      {/* 7. CTA Ajakan Lapor Sekarang */}
+      <section id="lapor-cta" className="py-16 sm:py-20 bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] relative overflow-hidden">
+        {/* Top & Bottom Gradient Fades for Seamless Section Transition */}
+        <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white to-transparent pointer-events-none z-10" />
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
 
-        <div className="max-w-7xl mx-auto relative z-10 flex flex-col md:flex-row items-center justify-between gap-10">
-          <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0284C7]/30 border border-sky-400/40 text-sky-200 text-xs font-semibold uppercase tracking-wider mb-4">
-              <MapPin className="w-3.5 h-3.5" />
-              Sistem Informasi Geografis Real-Time
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20">
+          <div className="rounded-[36px] sm:rounded-[44px] bg-gradient-to-br from-sky-50 via-[#F0F9FF] to-sky-100/70 p-8 sm:p-12 lg:p-14 flex flex-col md:flex-row items-start md:items-center justify-between gap-8 shadow-xl shadow-sky-100/60 border border-sky-200/90 relative overflow-hidden">
+            
+            {/* Background Ambient Glow */}
+            <div className="absolute -top-24 -right-24 w-72 h-72 bg-[#0284C7]/10 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="max-w-2xl relative z-10">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-[#0F172A] tracking-tight leading-tight">
+                Lihat Pencemaran Sungai? <br className="hidden sm:block" />
+                <span className="text-[#0284C7]">Laporkan Sekarang!</span>
+              </h2>
+              <p className="mt-3 sm:mt-4 text-sm sm:text-base text-slate-600 font-medium leading-relaxed">
+                Bantu jaga kelestarian sungai di wilayah Anda. Unggah lokasi presisi & foto untuk penanganan cepat oleh tim DLH dan komunitas.
+              </p>
             </div>
-            <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight">
-              Jelajahi Peta Kondisi Sungai <br />
-              <span className="text-[#38BDF8]">Di Wilayah Anda Hari Ini</span>
-            </h2>
-            <p className="mt-4 text-sm sm:text-base text-sky-100/90 leading-relaxed">
-              Pantau titik ketercemaran, berikan dukungan upvote pada laporan terdekat, atau unggah laporan pencemaran sungai baru secara presisi dengan smart geofencing.
-            </p>
-          </div>
 
-          <div className="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
-            <a
-              href="/lapor"
-              className="flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-gradient-to-r from-[#0284C7] to-[#38BDF8] text-white font-bold text-sm shadow-xl shadow-[#0284C7]/30 hover:brightness-110 transition-all hover:scale-105 active:scale-95"
-            >
-              <MapPin className="w-5 h-5 text-white" />
-              <span>Buka Peta GIS</span>
-            </a>
-            <a
-              href="/lapor"
-              className="flex items-center justify-center gap-2.5 px-7 py-4 rounded-2xl bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold text-sm hover:bg-white/20 transition-all hover:scale-105 active:scale-95"
-            >
-              <ShieldCheck className="w-5 h-5 text-sky-300" />
-              <span>Buat Laporan Warga</span>
-            </a>
+            <div className="flex-shrink-0 w-full md:w-auto relative z-10">
+              <a
+                href="/lapor"
+                className="inline-flex items-center justify-center w-full md:w-auto px-8 py-4 rounded-full bg-[#0284C7] text-white font-extrabold text-base shadow-xl shadow-[#0284C7]/25 hover:bg-[#0369A1] transition-all hover:scale-105 active:scale-95 gap-2.5"
+              >
+                <span>Lapor Sekarang</span>
+                <ArrowRight className="w-5 h-5 text-white" />
+              </a>
+            </div>
           </div>
         </div>
       </section>

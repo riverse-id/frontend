@@ -10,7 +10,7 @@ export default function Footer() {
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-white/10 p-1 flex items-center justify-center">
               <Image
-                src="/assets/logo.png"
+                src="/assets/logo-new.png"
                 alt="RIVERSE Logo"
                 width={36}
                 height={36}
@@ -18,7 +18,7 @@ export default function Footer() {
               />
             </div>
             <span className="text-white font-extrabold tracking-tight text-xl">
-              RIVER<span className="text-[#38BDF8]">SE</span>
+              RIVERSE
             </span>
           </div>
           <p className="text-xs text-slate-400 leading-relaxed">
@@ -33,7 +33,7 @@ export default function Footer() {
           <div className="flex flex-col gap-2 text-xs">
             <a href="/" className="hover:text-white transition-colors">Beranda</a>
             <a href="/#tentang-kami" className="hover:text-white transition-colors">Tentang Kami</a>
-            <a href="/#ekosistem" className="hover:text-white transition-colors">Ekosistem Tata Kelola</a>
+            <a href="/#cara-kerja" className="hover:text-white transition-colors">Cara Kerja</a>
             <a href="/#partner" className="hover:text-white transition-colors">Partner & Kolaborasi</a>
             <a href="/lapor" className="hover:text-white transition-colors">Buat Laporan Warga</a>
           </div>

@@ -21,11 +21,24 @@ import {
   RefreshCw,
   Clock,
   UserCheck,
+  PlusCircle,
   X,
-  PlusCircle
+  ThumbsUp,
+  Layers,
+  ChevronRight,
+  Search,
+  Filter
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import ReportDetailModal from "../components/ReportDetailModal";
+import {
+  submitCitizenReport,
+  voteReport,
+  getStoredReports,
+  SubmissionResult
+} from "../../lib/store";
+import { Report, ReportCategory } from "../../lib/types";
 import dynamic from "next/dynamic";
 
 const RiverGISMap = dynamic(() => import("../components/RiverGISMap"), {
@@ -100,6 +113,29 @@ export default function LaporPage() {
   const [ticketNumber, setTicketNumber] = useState("");
   const [showFormModal, setShowFormModal] = useState(false);
 
+  // Reports & Geofence Submission States
+  const [reports, setReports] = useState<Report[]>([]);
+  const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
+  const [selectedDetailReport, setSelectedDetailReport] = useState<Report | null>(null);
+
+  // Sync with store & localStorage
+  React.useEffect(() => {
+    setReports(getStoredReports());
+    const handleUpdate = () => setReports(getStoredReports());
+    window.addEventListener("riverse_reports_updated", handleUpdate);
+    return () => window.removeEventListener("riverse_reports_updated", handleUpdate);
+  }, []);
+
+  const handleVote = (reportId: string) => {
+    const updated = voteReport(reportId);
+    if (updated) {
+      setReports(getStoredReports());
+      if (selectedDetailReport && selectedDetailReport.id === reportId) {
+        setSelectedDetailReport(updated);
+      }
+    }
+  };
+
   // Handle GPS Auto Locate
   const handleGetLocation = () => {
     setIsLocating(true);
@@ -113,12 +149,12 @@ export default function LaporPage() {
         },
         () => {
           // Fallback simulation if denied or mock
-          setGpsLocation("-6.2088, 106.8456 (Sesuai Peta GIS)");
+          setGpsLocation("-6.2352, 106.8543 (Sesuai Peta GIS)");
           setIsLocating(false);
         }
       );
     } else {
-      setGpsLocation("-6.2088, 106.8456 (Sesuai Peta GIS)");
+      setGpsLocation("-6.2352, 106.8543 (Sesuai Peta GIS)");
       setIsLocating(false);
     }
   };
@@ -130,30 +166,65 @@ export default function LaporPage() {
     setShowFormModal(true);
   };
 
-  // Handle Photo Upload Simulation
+  // Handle Photo Upload Simulation (Persistent Base64 Data URL)
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const url = URL.createObjectURL(file);
-      setPreviewImage(url);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (typeof reader.result === "string") {
+          setPreviewImage(reader.result);
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  // Handle Form Submission
+  // Handle Form Submission with 500m Geofencing
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
+
+    let targetLat = -6.235;
+    let targetLng = 106.854;
+
+    if (gpsLocation) {
+      const match = gpsLocation.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
+      if (match) {
+        targetLat = parseFloat(match[1]);
+        targetLng = parseFloat(match[2]);
+      }
+    }
+
+    const selectedCatObj = POLLUTION_CATEGORIES.find((c) => c.id === category);
+    const categoryLabel = selectedCatObj ? selectedCatObj.title : "Pencemaran Sungai";
+
     setTimeout(() => {
-      const randomTicket = `RVR-${new Date().getFullYear()}-${Math.floor(10000 + Math.random() * 90000)}`;
-      setTicketNumber(randomTicket);
+      const result = submitCitizenReport({
+        category: category as ReportCategory,
+        categoryLabel,
+        riverName: riverSegment,
+        locationDetail: address || riverSegment,
+        description,
+        reporterName,
+        isAnonymous,
+        lat: targetLat,
+        lng: targetLng,
+        image: previewImage || undefined,
+        radiusMetersThreshold: 500,
+      });
+
+      setSubmissionResult(result);
+      setTicketNumber(result.ticketNo);
+      setReports(getStoredReports());
       setIsSubmitting(false);
       setIsSubmitted(true);
-    }, 1200);
+    }, 1000);
   };
 
   const handleReset = () => {
     setIsSubmitted(false);
+    setSubmissionResult(null);
     setCategory("sampah");
     setDescription("");
     setAddress("");
@@ -266,13 +337,121 @@ export default function LaporPage() {
           onClick={() => setShowFormModal(true)}
           className="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-[#0284C7] text-white text-base font-extrabold shadow-xl shadow-[#0284C7]/30 hover:bg-[#0284C7]/90 transition-all hover:scale-105 active:scale-95 cursor-pointer"
         >
-          <PlusCircle className="w-5 h-5" />
           <span>Buat Laporan Baru Sekarang</span>
         </button>
         <p className="text-xs text-slate-500 font-medium mt-2">
           Atau klik salah satu titik penanda di peta untuk langsung mengisi laporan spasial.
         </p>
       </div>
+
+      {/* ============================================================ */}
+      {/* COMMUNITY LIVE REPORTS & VOTING SECTION                      */}
+      {/* ============================================================ */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 relative z-20">
+        <div className="bg-white rounded-[32px] border border-slate-200/90 p-6 sm:p-10 shadow-xl shadow-slate-200/50">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-100">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 text-[#0284C7] border border-sky-200/80 text-[10px] font-extrabold uppercase tracking-wider mb-2">
+                Real-Time Community Voting & Sub-Reports
+              </div>
+              <h2 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                Dukung & Pantau Laporan Warga
+              </h2>
+              <p className="text-xs text-slate-500 font-medium mt-1">
+                Dukungan warga mempercepat verifikasi & penanganan langsung oleh Dinas Lingkungan Hidup.
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
+                Total Laporan: {reports.length}
+              </span>
+            </div>
+          </div>
+
+          {/* Reports Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {reports.map((rpt) => {
+              const subCount = rpt.subReports?.length || 0;
+              return (
+                <div
+                  key={rpt.id}
+                  className="bg-slate-50/70 hover:bg-white rounded-2xl border border-slate-200/90 p-5 transition-all hover:shadow-lg hover:border-sky-300 flex flex-col justify-between"
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-2 mb-3">
+                      <span className="font-mono text-[11px] font-bold text-[#0284C7] bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-200">
+                        #{rpt.ticketNo}
+                      </span>
+                      <span
+                        className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border uppercase tracking-wider ${
+                          rpt.status === "terverifikasi"
+                            ? "bg-rose-50 text-rose-700 border-rose-200"
+                            : rpt.status === "diproses"
+                            ? "bg-sky-50 text-sky-700 border-sky-200"
+                            : rpt.status === "selesai"
+                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                            : "bg-amber-50 text-amber-700 border-amber-200"
+                        }`}
+                      >
+                        {rpt.status}
+                      </span>
+                    </div>
+
+                    <h3 className="font-bold text-sm text-slate-900 leading-snug mb-1">
+                      {rpt.riverName}
+                    </h3>
+                    <p className="text-xs text-slate-500 font-medium mb-3 line-clamp-2">
+                      {rpt.description}
+                    </p>
+
+                    {/* Meta info tags */}
+                    <div className="flex flex-wrap items-center gap-2 mb-4 text-[11px] text-slate-600 font-medium">
+                      <span className="bg-white px-2.5 py-1 rounded-lg border border-slate-200">
+                        {rpt.locationDetail}
+                      </span>
+                      {subCount > 0 && (
+                        <span className="bg-sky-50 text-[#0284C7] px-2.5 py-1 rounded-lg border border-sky-200 font-bold">
+                          💬 {subCount} Sub-Laporan
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Actions & Voting Bar */}
+                  <div className="pt-3 border-t border-slate-200/80 flex items-center justify-between gap-3">
+                    <button
+                      onClick={() => handleVote(rpt.id)}
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold transition-all shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
+                    >
+                      <ThumbsUp className="w-3.5 h-3.5" />
+                      <span>Dukung (+1 Vote)</span>
+                      <span className="ml-1 px-1.5 py-0.5 rounded-md bg-white/20 text-[10px]">
+                        {rpt.upvotes}
+                      </span>
+                    </button>
+
+                    <button
+                      onClick={() => setSelectedDetailReport(rpt)}
+                      className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+                    >
+                      <span>Detail & Sub-Laporan</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Detail Modal Dialog */}
+      <ReportDetailModal
+        report={selectedDetailReport}
+        onClose={() => setSelectedDetailReport(null)}
+        onVote={handleVote}
+      />
 
       {/* ============================================================ */}
       {/* MODAL DIALOG REPORTING FORM OVERLAY                           */}
@@ -284,9 +463,6 @@ export default function LaporPage() {
             {/* Modal Header Bar (Clean Light Theme per DESIGN.md) */}
             <div className="p-6 sm:p-7 bg-white border-b border-slate-100 flex items-center justify-between flex-shrink-0">
               <div className="flex items-center gap-3.5">
-                <div className="w-11 h-11 rounded-2xl bg-sky-50 border border-sky-100 text-[#0284C7] flex items-center justify-center flex-shrink-0 shadow-xs">
-                  <PlusCircle className="w-5 h-5" />
-                </div>
                 <div>
                   <h3 className="text-base sm:text-xl font-bold text-slate-900 tracking-tight">Formulir Pelaporan Pencemaran Sungai</h3>
                   <p className="text-xs text-slate-500 font-medium">Isi detail kejadian pencemaran secara presisi untuk verifikasi komunitas & DLH</p>
@@ -306,50 +482,103 @@ export default function LaporPage() {
               {isSubmitted ? (
                 /* SUCCESS SUBMISSION CARD */
                 <div className="bg-white rounded-3xl p-6 sm:p-8 border border-sky-100 shadow-xl shadow-sky-900/5 text-center max-w-2xl mx-auto animate-in fade-in zoom-in duration-300">
-                  <div className="h-20 w-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
-                    <CheckCircle2 className="w-10 h-10" />
-                  </div>
-
-                  <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold tracking-wide mb-3">
-                    Tiket Pelaporan Resmi
-                  </div>
-                  
-                  <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                    Laporan Berhasil Terkirim!
-                  </h2>
-                  
-                  <p className="mt-2 text-sm text-slate-600 max-w-md mx-auto">
-                    Terima kasih telah berkontribusi menjaga kebersihan sungai. Laporan Anda telah tersimpan di basis data spasial RIVERSE.
-                  </p>
-
-                  {/* Ticket Card Box */}
-                  <div className="my-6 p-6 rounded-2xl bg-sky-50/80 border border-sky-200 text-left max-w-md mx-auto">
-                    <div className="flex justify-between items-center pb-3 border-b border-sky-200/80">
-                      <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">No. Tiket Spasial</span>
-                      <span className="font-mono font-extrabold text-base text-[#0284C7] bg-white px-3 py-1 rounded-lg border border-sky-200 shadow-xs">
-                        {ticketNumber}
-                      </span>
-                    </div>
-
-                    <div className="mt-4 space-y-2 text-xs text-slate-600">
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Status Awal:</span>
-                        <span className="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
-                          Menunggu Verifikasi DLH
-                        </span>
+                  {submissionResult?.isAggregated ? (
+                    <>
+                      <div className="h-20 w-20 bg-sky-100 text-[#0284C7] rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner border-2 border-sky-200">
+                        <MapPin className="w-10 h-10 animate-bounce" />
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Segmen Sungai:</span>
-                        <span className="font-semibold text-slate-800">{riverSegment}</span>
+
+                      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-sky-100 text-[#0284C7] text-xs font-extrabold tracking-wide mb-3 border border-sky-200">
+                        ⚡ Smart Geofencing Radius ({submissionResult.aggregatedDistanceMeters}m ≤ 500m)
                       </div>
-                      <div className="flex justify-between">
-                        <span className="text-slate-500">Identitas Pelapor:</span>
-                        <span className="font-semibold text-slate-800">
-                          {isAnonymous ? "Anonim (Privasi Terjaga)" : reporterName || "Anonim"}
-                        </span>
+                      
+                      <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                        Laporan Otomatis Digabungkan!
+                      </h2>
+                      
+                      <p className="mt-2 text-xs sm:text-sm text-slate-600 max-w-md mx-auto leading-relaxed">
+                        Sistem Spasial RIVERSE mendeteksi laporan aktif pada lokasi yang sama dalam radius <strong>{submissionResult.aggregatedDistanceMeters} meter</strong>. Laporan Anda berhasil ditambahkan ke Tiket Utama <strong>#{ticketNumber}</strong> sebagai <strong>Sub-Laporan Komunitas</strong> (+1 Dukungan Warga & foto bukti baru).
+                      </p>
+
+                      {/* Ticket Card Box */}
+                      <div className="my-6 p-6 rounded-2xl bg-sky-50/80 border border-sky-200 text-left max-w-md mx-auto shadow-xs">
+                        <div className="flex justify-between items-center pb-3 border-b border-sky-200/80">
+                          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Tiket Utama Komando</span>
+                          <span className="font-mono font-extrabold text-base text-[#0284C7] bg-white px-3 py-1 rounded-lg border border-sky-200 shadow-xs">
+                            #{ticketNumber}
+                          </span>
+                        </div>
+
+                        <div className="mt-4 space-y-2 text-xs text-slate-600">
+                          <div className="flex justify-between">
+                            <span className="text-slate-500">Status Penanganan:</span>
+                            <span className="font-bold text-sky-700 bg-sky-100 px-2 py-0.5 rounded border border-sky-200 capitalize">
+                              {submissionResult.report.status}
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-500">Total Dukungan Warga:</span>
+                            <span className="font-bold text-slate-800">
+                              👍 {submissionResult.report.upvotes} Votes
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-500">Sub-Laporan Komunitas:</span>
+                            <span className="font-bold text-[#0284C7]">
+                              {submissionResult.report.subReports?.length || 1} Sub-Laporan Ditambahkan
+                            </span>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </div>
+                    </>
+                  ) : (
+                    <>
+                      <div className="h-20 w-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6 shadow-inner">
+                        <CheckCircle2 className="w-10 h-10" />
+                      </div>
+
+                      <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold tracking-wide mb-3">
+                        Tiket Pelaporan Resmi
+                      </div>
+                      
+                      <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+                        Laporan Berhasil Terkirim!
+                      </h2>
+                      
+                      <p className="mt-2 text-sm text-slate-600 max-w-md mx-auto">
+                        Terima kasih telah berkontribusi menjaga kebersihan sungai. Laporan Anda telah tersimpan di basis data spasial RIVERSE.
+                      </p>
+
+                      {/* Ticket Card Box */}
+                      <div className="my-6 p-6 rounded-2xl bg-sky-50/80 border border-sky-200 text-left max-w-md mx-auto">
+                        <div className="flex justify-between items-center pb-3 border-b border-sky-200/80">
+                          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">No. Tiket Spasial</span>
+                          <span className="font-mono font-extrabold text-base text-[#0284C7] bg-white px-3 py-1 rounded-lg border border-sky-200 shadow-xs">
+                            {ticketNumber}
+                          </span>
+                        </div>
+
+                        <div className="mt-4 space-y-2 text-xs text-slate-600">
+                          <div className="flex justify-between">
+                            <span className="text-slate-500">Status Awal:</span>
+                            <span className="font-bold text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+                              Menunggu Verifikasi DLH
+                            </span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-500">Segmen Sungai:</span>
+                            <span className="font-semibold text-slate-800">{riverSegment}</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-slate-500">Identitas Pelapor:</span>
+                            <span className="font-semibold text-slate-800">
+                              {isAnonymous ? "Anonim (Privasi Terjaga)" : reporterName || "Anonim"}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </>
+                  )}
 
                   <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                     <button

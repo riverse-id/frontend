@@ -279,7 +279,7 @@ export default function ScrollIntroHero() {
             <div className="absolute -inset-8 rounded-full bg-gradient-to-r from-[#0284C7]/25 via-[#38BDF8]/35 to-sky-200/40 opacity-70 blur-3xl animate-pulse" />
             <div className="relative h-36 w-36 md:h-48 md:w-48 flex items-center justify-center">
               <Image
-                src="/assets/logo.png"
+                src="/assets/logo-new.png"
                 alt="RIVERSE Logo"
                 width={200}
                 height={200}

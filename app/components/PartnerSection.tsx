@@ -1,17 +1,23 @@
 "use client";
 
 import React, { useState } from "react";
+import Image from "next/image";
 import { Handshake } from "lucide-react";
 
-const PARTNERS = [
-  { name: "Dinas LH DKI", role: "Integrasi Eskalasi Official", badge: "DLH" },
-  { name: "PostGIS Spasial", role: "Spatial Indexing Database", badge: "GIS" },
-  { name: "Komunitas Ciliwung", role: "Relawan Verifikasi Lapangan", badge: "NGO" },
-  { name: "EcoGIS Indonesia", role: "Peta Topografi Precision", badge: "MAP" },
-  { name: "Kementerian LHK", role: "Pengawasan Mutu Air", badge: "GOV" },
-  { name: "BMKG Hydro", role: "Sensor Telemetri Hujan", badge: "IOT" },
-  { name: "UNICEF Indonesia", role: "Sanitasi Pemukiman Sungai", badge: "ORG" },
-  { name: "Clean Rivers ID", role: "Teknologi Filter Limbah", badge: "ECO" },
+const PARTNER_LOGOS = [
+  { name: "Kementerian LHK", src: "/assets/Logo Partner/Lambang_Kementerian_Lingkungan_Hidup_dan_Kehutanan.png" },
+  { name: "PPLI", src: "/assets/Logo Partner/Logo-Prasadha-Pamunah-Limbah-Industri-PPLI.png" },
+  { name: "BMKG", src: "/assets/Logo Partner/bmkg-seeklogo.png" },
+  { name: "Indofood", src: "/assets/Logo Partner/indofood-seeklogo.png" },
+  { name: "PAM Jaya", src: "/assets/Logo Partner/pam-jaya-logo.webp" },
+  { name: "Pertamina", src: "/assets/Logo Partner/pertamina-seeklogo.png" },
+  { name: "PLN", src: "/assets/Logo Partner/pln-2016-seeklogo.png" },
+  { name: "Unilever", src: "/assets/Logo Partner/unilever-seeklogo.png" },
+  { name: "Kementerian Kehutanan", src: "/assets/Logo Partner/kementerian-kehutanan-republik-indonesia-seeklogo_2.png" },
+  { name: "Mitra Eco 1", src: "/assets/Logo Partner/1744836430483.jpeg" },
+  { name: "Mitra Eco 2", src: "/assets/Logo Partner/c477faf31570b9a034a24624af14d10a.png" },
+  { name: "Mitra Eco 3", src: "/assets/Logo Partner/images (1).jpeg" },
+  { name: "Greenpeace", src: "/assets/Logo Partner/Greenpeace-logo.png" }
 ];
 
 export default function PartnerSection() {
@@ -19,25 +25,28 @@ export default function PartnerSection() {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   // Duplicate list to achieve 100% seamless infinite looping ticker
-  const doublePartners = [...PARTNERS, ...PARTNERS];
+  const doublePartners = [...PARTNER_LOGOS, ...PARTNER_LOGOS];
 
   return (
-    <section id="partner" className="py-20 bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] border-t border-sky-100 relative overflow-hidden">
+    <section id="partner" className="scroll-mt-24 py-20 lg:py-28 bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] relative overflow-hidden">
+      {/* Top & Bottom Gradient Fades for Seamless Section Transition */}
+      <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white to-transparent pointer-events-none z-10" />
+      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 mb-12">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0284C7]/10 text-[#0284C7] text-xs font-bold uppercase tracking-wider mb-4 border border-[#0284C7]/20">
           <Handshake className="w-4 h-4" /> Partner & Kolaborasi Institusi
         </div>
         <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight">
-          Dipercaya Oleh Instansi Lingkungan & Komunitas Sungai
+          Kolaborasi Strategis untuk Kelestarian Sungai
         </h2>
         <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-xl mx-auto font-medium">
-          Terhubung langsung dengan Dinas Lingkungan Hidup (DLH), komunitas peduli sungai, dan penyedia peta GIS profesional.
+          Bermitra dengan instansi pemerintah, BUMN, dan komunitas lokal untuk mewujudkan ekosistem sungai yang bersih.
         </p>
       </div>
 
       {/* Marquee Outer Track Wrapper with Fade Edge Gradient Shadows */}
       <div
-        className="relative w-full overflow-hidden py-4"
+        className="relative w-full overflow-hidden py-8 sm:py-10"
         onMouseEnter={() => setIsPaused(true)}
         onMouseLeave={() => {
           setIsPaused(false);
@@ -50,9 +59,9 @@ export default function PartnerSection() {
 
         {/* Continuous Moving Marquee Track */}
         <div
-          className="flex gap-6 w-max"
+          className="flex items-center gap-12 sm:gap-16 w-max"
           style={{
-            animation: "partnerMarquee 28s linear infinite",
+            animation: "partnerMarquee 36s linear infinite",
             animationPlayState: isPaused ? "paused" : "running",
           }}
         >
@@ -62,27 +71,24 @@ export default function PartnerSection() {
               <div
                 key={idx}
                 onMouseEnter={() => setHoveredIndex(idx)}
-                className={`flex flex-col items-center justify-center px-8 py-5 rounded-2xl border transition-all duration-300 cursor-pointer min-w-[240px] select-none ${
-                  isHovered
-                    ? "bg-white border-[#0284C7] shadow-xl shadow-[#0284C7]/20 scale-105 -translate-y-1 z-30 ring-2 ring-[#0284C7]/30"
-                    : "bg-slate-50/90 border-slate-200/80 shadow-sm hover:border-sky-300 opacity-90"
+                className={`relative flex items-center justify-center transition-all duration-300 cursor-pointer w-[150px] sm:w-[180px] h-[75px] sm:h-[88px] select-none ${
+                  isHovered ? "scale-108 z-30" : "opacity-85 hover:opacity-100"
                 }`}
               >
-                <div className="flex items-center gap-3">
-                  <div
-                    className={`h-8 w-8 rounded-lg flex items-center justify-center font-bold text-xs transition-colors ${
-                      isHovered ? "bg-[#0284C7] text-white" : "bg-sky-100 text-[#0284C7]"
-                    }`}
-                  >
-                    {partner.badge}
-                  </div>
-                  <span className="font-extrabold text-base text-slate-800 tracking-tight">
-                    {partner.name}
-                  </span>
-                </div>
-                <span className="text-xs text-sky-600 font-semibold mt-1.5">
-                  {partner.role}
-                </span>
+                {/* Soft Subtle Blue Ambient Glow Backdrop */}
+                <div
+                  className={`absolute inset-2 bg-[#0284C7]/12 rounded-full blur-md pointer-events-none transition-all duration-300 ${
+                    isHovered ? "opacity-100 scale-105" : "opacity-0 scale-75"
+                  }`}
+                />
+
+                <Image
+                  src={partner.src}
+                  alt={partner.name}
+                  fill
+                  sizes="180px"
+                  className="object-contain mix-blend-multiply transition-transform duration-300 relative z-10"
+                />
               </div>
             );
           })}

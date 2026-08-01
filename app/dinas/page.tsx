@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import {
@@ -10,6 +10,8 @@ import {
   Truck,
   History,
   LogOut,
+  LogIn,
+  Lock,
   Search,
   Bell,
   User,
@@ -35,10 +37,11 @@ import {
   Ban,
   Clock,
   ThumbsUp,
-  FileCheck
+  FileCheck,
+  ArrowLeft
 } from "lucide-react";
 import dynamic from "next/dynamic";
-import { INITIAL_OFFICERS, MOCK_REPORTS, MOCK_AUDIT_LOGS, INITIAL_SYSTEM_CONFIG } from "../../lib/store";
+import { INITIAL_OFFICERS, MOCK_REPORTS, MOCK_AUDIT_LOGS, INITIAL_SYSTEM_CONFIG, getStoredReports, saveStoredReports } from "../../lib/store";
 import { Report, Officer, AuditLog, SystemConfig, OfficerRole, ReportStatus } from "../../lib/types";
 
 const RiverGISMap = dynamic(() => import("../components/RiverGISMap"), {
@@ -51,11 +54,57 @@ const RiverGISMap = dynamic(() => import("../components/RiverGISMap"), {
 });
 
 export default function DinasDashboard() {
+  // Authentication State
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [nipInput, setNipInput] = useState<string>("19880512 201201 1 004");
+  const [passwordInput, setPasswordInput] = useState<string>("••••••••");
+  const [loginError, setLoginError] = useState<string | null>(null);
+  const [isAuthenticating, setIsAuthenticating] = useState<boolean>(false);
+
+  const handleLoginSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!nipInput.trim() || !passwordInput.trim()) {
+      setLoginError("Silakan masukkan NIP / ID Petugas dan kata sandi.");
+      return;
+    }
+    setIsAuthenticating(true);
+    setLoginError(null);
+    setTimeout(() => {
+      setIsAuthenticating(false);
+      setIsLoggedIn(true);
+    }, 500);
+  };
+
+  const handleQuickAdminFill = () => {
+    setNipInput("19880512 201201 1 004");
+    setPasswordInput("••••••••");
+    setCurrentRole("super_admin");
+    setLoginError(null);
+    setIsAuthenticating(true);
+    setTimeout(() => {
+      setIsAuthenticating(false);
+      setIsLoggedIn(true);
+    }, 600);
+  };
+
   const [activeNav, setActiveNav] = useState<string>("dashboard");
-  const [reports, setReports] = useState<Report[]>(MOCK_REPORTS);
+  const [reports, setReports] = useState<Report[]>([]);
   const [officers, setOfficers] = useState<Officer[]>(INITIAL_OFFICERS);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(MOCK_AUDIT_LOGS);
   const [systemConfig, setSystemConfig] = useState<SystemConfig>(INITIAL_SYSTEM_CONFIG);
+
+  // Sync reports with local store
+  useEffect(() => {
+    setReports(getStoredReports());
+    const handleUpdate = () => setReports(getStoredReports());
+    window.addEventListener("riverse_reports_updated", handleUpdate);
+    return () => window.removeEventListener("riverse_reports_updated", handleUpdate);
+  }, []);
+
+  const updateAndSaveReports = (newReports: Report[]) => {
+    setReports(newReports);
+    saveStoredReports(newReports);
+  };
 
   // Role Management State
   const [currentRole, setCurrentRole] = useState<OfficerRole>("super_admin");
@@ -118,22 +167,22 @@ export default function DinasDashboard() {
         actor: assignedOff ? assignedOff.name : "Petugas DLH",
       };
 
-      setReports((prev) =>
-        prev.map((item) =>
-          item.id === selectedReport.id
-            ? {
-                ...item,
-                status: updateStatus,
-                assignedOfficerId: assignedOfficerId,
-                assignedOfficerName: assignedOff?.name,
-                officerNote: officerNoteInput || "Tindakan pembersihan telah dilaksanakan sesuai SOP DLH.",
-                afterImage: afterImagePreview || item.beforeImages[0],
-                timeline: [...item.timeline, newTimelineStep],
-                updatedAt: new Date().toISOString(),
-              }
-            : item
-        )
+      const updatedList = reports.map((item) =>
+        item.id === selectedReport.id
+          ? {
+              ...item,
+              status: updateStatus,
+              assignedOfficerId: assignedOfficerId,
+              assignedOfficerName: assignedOff?.name,
+              officerNote: officerNoteInput || "Tindakan pembersihan telah dilaksanakan sesuai SOP DLH.",
+              afterImage: afterImagePreview || item.beforeImages[0],
+              timeline: [...item.timeline, newTimelineStep],
+              updatedAt: new Date().toISOString(),
+            }
+          : item
       );
+
+      updateAndSaveReports(updatedList);
 
       // Audit Log
       setAuditLogs((prev) => [
@@ -162,27 +211,28 @@ export default function DinasDashboard() {
 
     setIsSaving(true);
     setTimeout(() => {
-      setReports((prev) =>
-        prev.map((item) =>
-          item.id === selectedReport.id
-            ? {
-                ...item,
-                status: "ditolak",
-                rejectionReason: rejectionReasonInput,
-                timeline: [
-                  ...item.timeline,
-                  {
-                    status: "ditolak",
-                    label: "Laporan Ditolak / Tidak Valid",
-                    timestamp: new Date().toLocaleString("id-ID"),
-                    actor: "Administrator DLH",
-                    note: rejectionReasonInput,
-                  },
-                ],
-              }
-            : item
-        )
+      const updatedList = reports.map((item) =>
+        item.id === selectedReport.id
+          ? {
+              ...item,
+              status: "ditolak" as ReportStatus,
+              rejectionReason: rejectionReasonInput,
+              timeline: [
+                ...item.timeline,
+                {
+                  status: "ditolak" as ReportStatus,
+                  label: "Laporan Ditolak / Tidak Valid",
+                  timestamp: new Date().toLocaleString("id-ID"),
+                  actor: "Petugas DLH",
+                  note: rejectionReasonInput,
+                },
+              ],
+              updatedAt: new Date().toISOString(),
+            }
+          : item
       );
+
+      updateAndSaveReports(updatedList);
 
       setAuditLogs((prev) => [
         {
@@ -224,6 +274,129 @@ export default function DinasDashboard() {
     }, 1500);
   };
 
+  // Render Login View if not authenticated
+  if (!isLoggedIn) {
+    return (
+      <div className="min-h-screen bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] text-slate-800 flex flex-col justify-between relative overflow-hidden font-sans">
+        {/* Top & Bottom Gradient Fades for Seamless Transition */}
+        <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white to-transparent pointer-events-none z-10" />
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
+        
+        {/* Ambient GIS River Glow */}
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#0284C7]/10 rounded-full blur-[120px] pointer-events-none" />
+
+        {/* Top Navbar Header: Back button on top-left */}
+        <header className="relative z-20 p-6 sm:px-12 flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 hover:bg-slate-100 border border-slate-200/90 text-xs font-bold text-slate-700 shadow-sm transition-all hover:scale-105 active:scale-95"
+          >
+            <ArrowLeft className="w-4 h-4 text-[#0284C7]" />
+            <span>Kembali ke Beranda</span>
+          </Link>
+        </header>
+
+        {/* Main Login Card */}
+        <main className="relative z-20 flex-1 flex items-center justify-center p-4 sm:p-6">
+          <div className="w-full max-w-md bg-white/95 backdrop-blur-xl border border-slate-200/90 rounded-[36px] sm:rounded-[40px] p-8 sm:p-10 shadow-2xl shadow-slate-200/80 relative">
+            
+            {/* Big RIVERSE Logo & Brand Header inside Card */}
+            <div className="flex flex-col items-center justify-center mb-6 text-center">
+              <Image
+                src="/assets/logo-new.png"
+                alt="RIVERSE Logo"
+                width={80}
+                height={80}
+                className="h-16 sm:h-20 w-auto object-contain mb-3"
+                priority
+              />
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">
+                Portal Dinas & Komando RIVERSE
+              </h1>
+              <p className="text-xs text-slate-500 mt-2 leading-relaxed max-w-xs">
+                Masukkan NIP atau ID Petugas untuk mengakses Dashboard Penanganan Sungai Dinas Lingkungan Hidup.
+              </p>
+            </div>
+
+            {loginError && (
+              <div className="mb-6 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2.5">
+                <AlertTriangle className="w-4 h-4 flex-shrink-0 text-rose-500" />
+                <span>{loginError}</span>
+              </div>
+            )}
+
+            <form onSubmit={handleLoginSubmit} className="space-y-4">
+              <div>
+                <label className="block text-[11px] font-extrabold text-slate-600 mb-1.5 uppercase tracking-wider">
+                  NIP / ID Petugas
+                </label>
+                <div className="relative">
+                  <User className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="text"
+                    value={nipInput}
+                    onChange={(e) => setNipInput(e.target.value)}
+                    placeholder="Masukkan NIP / ID"
+                    className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-medium focus:border-[#0284C7] focus:bg-white focus:ring-2 focus:ring-[#0284C7]/20 outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-extrabold text-slate-600 mb-1.5 uppercase tracking-wider">
+                  Kata Sandi
+                </label>
+                <div className="relative">
+                  <Lock className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                  <input
+                    type="password"
+                    value={passwordInput}
+                    onChange={(e) => setPasswordInput(e.target.value)}
+                    placeholder="Masukkan kata sandi"
+                    className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-medium focus:border-[#0284C7] focus:bg-white focus:ring-2 focus:ring-[#0284C7]/20 outline-none transition-all"
+                  />
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isAuthenticating}
+                className="w-full py-3.5 rounded-2xl bg-[#0284C7] text-white font-extrabold text-xs shadow-lg shadow-[#0284C7]/25 hover:bg-[#0369A1] transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer mt-2"
+              >
+                {isAuthenticating ? (
+                  <>
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                    <span>Memverifikasi Akses...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Masuk</span>
+                  </>
+                )}
+              </button>
+            </form>
+
+            {/* Demo Preset Quick Link */}
+            <div className="mt-5 pt-4 border-t border-slate-100 text-center">
+              <button
+                type="button"
+                onClick={handleQuickAdminFill}
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0284C7] hover:text-[#0369A1] hover:underline transition-all cursor-pointer"
+              >
+                <span>Gunakan Akun Demo Admin DLH</span>
+              </button>
+            </div>
+
+          </div>
+        </main>
+
+        <footer className="relative z-20 p-6 text-center text-xs text-slate-400 font-medium">
+          &copy; {new Date().getFullYear()} RIVERSE Platform Monitoring & Pelaporan Sungai — Sistem Informasi Geografis Terintegrasi
+        </footer>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-slate-800 font-sans flex flex-col md:flex-row selection:bg-[#0284C7] selection:text-white">
       
@@ -233,7 +406,7 @@ export default function DinasDashboard() {
           <Link href="/" className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0284C7] to-sky-600 p-0.5 shadow-md flex items-center justify-center">
               <Image
-                src="/assets/logo.png"
+                src="/assets/logo-new.png"
                 alt="RIVERSE Logo"
                 width={36}
                 height={36}
@@ -305,12 +478,19 @@ export default function DinasDashboard() {
         </div>
 
         {/* Sidebar Footer */}
-        <div className="p-4 border-t border-slate-100">
-          <Link
-            href="/"
-            className="w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-all"
+        <div className="p-4 border-t border-slate-100 space-y-1">
+          <button
+            onClick={() => setIsLoggedIn(false)}
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-all cursor-pointer"
           >
             <LogOut className="w-4 h-4" />
+            <span>Keluar Akun Dinas</span>
+          </button>
+          <Link
+            href="/"
+            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-all"
+          >
+            <ArrowLeft className="w-4 h-4" />
             <span>Kembali ke Beranda</span>
           </Link>
         </div>

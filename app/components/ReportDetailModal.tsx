@@ -35,6 +35,7 @@ export default function ReportDetailModal({
   const [sliderPos, setSliderPos] = useState<number>(50);
   const [hasVoted, setHasVoted] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
+  const [activeLightBoxImage, setActiveLightBoxImage] = useState<string | null>(null);
 
   if (!report) return null;
 
@@ -165,7 +166,8 @@ export default function ReportDetailModal({
                 <img
                   src={report.afterImage}
                   alt="After"
-                  className="absolute inset-0 w-full h-full object-cover"
+                  onClick={() => setActiveLightBoxImage(report.afterImage!)}
+                  className="absolute inset-0 w-full h-full object-cover cursor-pointer"
                 />
                 <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-emerald-600 text-white font-bold text-[10px] shadow-md">
                   AFTER (Selesai Clean)
@@ -179,7 +181,8 @@ export default function ReportDetailModal({
                   <img
                     src={report.beforeImages[0]}
                     alt="Before"
-                    className="absolute top-0 left-0 w-full h-full object-cover max-w-none"
+                    onClick={() => setActiveLightBoxImage(report.beforeImages[0])}
+                    className="absolute top-0 left-0 w-full h-full object-cover max-w-none cursor-pointer"
                     style={{ width: "100%", height: "100%" }}
                   />
                   <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-rose-600 text-white font-bold text-[10px] shadow-md">
@@ -209,11 +212,30 @@ export default function ReportDetailModal({
           ) : (
             /* Regular Photo Gallery */
             <div className="space-y-2">
-              <h4 className="font-extrabold text-sm text-slate-900">Galeri Foto Bukti Lapangan</h4>
+              <div className="flex items-center justify-between">
+                <h4 className="font-extrabold text-sm text-slate-900">Galeri Foto Bukti Lapangan</h4>
+                <span className="text-[10px] font-semibold text-slate-400">Klik foto untuk melihat ukuran penuh</span>
+              </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {report.beforeImages.map((img, idx) => (
-                  <div key={idx} className="h-44 rounded-2xl overflow-hidden border border-slate-200 relative">
-                    <img src={img} alt={`Bukti ${idx + 1}`} className="w-full h-full object-cover" />
+                  <div
+                    key={idx}
+                    onClick={() => setActiveLightBoxImage(img)}
+                    className="h-48 sm:h-56 rounded-2xl overflow-hidden border border-slate-200 relative group cursor-pointer shadow-sm hover:shadow-md transition-all"
+                  >
+                    <img
+                      src={img}
+                      alt={`Bukti ${idx + 1}`}
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).src = "/assets/sungai/Pencemaran Teluk Jakarta oleh Paracetamol.jpg";
+                      }}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    />
+                    <div className="absolute inset-0 bg-slate-950/20 group-hover:bg-slate-950/40 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                      <span className="px-3.5 py-1.5 rounded-full bg-white/90 text-slate-900 text-xs font-extrabold shadow-lg flex items-center gap-1.5 backdrop-blur-xs">
+                        Klik Untuk Melihat Detail
+                      </span>
+                    </div>
                   </div>
                 ))}
               </div>
@@ -239,12 +261,35 @@ export default function ReportDetailModal({
               </h4>
               <div className="space-y-2">
                 {report.subReports.map((sub) => (
-                  <div key={sub.id} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-1.5">
+                  <div key={sub.id} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="font-bold text-slate-800 text-xs">{sub.reporterName}</span>
                       <span className="text-[10px] text-slate-400 font-medium">{sub.categoryLabel}</span>
                     </div>
                     <p className="text-xs text-slate-600 font-medium">"{sub.description}"</p>
+                    {sub.images && sub.images.length > 0 && (
+                      <div className="flex items-center gap-2 pt-1">
+                        {sub.images.map((subImg, sIdx) => (
+                          <div
+                            key={sIdx}
+                            onClick={() => setActiveLightBoxImage(subImg)}
+                            className="w-16 h-16 rounded-xl overflow-hidden border border-slate-200 cursor-pointer hover:scale-105 transition-transform relative group"
+                          >
+                            <img
+                              src={subImg}
+                              alt="Sub Bukti"
+                              onError={(e) => {
+                                (e.target as HTMLImageElement).src = "/assets/sungai/Mengerikan! Ini Penampakan Pencemaran Sungai di Jakarta.jpeg";
+                              }}
+                              className="w-full h-full object-cover"
+                            />
+                            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-[10px] font-bold transition-opacity">
+                              Klik Untuk Melihat Detail
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
@@ -312,6 +357,37 @@ export default function ReportDetailModal({
         </div>
 
       </div>
+
+      {/* Full-Screen Lightbox Image Preview Modal */}
+      {activeLightBoxImage && (
+        <div
+          onClick={() => setActiveLightBoxImage(null)}
+          className="fixed inset-0 z-[100] bg-slate-950/90 backdrop-blur-md flex flex-col items-center justify-center p-4 sm:p-8 cursor-zoom-out animate-in fade-in zoom-in duration-200"
+        >
+          <button
+            type="button"
+            onClick={() => setActiveLightBoxImage(null)}
+            className="absolute top-6 right-6 w-11 h-11 rounded-full bg-white/20 hover:bg-white/30 text-white flex items-center justify-center transition-all shadow-xl cursor-pointer"
+            title="Tutup Preview Foto"
+          >
+            <X className="w-6 h-6" />
+          </button>
+
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="relative max-w-5xl max-h-[85vh] w-full flex flex-col items-center justify-center"
+          >
+            <img
+              src={activeLightBoxImage}
+              alt="Foto Bukti Detail"
+              className="max-w-full max-h-[80vh] object-contain rounded-3xl border-2 border-white/20 shadow-2xl"
+            />
+            <div className="mt-4 px-4 py-2 rounded-full bg-slate-900/80 text-white text-xs font-bold backdrop-blur-md border border-white/15 flex items-center gap-2">
+              <span>Foto Bukti Lapangan Spasial RIVERSE</span>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

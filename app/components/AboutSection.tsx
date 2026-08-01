@@ -7,7 +7,7 @@ import { Sparkles, ShieldCheck, Waves, Users, MapPin } from "lucide-react";
 
 export default function AboutSection() {
   return (
-    <section id="tentang-kami" className="relative bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] pt-0 pb-24 border-t border-sky-100 overflow-hidden">
+    <section id="tentang-kami" className="relative bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] pt-0 pb-24 overflow-hidden">
       
       {/* ============================================================ */}
       {/* TOP BANNER: Solid Blue Topographic Header (No Dark Gradient)  */}
@@ -51,15 +51,15 @@ export default function AboutSection() {
         {/* Content Wrapper Layer */}
         <div className="relative z-10 px-4 sm:px-6 lg:px-8 pt-32 pb-40 max-w-4xl mx-auto text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-sky-200" />
+            {/* <Sparkles className="w-3.5 h-3.5 text-sky-200" /> */}
             Tentang Kami
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
             Mewujudkan Sungai Indonesia <br className="hidden sm:block" />
-            <span className="text-[#38BDF8]">Bersih, Transparan & Berkelanjutan</span>
+            <span className="text-white drop-shadow-sm">Bersih, Transparan & Berkelanjutan</span>
           </h2>
           <p className="mt-4 text-sm sm:text-base text-sky-100/90 leading-relaxed max-w-2xl mx-auto font-medium">
-            Buka potensi penuh pemantauan sungai presisi berbasis GIS dan partisipasi masyarakat untuk memadukan kemudahan pelaporan warga dengan respon cepat Dinas Lingkungan Hidup.
+            Kombinasi sistem GIS presisi dan partisipasi masyarakat untuk menghubungkan laporan warga secara langsung dengan respon cepat Dinas Lingkungan Hidup.
           </p>
         </div>
 
@@ -79,13 +79,13 @@ export default function AboutSection() {
       {/* ============================================================ */}
       {/* FLOATING MEDIA CARDS (Overlapping Header into Content)       */}
       {/* ============================================================ */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 -mt-20 sm:-mt-24">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 -mt-20 sm:-mt-24">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 items-end">
           
           {/* Card 1: Tall Portrait */}
           <div className="relative h-64 sm:h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform hover:-translate-y-2 transition-all duration-300 group">
             <Image
-              src="/assets/sungai/Pencemaran Teluk Jakarta oleh Paracetamol.jpg"
+              src="/assets/sungai/026016200_1633163690-20211002-Pencemaran_Teluk_Jakarta_oleh_Paracetamol-1.jpg"
               alt="Pencemaran Pesisir"
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-700"
@@ -102,7 +102,7 @@ export default function AboutSection() {
           {/* Card 2: Medium Square */}
           <div className="relative h-48 sm:h-64 rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform hover:-translate-y-2 transition-all duration-300 group">
             <Image
-              src="/assets/sungai/20200812-Sungai-Ciliwung-1_ratio-16x9.jpg"
+              src="/assets/sungai/pencemaran-teluk-jakarta-9r95-dom.jpg"
               alt="Sungai Ciliwung"
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-700"
@@ -119,7 +119,7 @@ export default function AboutSection() {
           {/* Card 3: Tall Portrait */}
           <div className="relative h-64 sm:h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform hover:-translate-y-2 transition-all duration-300 group">
             <Image
-              src="/assets/sungai/sungai ciliwung bening.jpg"
+              src="/assets/sungai/_ (1).jpeg"
               alt="Pembersihan Hilir"
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-700"
@@ -156,10 +156,10 @@ export default function AboutSection() {
       {/* ============================================================ */}
       {/* MIDDLE SECTION: Solusi & 2-Column Paragraph Grid              */}
       {/* ============================================================ */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
         <div className="max-w-3xl mb-8">
           <h3 className="text-2xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
-            Solusi Digital untuk Pertumbuhan & Kelestarian Sungai Kita
+            Solusi Digital untuk Perlindungan & Kelestarian Sungai Kita
           </h3>
         </div>
 
@@ -176,7 +176,7 @@ export default function AboutSection() {
       {/* ============================================================ */}
       {/* BOTTOM SECTION: 2-Column (Image Left, Mission Text Right)    */}
       {/* ============================================================ */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 items-center bg-white rounded-3xl p-6 sm:p-10 border border-slate-200/90 shadow-xl shadow-slate-200/40">
           
           {/* Image Left */}
@@ -196,7 +196,7 @@ export default function AboutSection() {
               Kami Mempercepat Transformasi Tata Kelola Sungai Indonesia
             </h4>
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed">
-              Kami percaya pada kekuatan transformatif kolaborasi publik dan transparansi data GIS untuk menjaga ekosistem sungai. Misi kami adalah mengakselerasi penanganan pencemaran sungai secara adil, responsif, dan berkelanjutan dari hilir hingga hulu.
+              Kami percaya pada kekuatan transformatif kolaborasi publik dan transparansi data GIS untuk menjaga ekosistem sungai. Misi kami adalah mengakselerasi penanganan pencemaran sungai secara adil, responsif, dan berkelanjutan dari hulu ke hilir.
             </p>
           </div>
 
