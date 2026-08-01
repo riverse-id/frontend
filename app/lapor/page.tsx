@@ -26,6 +26,7 @@ import {
   ThumbsUp,
   Layers,
   ChevronRight,
+  ChevronLeft,
   Search,
   Filter
 } from "lucide-react";
@@ -117,6 +118,12 @@ export default function LaporPage() {
   const [reports, setReports] = useState<Report[]>([]);
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
   const [selectedDetailReport, setSelectedDetailReport] = useState<Report | null>(null);
+
+  // Pagination / Index State (4 reports per page)
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 4;
+  const totalPages = Math.ceil(reports.length / ITEMS_PER_PAGE) || 1;
+  const displayedReports = reports.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
 
   // Sync with store & localStorage
   React.useEffect(() => {
@@ -242,14 +249,14 @@ export default function LaporPage() {
       {/* ============================================================ */}
       {/* HERO SECTION                                                 */}
       {/* ============================================================ */}
-      <section className="relative w-full pt-28 sm:pt-32 pb-8 sm:pb-12 overflow-hidden">
+      <section className="relative w-full pt-40 sm:pt-48 lg:pt-52 pb-16 sm:pb-20 lg:pb-24 overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
           
           {/* Floating Tilted Cards with Smooth Organic Bobbing Animations */}
           <motion.div
             animate={{ y: [0, -10, 0] }}
             transition={{ repeat: Infinity, duration: 4.2, ease: "easeInOut" }}
-            className="hidden lg:block absolute left-2 xl:left-8 top-2 -rotate-6 hover:rotate-0 transition-transform duration-300 z-10 cursor-pointer"
+            className="hidden lg:block absolute left-2 xl:left-8 top-6 -rotate-6 hover:rotate-0 transition-transform duration-300 z-10 cursor-pointer"
           >
             <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-xl transition-shadow">
               <div className="flex flex-col text-left">
@@ -265,7 +272,7 @@ export default function LaporPage() {
           <motion.div
             animate={{ y: [0, 10, 0] }}
             transition={{ repeat: Infinity, duration: 5.0, ease: "easeInOut" }}
-            className="hidden lg:block absolute right-2 xl:right-8 top-4 rotate-6 hover:rotate-0 transition-transform duration-300 z-10 cursor-pointer"
+            className="hidden lg:block absolute right-2 xl:right-8 top-6 rotate-6 hover:rotate-0 transition-transform duration-300 z-10 cursor-pointer"
           >
             <div className="bg-white border border-slate-200/90 rounded-2xl p-3.5 shadow-lg shadow-slate-200/50 flex items-center gap-3 hover:shadow-xl transition-shadow">
               <div className="flex flex-col text-left">
@@ -347,103 +354,140 @@ export default function LaporPage() {
       {/* ============================================================ */}
       {/* COMMUNITY LIVE REPORTS & VOTING SECTION                      */}
       {/* ============================================================ */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 relative z-20">
-        <div className="bg-white rounded-[32px] border border-slate-200/90 p-6 sm:p-10 shadow-xl shadow-slate-200/50">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 pb-6 border-b border-slate-100">
-            <div>
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-sky-50 text-[#0284C7] border border-sky-200/80 text-[10px] font-extrabold uppercase tracking-wider mb-2">
-                Real-Time Community Voting & Sub-Reports
-              </div>
-              <h2 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                Dukung & Pantau Laporan Warga
-              </h2>
-              <p className="text-xs text-slate-500 font-medium mt-1">
-                Dukungan warga mempercepat verifikasi & penanganan langsung oleh Dinas Lingkungan Hidup.
-              </p>
-            </div>
-            
-            <div className="flex items-center gap-3">
-              <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
-                Total Laporan: {reports.length}
-              </span>
-            </div>
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 mb-20 relative z-20 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2">
+          <div>
+            <h2 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+              Dukung & Pantau Laporan Warga
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+              Dukungan warga mempercepat verifikasi & penanganan langsung oleh Dinas Lingkungan Hidup.
+            </p>
           </div>
-
-          {/* Reports Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {reports.map((rpt) => {
-              const subCount = rpt.subReports?.length || 0;
-              return (
-                <div
-                  key={rpt.id}
-                  className="bg-slate-50/70 hover:bg-white rounded-2xl border border-slate-200/90 p-5 transition-all hover:shadow-lg hover:border-sky-300 flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="flex items-center justify-between gap-2 mb-3">
-                      <span className="font-mono text-[11px] font-bold text-[#0284C7] bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-200">
-                        #{rpt.ticketNo}
-                      </span>
-                      <span
-                        className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border uppercase tracking-wider ${
-                          rpt.status === "terverifikasi"
-                            ? "bg-rose-50 text-rose-700 border-rose-200"
-                            : rpt.status === "diproses"
-                            ? "bg-sky-50 text-sky-700 border-sky-200"
-                            : rpt.status === "selesai"
-                            ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                            : "bg-amber-50 text-amber-700 border-amber-200"
-                        }`}
-                      >
-                        {rpt.status}
-                      </span>
-                    </div>
-
-                    <h3 className="font-bold text-sm text-slate-900 leading-snug mb-1">
-                      {rpt.riverName}
-                    </h3>
-                    <p className="text-xs text-slate-500 font-medium mb-3 line-clamp-2">
-                      {rpt.description}
-                    </p>
-
-                    {/* Meta info tags */}
-                    <div className="flex flex-wrap items-center gap-2 mb-4 text-[11px] text-slate-600 font-medium">
-                      <span className="bg-white px-2.5 py-1 rounded-lg border border-slate-200">
-                        {rpt.locationDetail}
-                      </span>
-                      {subCount > 0 && (
-                        <span className="bg-sky-50 text-[#0284C7] px-2.5 py-1 rounded-lg border border-sky-200 font-bold">
-                          💬 {subCount} Sub-Laporan
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Actions & Voting Bar */}
-                  <div className="pt-3 border-t border-slate-200/80 flex items-center justify-between gap-3">
-                    <button
-                      onClick={() => handleVote(rpt.id)}
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold transition-all shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
-                    >
-                      <ThumbsUp className="w-3.5 h-3.5" />
-                      <span>Dukung (+1 Vote)</span>
-                      <span className="ml-1 px-1.5 py-0.5 rounded-md bg-white/20 text-[10px]">
-                        {rpt.upvotes}
-                      </span>
-                    </button>
-
-                    <button
-                      onClick={() => setSelectedDetailReport(rpt)}
-                      className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
-                    >
-                      <span>Detail & Sub-Laporan</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
+          
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold text-slate-600 bg-slate-100 px-3.5 py-1.5 rounded-full border border-slate-200/80 shadow-xs">
+              Total Laporan: {reports.length}
+            </span>
           </div>
         </div>
+
+        {/* Reports Grid (4 Items per page) */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {displayedReports.map((rpt) => {
+            const subCount = rpt.subReports?.length || 0;
+            return (
+              <div
+                key={rpt.id}
+                className="bg-white rounded-3xl border border-slate-200/90 p-6 shadow-xs transition-all hover:shadow-lg hover:border-sky-300 flex flex-col justify-between"
+              >
+                <div>
+                  <div className="flex items-center justify-between gap-2 mb-3">
+                    <span className="font-mono text-[11px] font-bold text-[#0284C7] bg-sky-50 px-2.5 py-1 rounded-lg border border-sky-200">
+                      #{rpt.ticketNo}
+                    </span>
+                    <span
+                      className={`text-[10px] font-extrabold px-2.5 py-0.5 rounded-full border uppercase tracking-wider ${
+                        rpt.status === "terverifikasi"
+                          ? "bg-rose-50 text-rose-700 border-rose-200"
+                          : rpt.status === "diproses"
+                          ? "bg-sky-50 text-sky-700 border-sky-200"
+                          : rpt.status === "selesai"
+                          ? "bg-emerald-50 text-emerald-700 border-emerald-200"
+                          : "bg-amber-50 text-amber-700 border-amber-200"
+                      }`}
+                    >
+                      {rpt.status}
+                    </span>
+                  </div>
+
+                  <h3 className="font-bold text-base text-slate-900 leading-snug mb-1.5">
+                    {rpt.riverName}
+                  </h3>
+                  <p className="text-xs text-slate-600 font-medium mb-3 line-clamp-2 leading-relaxed">
+                    {rpt.description}
+                  </p>
+
+                  {/* Meta info tags */}
+                  <div className="flex flex-wrap items-center gap-2 mb-4 text-[11px] text-slate-600 font-medium">
+                    <span className="bg-slate-50 px-2.5 py-1 rounded-lg border border-slate-200">
+                      {rpt.locationDetail}
+                    </span>
+                    {subCount > 0 && (
+                      <span className="bg-sky-50 text-[#0284C7] px-2.5 py-1 rounded-lg border border-sky-200 font-bold">
+                        💬 {subCount} Sub-Laporan
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {/* Actions & Voting Bar */}
+                <div className="pt-3.5 border-t border-slate-100 flex items-center justify-between gap-3">
+                  <button
+                    onClick={() => handleVote(rpt.id)}
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white text-xs font-bold transition-all shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
+                  >
+                    <ThumbsUp className="w-3.5 h-3.5" />
+                    <span>Dukung (+1 Vote)</span>
+                    <span className="ml-1 px-1.5 py-0.5 rounded-md bg-white/20 text-[10px]">
+                      {rpt.upvotes}
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => setSelectedDetailReport(rpt)}
+                    className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+                  >
+                    <span>Detail & Sub-Laporan</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Pagination Index (Otomatis setiap 4 laporan) */}
+        {totalPages > 1 && (
+          <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <span className="text-xs font-semibold text-slate-500">
+              Menampilkan Halaman {currentPage} dari {totalPages} ({reports.length} Total Laporan)
+            </span>
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={currentPage === 1}
+                className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 transition-all cursor-pointer flex items-center gap-1"
+              >
+                <ChevronLeft className="w-4 h-4" />
+                <span>Sebelumnya</span>
+              </button>
+
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                <button
+                  key={pageNum}
+                  onClick={() => setCurrentPage(pageNum)}
+                  className={`w-8 h-8 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                    currentPage === pageNum
+                      ? "bg-[#0284C7] text-white shadow-md shadow-[#0284C7]/20"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              ))}
+
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={currentPage === totalPages}
+                className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 transition-all cursor-pointer flex items-center gap-1"
+              >
+                <span>Berikutnya</span>
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        )}
       </section>
 
       {/* Detail Modal Dialog */}

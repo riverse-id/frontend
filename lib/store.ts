@@ -65,7 +65,7 @@ export const MOCK_REPORTS: Report[] = [
     status: "terverifikasi",
     createdAt: "2026-07-31T08:15:00Z",
     updatedAt: "2026-07-31T09:00:00Z",
-    beforeImages: ["/assets/sungai/Pencemaran Teluk Jakarta oleh Paracetamol.jpg"],
+    beforeImages: ["/assets/sungai/026016200_1633163690-20211002-Pencemaran_Teluk_Jakarta_oleh_Paracetamol-1.jpg"],
     subReports: [
       {
         id: "sub-101-a",
@@ -105,7 +105,7 @@ export const MOCK_REPORTS: Report[] = [
     updatedAt: "2026-07-31T10:15:00Z",
     assignedOfficerId: "off-3",
     assignedOfficerName: "Suryadi Pasukan Oranye",
-    beforeImages: ["/assets/sungai/20200812-Sungai-Ciliwung-1_ratio-16x9.jpg"],
+    beforeImages: ["/assets/sungai/antarafoto-bantaran-sungai-penuh-sampah-230624-adm-1.jpg"],
     subReports: [],
     timeline: [
       { status: "pending", label: "Laporan Dibuat Warga", timestamp: "2026-07-31 07:30", actor: "Siti Rahma" },
@@ -160,8 +160,8 @@ export const MOCK_REPORTS: Report[] = [
     updatedAt: "2026-07-30T16:30:00Z",
     assignedOfficerId: "off-3",
     assignedOfficerName: "Suryadi Pasukan Oranye",
-    beforeImages: ["/assets/sungai/sungai ciliwung bening.jpg"],
-    afterImage: "/assets/sungai/sungai ciliwung bening.jpg",
+    beforeImages: ["/assets/sungai/Potret Lautan Sampah di Teluk Jakarta.jpeg"],
+    afterImage: "/assets/sungai/thumb-citarum-563x353.jpg",
     officerNote: "Telah diangkut 3.2 ton sampah plastik menggunakan 2 unit truk sampah DLH. Air mengalir lancar.",
     subReports: [],
     timeline: [
@@ -190,7 +190,7 @@ export const MOCK_REPORTS: Report[] = [
     status: "pending",
     createdAt: "2026-07-31T09:10:00Z",
     updatedAt: "2026-07-31T09:10:00Z",
-    beforeImages: ["/assets/sungai/20200812-Sungai-Ciliwung-1_ratio-16x9.jpg"],
+    beforeImages: ["/assets/sungai/5d58fc880697c.jpg"],
     subReports: [],
     timeline: [
       { status: "pending", label: "Laporan Dibuat (Mengumpulkan Vote)", timestamp: "2026-07-31 09:10", actor: "Rian Kurniawan" },
@@ -219,27 +219,20 @@ export const MOCK_AUDIT_LOGS: AuditLog[] = [
   },
 ];
 
-/**
- * Calculate distance in meters between two lat/lng coordinates (Haversine Formula)
- */
-export function calculateDistanceMeters(
-  lat1: number,
-  lon1: number,
-  lat2: number,
-  lon2: number
-): number {
-  const R = 6371e3; // Earth radius in meters
-  const rad = Math.PI / 180;
-  const dLat = (lat2 - lat1) * rad;
-  const dLon = (lon2 - lon1) * rad;
-  const a =
-    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-    Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return Math.round(R * c);
-}
-
 const STORAGE_KEY = "riverse_reports_db_v1";
+
+const fixImagePath = (path: string | undefined, defaultPath: string): string => {
+  if (
+    !path ||
+    path.startsWith("blob:") ||
+    path.includes("sungai ciliwung bening") ||
+    path.includes("Pencemaran Teluk Jakarta oleh Paracetamol.jpg") ||
+    path.includes("20200812")
+  ) {
+    return defaultPath;
+  }
+  return path;
+};
 
 export function getStoredReports(): Report[] {
   if (typeof window === "undefined") return MOCK_REPORTS;
@@ -251,15 +244,15 @@ export function getStoredReports(): Report[] {
         const sanitized = parsed.map((r: Report) => ({
           ...r,
           beforeImages: (r.beforeImages || []).map((img) =>
-            img.startsWith("blob:") ? "/assets/sungai/Pencemaran Teluk Jakarta oleh Paracetamol.jpg" : img
+            fixImagePath(img, "/assets/sungai/026016200_1633163690-20211002-Pencemaran_Teluk_Jakarta_oleh_Paracetamol-1.jpg")
           ),
-          afterImage: r.afterImage?.startsWith("blob:")
-            ? "/assets/sungai/sungai ciliwung bening.jpg"
-            : r.afterImage,
+          afterImage: r.afterImage
+            ? fixImagePath(r.afterImage, "/assets/sungai/thumb-citarum-563x353.jpg")
+            : undefined,
           subReports: (r.subReports || []).map((sub) => ({
             ...sub,
             images: (sub.images || []).map((img) =>
-              img.startsWith("blob:") ? "/assets/sungai/Mengerikan! Ini Penampakan Pencemaran Sungai di Jakarta.jpeg" : img
+              fixImagePath(img, "/assets/sungai/Mengerikan! Ini Penampakan Pencemaran Sungai di Jakarta.jpeg")
             ),
           })),
         }));
@@ -302,6 +295,26 @@ export interface SubmissionResult {
   report: Report;
   aggregatedDistanceMeters?: number;
   message: string;
+}
+
+/**
+ * Calculate distance in meters between two lat/lng coordinates (Haversine Formula)
+ */
+export function calculateDistanceMeters(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number
+): number {
+  const R = 6371e3; // Earth radius in meters
+  const rad = Math.PI / 180;
+  const dLat = (lat2 - lat1) * rad;
+  const dLon = (lon2 - lon1) * rad;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return Math.round(R * c);
 }
 
 /**

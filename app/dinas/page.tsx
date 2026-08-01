@@ -38,7 +38,8 @@ import {
   Clock,
   ThumbsUp,
   FileCheck,
-  ArrowLeft
+  ArrowLeft,
+  PlusCircle
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { INITIAL_OFFICERS, MOCK_REPORTS, MOCK_AUDIT_LOGS, INITIAL_SYSTEM_CONFIG, getStoredReports, saveStoredReports } from "../../lib/store";
@@ -52,6 +53,15 @@ const RiverGISMap = dynamic(() => import("../components/RiverGISMap"), {
     </div>
   ),
 });
+
+const getInitials = (name: string): string => {
+  const clean = name
+    .replace(/^(Ir\.|Drs\.|Dr\.|H\.|Hj\.|Prof\.)\s+/gi, "")
+    .replace(/,\s*(M\.T\.|S\.T\.|S\.E\.|S\.Kom\.|M\.Kom\.|S\.Pd\.|M\.Si\.)$/gi, "");
+  const parts = clean.trim().split(/\s+/);
+  if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+  return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+};
 
 export default function DinasDashboard() {
   // Authentication State
@@ -133,6 +143,45 @@ export default function DinasDashboard() {
   // Config Form Inputs
   const [configThreshold, setConfigThreshold] = useState<number>(systemConfig.globalThreshold);
   const [configRadius, setConfigRadius] = useState<number>(systemConfig.geofencingRadiusMeters);
+
+  // Add Officer Form State
+  const [showAddOfficerModal, setShowAddOfficerModal] = useState<boolean>(false);
+  const [newOfficerName, setNewOfficerName] = useState<string>("");
+  const [newOfficerNip, setNewOfficerNip] = useState<string>("");
+  const [newOfficerRole, setNewOfficerRole] = useState<OfficerRole>("petugas_lapangan");
+  const [newOfficerRegion, setNewOfficerRegion] = useState<string>("Jakarta Selatan");
+  const [newOfficerPhone, setNewOfficerPhone] = useState<string>("");
+  const [newOfficerEmail, setNewOfficerEmail] = useState<string>("");
+
+  const handleAddOfficer = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newOfficerName || !newOfficerNip) return;
+
+    const newOfficer: Officer = {
+      id: `off-${Date.now()}`,
+      name: newOfficerName,
+      nip: newOfficerNip,
+      role: newOfficerRole,
+      roleLabel:
+        newOfficerRole === "super_admin"
+          ? "Super Admin DLH"
+          : newOfficerRole === "korwil"
+          ? "Koordinator Wilayah"
+          : "Petugas Lapangan",
+      region: newOfficerRegion,
+      phone: newOfficerPhone || "0812-9988-7766",
+      email: newOfficerEmail || `${newOfficerName.toLowerCase().replace(/\s+/g, ".")}@dlh.jakarta.go.id`,
+      activeWorkload: 0,
+      completedTasks: 0,
+    };
+
+    setOfficers((prev) => [newOfficer, ...prev]);
+    setShowAddOfficerModal(false);
+    setNewOfficerName("");
+    setNewOfficerNip("");
+    setNewOfficerPhone("");
+    setNewOfficerEmail("");
+  };
 
   // Filtered Reports Queue
   const filteredReports = reports.filter((item) => {
@@ -442,7 +491,6 @@ export default function DinasDashboard() {
                     key={item.id}
                     onClick={() => {
                       setActiveNav(item.id);
-                      if (item.id === "audit") setShowAuditModal(true);
                     }}
                     className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
                       isActive
@@ -510,19 +558,6 @@ export default function DinasDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Role Switcher Selector (Fitur B.1) */}
-            <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl">
-              <span className="text-[10px] font-bold text-slate-500 px-2 uppercase">Role:</span>
-              <select
-                value={currentRole}
-                onChange={(e) => setCurrentRole(e.target.value as OfficerRole)}
-                className="bg-white text-xs font-extrabold text-[#0284C7] px-3 py-1.5 rounded-xl border border-slate-200 focus:outline-none cursor-pointer"
-              >
-                <option value="super_admin">Super Admin</option>
-                <option value="korwil">Koordinator Wilayah</option>
-                <option value="petugas_lapangan">Petugas Lapangan</option>
-              </select>
-            </div>
 
             {/* Export PDF/Excel Button (Fitur B.5) */}
             <button
@@ -549,240 +584,330 @@ export default function DinasDashboard() {
         {/* DASHBOARD BODY CONTAINER */}
         <div className="p-6 space-y-6 max-w-7xl w-full mx-auto">
           
-          {/* TOP HERO & PERLU PERHATIAN SEGERA WIDGET */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            
-            {/* HERO GRADIENT CARD */}
-            <div className="lg:col-span-2 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0F172A] text-white p-7 sm:p-8 rounded-[32px] shadow-xl relative overflow-hidden flex flex-col justify-between">
-              <div className="absolute top-0 right-0 w-80 h-80 bg-sky-400/10 rounded-full blur-3xl pointer-events-none" />
+          {/* ============================================================ */}
+          {/* VIEW 1: DASHBOARD UTAMA (HOME)                               */}
+          {/* ============================================================ */}
+          {activeNav === "dashboard" && (
+            <>
+              {/* TOP HERO & PERLU PERHATIAN SEGERA WIDGET */}
+              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                
+                {/* HERO GRADIENT CARD */}
+                <div className="lg:col-span-2 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0F172A] text-white p-7 sm:p-8 rounded-[32px] shadow-xl relative overflow-hidden flex flex-col justify-between">
+                  <div className="absolute top-0 right-0 w-80 h-80 bg-sky-400/10 rounded-full blur-3xl pointer-events-none" />
 
-              <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-sky-200 text-[11px] font-bold uppercase tracking-wider mb-4">
-                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                  Proses Penanganan Real-Time
-                </div>
+                  <div>
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-sky-200 text-[11px] font-bold uppercase tracking-wider mb-4">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      Proses Penanganan Real-Time
+                    </div>
 
-                <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
-                  Pengawasan & Pembersihan Sungai Jabodetabek
-                </h2>
-                <p className="text-xs sm:text-sm text-sky-100/90 mt-2 max-w-xl leading-relaxed font-medium">
-                  Monitoring spasial laporan pencemaran warga, koordinasi tim armada sampah lapangan, dan penutupan tiket tertutup.
-                </p>
-              </div>
-
-              <div className="mt-8 pt-6 border-t border-white/15">
-                <div className="flex justify-between items-center text-xs font-bold mb-2">
-                  <span className="text-sky-200">KPI Response Time DLH (Rata-rata Waktu Selesai)</span>
-                  <span className="text-emerald-300 font-mono">4.2 Jam / Laporan</span>
-                </div>
-                <div className="w-full h-2.5 bg-white/20 rounded-full overflow-hidden mb-6">
-                  <div className="h-full bg-gradient-to-r from-emerald-400 to-sky-300 rounded-full w-[88%]" />
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                  <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 text-center">
-                    <span className="block text-[10px] text-sky-200 font-bold uppercase">Total Laporan</span>
-                    <span className="text-lg font-extrabold text-white mt-0.5 block">{reports.length}</span>
+                    <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
+                      Pengawasan & Pembersihan Sungai Jabodetabek
+                    </h2>
+                    <p className="text-xs sm:text-sm text-sky-100/90 mt-2 max-w-xl leading-relaxed font-medium">
+                      Monitoring spasial laporan pencemaran warga, koordinasi tim armada sampah lapangan, dan penutupan tiket tertutup.
+                    </p>
                   </div>
-                  <div className="p-3 rounded-2xl bg-rose-500/20 backdrop-blur-md border border-rose-400/30 text-center">
-                    <span className="block text-[10px] text-rose-200 font-bold uppercase">Terverifikasi</span>
-                    <span className="text-lg font-extrabold text-rose-300 mt-0.5 block">
-                      {reports.filter((r) => r.status === "terverifikasi").length}
-                    </span>
-                  </div>
-                  <div className="p-3 rounded-2xl bg-sky-500/20 backdrop-blur-md border border-sky-400/30 text-center">
-                    <span className="block text-[10px] text-sky-200 font-bold uppercase">Diproses</span>
-                    <span className="text-lg font-extrabold text-sky-300 mt-0.5 block">
-                      {reports.filter((r) => r.status === "diproses").length}
-                    </span>
-                  </div>
-                  <div className="p-3 rounded-2xl bg-emerald-500/20 backdrop-blur-md border border-emerald-400/30 text-center">
-                    <span className="block text-[10px] text-emerald-200 font-bold uppercase">Selesai</span>
-                    <span className="text-lg font-extrabold text-emerald-300 mt-0.5 block">
-                      {reports.filter((r) => r.status === "selesai").length}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
 
-            {/* WIDGET PERLU PERHATIAN SEGERA (Fitur B.2) */}
-            <div className="bg-white p-6 rounded-[32px] border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
-              <div>
-                <span className="text-[11px] font-extrabold text-rose-600 uppercase tracking-wider bg-rose-50 px-3 py-1 rounded-full border border-rose-100 inline-block mb-3">
-                  ⚠️ Perlu Perhatian Segera
-                </span>
-                <h3 className="text-base font-extrabold text-slate-900">Laporan Prioritas Tertinggi</h3>
-                <p className="text-xs text-slate-500 font-medium">Laporan dengan Urgency Score tertinggi yang menunggu penanganan dinas.</p>
+                  <div className="mt-8 pt-6 border-t border-white/15">
+                    <div className="flex justify-between items-center text-xs font-bold mb-2">
+                      <span className="text-sky-200">KPI Response Time DLH (Rata-rata Waktu Selesai)</span>
+                      <span className="text-emerald-300 font-mono">4.2 Jam / Laporan</span>
+                    </div>
+                    <div className="w-full h-2.5 bg-white/20 rounded-full overflow-hidden mb-6">
+                      <div className="h-full bg-gradient-to-r from-emerald-400 to-sky-300 rounded-full w-[88%]" />
+                    </div>
 
-                <div className="space-y-3 mt-4">
-                  {urgentReports.map((urgent) => (
-                    <div key={urgent.id} className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-                      <div className="flex justify-between items-center">
-                        <span className="font-mono text-xs font-bold text-[#0284C7]">{urgent.ticketNo}</span>
-                        <span className="font-bold text-xs text-amber-700 bg-amber-100 px-2 py-0.5 rounded">
-                          {urgent.urgencyScore} Poin
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                      <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 text-center">
+                        <span className="block text-[10px] text-sky-200 font-bold uppercase">Total Laporan</span>
+                        <span className="text-lg font-extrabold text-white mt-0.5 block">{reports.length}</span>
+                      </div>
+                      <div className="p-3 rounded-2xl bg-rose-500/20 backdrop-blur-md border border-rose-400/30 text-center">
+                        <span className="block text-[10px] text-rose-200 font-bold uppercase">Terverifikasi</span>
+                        <span className="text-lg font-extrabold text-rose-300 mt-0.5 block">
+                          {reports.filter((r) => r.status === "terverifikasi").length}
                         </span>
                       </div>
-                      <h4 className="font-bold text-xs text-slate-900 truncate">{urgent.riverName}</h4>
-                      <p className="text-[11px] text-slate-500 truncate">{urgent.locationDetail}</p>
+                      <div className="p-3 rounded-2xl bg-sky-500/20 backdrop-blur-md border border-sky-400/30 text-center">
+                        <span className="block text-[10px] text-sky-200 font-bold uppercase">Diproses</span>
+                        <span className="text-lg font-extrabold text-sky-300 mt-0.5 block">
+                          {reports.filter((r) => r.status === "diproses").length}
+                        </span>
+                      </div>
+                      <div className="p-3 rounded-2xl bg-emerald-500/20 backdrop-blur-md border border-emerald-400/30 text-center">
+                        <span className="block text-[10px] text-emerald-200 font-bold uppercase">Selesai</span>
+                        <span className="text-lg font-extrabold text-emerald-300 mt-0.5 block">
+                          {reports.filter((r) => r.status === "selesai").length}
+                        </span>
+                      </div>
                     </div>
-                  ))}
+                  </div>
+                </div>
+
+                {/* WIDGET PERLU PERHATIAN SEGERA (Fitur B.2) */}
+                <div className="bg-white p-6 rounded-[32px] border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
+                  <div>
+                    <span className="text-[11px] font-extrabold text-rose-600 uppercase tracking-wider bg-rose-50 px-3 py-1 rounded-full border border-rose-100 inline-block mb-3">
+                      Perlu Perhatian Segera
+                    </span>
+                    <h3 className="text-base font-extrabold text-slate-900">Laporan Prioritas Tertinggi</h3>
+                    <p className="text-xs text-slate-500 font-medium">Laporan dengan Urgency Score tertinggi yang menunggu penanganan dinas.</p>
+
+                    <div className="space-y-3 mt-4">
+                      {urgentReports.map((urgent) => (
+                        <div key={urgent.id} className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
+                          <div className="flex justify-between items-center">
+                            <span className="font-mono text-xs font-bold text-[#0284C7]">{urgent.ticketNo}</span>
+                            <span className="font-bold text-xs text-amber-700 bg-amber-100 px-2 py-0.5 rounded">
+                              {urgent.urgencyScore} Poin
+                            </span>
+                          </div>
+                          <h4 className="font-bold text-xs text-slate-900 truncate">{urgent.riverName}</h4>
+                          <p className="text-[11px] text-slate-500 truncate">{urgent.locationDetail}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setActiveNav("laporan")}
+                    className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                  >
+                    <span>Tinjau Semua Laporan Terverifikasi</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+
+              </div>
+
+              {/* FITUR BARU: PUSAT PINTASAN MENU & PENJELASAN MODAL/FUNGSI */}
+              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                      Pusat Pintasan Menu & Modul Penanganan Sungai
+                    </h3>
+                    <p className="text-xs text-slate-500 font-medium mt-0.5">
+                      Pilih pintasan menu di bawah ini untuk mengakses modul kerja atau memahami fungsi masing-masing menu.
+                    </p>
+                  </div>
+                  <span className="text-[11px] font-extrabold text-[#0284C7] bg-sky-50 px-3 py-1 rounded-full border border-sky-100 self-start sm:self-auto">
+                    5 Modul Operasional Aktif
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {/* Shortcut 1: Peta Density GIS */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-br from-sky-50/50 to-white border border-sky-100 flex flex-col justify-between space-y-3 hover:border-sky-300 transition-all hover:shadow-md group">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="w-10 h-10 rounded-2xl bg-[#0284C7] text-white flex items-center justify-center shadow-md shadow-[#0284C7]/20 group-hover:scale-105 transition-transform">
+                          <MapPin className="w-5 h-5" />
+                        </div>
+                        <span className="text-[10px] font-extrabold text-[#0284C7] bg-white px-2.5 py-0.5 rounded-full border border-sky-200">
+                          Peta Interactive
+                        </span>
+                      </div>
+                      <h4 className="font-extrabold text-sm text-slate-900">1. Peta Density GIS</h4>
+                      <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                        <strong>Fungsi & Kegunaan:</strong> Memantau sebaran spasial lokasi pencemaran sungai secara real-time berbasis peta Leaflet interaktif, mendeteksi kluster titik panas (hotspot), dan menganalisis tingkat kepadatan sampah per segmen wilayah sungai.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setActiveNav("peta")}
+                      className="w-full py-2.5 rounded-xl bg-white hover:bg-[#0284C7] text-[#0284C7] hover:text-white font-extrabold text-xs border border-sky-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <span>Buka Modul Peta GIS</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Shortcut 2: Manajemen Laporan */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-50/50 to-white border border-emerald-100 flex flex-col justify-between space-y-3 hover:border-emerald-300 transition-all hover:shadow-md group">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/20 group-hover:scale-105 transition-transform">
+                          <FileText className="w-5 h-5" />
+                        </div>
+                        <span className="text-[10px] font-extrabold text-emerald-700 bg-white px-2.5 py-0.5 rounded-full border border-emerald-200">
+                          {reports.length} Tiket Laporan
+                        </span>
+                      </div>
+                      <h4 className="font-extrabold text-sm text-slate-900">2. Manajemen Laporan</h4>
+                      <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                        <strong>Fungsi & Kegunaan:</strong> Mengelola antrean tiket laporan warga, melakukan verifikasi lapang, disposisi penugasan ke tim armada DLH, mengunggah foto bukti pembersihan (after clean), serta persetujuan/penolakan tiket.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setActiveNav("laporan")}
+                      className="w-full py-2.5 rounded-xl bg-white hover:bg-emerald-600 text-emerald-700 hover:text-white font-extrabold text-xs border border-emerald-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <span>Buka Manajemen Laporan</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Shortcut 3: Tim & Beban Kerja */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-br from-purple-50/50 to-white border border-purple-100 flex flex-col justify-between space-y-3 hover:border-purple-300 transition-all hover:shadow-md group">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-600/20 group-hover:scale-105 transition-transform">
+                          <Users className="w-5 h-5" />
+                        </div>
+                        <span className="text-[10px] font-extrabold text-purple-700 bg-white px-2.5 py-0.5 rounded-full border border-purple-200">
+                          {officers.length} Petugas DLH
+                        </span>
+                      </div>
+                      <h4 className="font-extrabold text-sm text-slate-900">3. Tim & Beban Kerja</h4>
+                      <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                        <strong>Fungsi & Kegunaan:</strong> Memantau beban kerja (active workload) seluruh petugas lapangan dan Koordinator Wilayah DLH, membagikan penugasan secara adil, serta mendaftarkan petugas armada baru.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setActiveNav("petugas")}
+                      className="w-full py-2.5 rounded-xl bg-white hover:bg-purple-600 text-purple-700 hover:text-white font-extrabold text-xs border border-purple-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <span>Buka Kelola Tim & Beban Kerja</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Shortcut 4: Audit Log Aktivitas */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-br from-amber-50/50 to-white border border-amber-100 flex flex-col justify-between space-y-3 hover:border-amber-300 transition-all hover:shadow-md group">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="w-10 h-10 rounded-2xl bg-amber-600 text-white flex items-center justify-center shadow-md shadow-amber-600/20 group-hover:scale-105 transition-transform">
+                          <History className="w-5 h-5" />
+                        </div>
+                        <span className="text-[10px] font-extrabold text-amber-700 bg-white px-2.5 py-0.5 rounded-full border border-amber-200">
+                          {auditLogs.length} Log Aktivitas
+                        </span>
+                      </div>
+                      <h4 className="font-extrabold text-sm text-slate-900">4. Audit Log Aktivitas</h4>
+                      <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                        <strong>Fungsi & Kegunaan:</strong> Mengawasi riwayat audit trail perubahan status tiket secara transparan, melacak actor/petugas yang mengubah status, waktu eksekusi, serta catatan tindakan dinas secara akuntabel.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setActiveNav("audit")}
+                      className="w-full py-2.5 rounded-xl bg-white hover:bg-amber-600 text-amber-700 hover:text-white font-extrabold text-xs border border-amber-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <span>Buka Audit Log Transparan</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Shortcut 5: Konfigurasi Radius & Threshold */}
+                  <div className="p-5 rounded-2xl bg-gradient-to-br from-rose-50/50 to-white border border-rose-100 flex flex-col justify-between space-y-3 hover:border-rose-300 transition-all hover:shadow-md group md:col-span-2 lg:col-span-2">
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center shadow-md shadow-rose-600/20 group-hover:scale-105 transition-transform">
+                          <Sliders className="w-5 h-5" />
+                        </div>
+                        <span className="text-[10px] font-extrabold text-rose-700 bg-white px-2.5 py-0.5 rounded-full border border-rose-200">
+                          Geofence: {systemConfig.geofencingRadiusMeters}m | Vote: {systemConfig.globalThreshold}
+                        </span>
+                      </div>
+                      <h4 className="font-extrabold text-sm text-slate-900">5. Konfigurasi Sistem (Smart Geofencing & Vote Escalation)</h4>
+                      <p className="text-xs text-slate-600 font-medium leading-relaxed">
+                        <strong>Fungsi & Kegunaan:</strong> Mengatur batas radius pencocokan otomatis duplikat laporan warga (Smart Geofencing Radius 500 meter), mengubah ambang batas vote eskalasi verifikasi, serta mengaktifkan mode otomatisasi sistem dinas.
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => setShowConfigModal(true)}
+                      className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                    >
+                      <span>Buka Panel Konfigurasi Radius & Vote</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
 
-              <button
-                onClick={() => setActiveTab("terverifikasi")}
-                className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
-              >
-                <span>Tinjau Semua Laporan Terverifikasi</span>
-                <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
+              {/* MIDDLE: PETA SPASIAL GIS DENSITY HEATMAP */}
+              <div className="bg-white p-6 rounded-[32px] border border-slate-200/80 shadow-xs space-y-4">
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
+                      Peta Spasial GIS Density & Clustering Marker
+                    </h3>
+                    <p className="text-xs text-slate-500 font-medium mt-0.5">
+                      Visualisasi sebaran titik laporan pencemaran (Oranye: Pending, Merah: Terverifikasi, Biru: Diproses, Hijau: Selesai).
+                    </p>
+                  </div>
 
-          </div>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    Live GIS Feed Active
+                  </span>
+                </div>
 
-          {/* MIDDLE: PETA SPASIAL GIS DENSITY HEATMAP */}
-          <div className="bg-white p-6 rounded-[32px] border border-slate-200/80 shadow-xs space-y-4">
-            <div className="flex items-center justify-between flex-wrap gap-3">
-              <div>
-                <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                  <MapPin className="w-5 h-5 text-[#0284C7]" />
-                  Peta Spasial GIS Density & Clustering Marker
-                </h3>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">
-                  Visualisasi sebaran titik laporan pencemaran (Oranye: Pending, Merah: Terverifikasi, Biru: Diproses, Hijau: Selesai).
-                </p>
+                <RiverGISMap />
               </div>
 
-              <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
-                <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                Live GIS Feed Active
-              </span>
-            </div>
-
-            <RiverGISMap />
-          </div>
-
-          {/* BOTTOM: TABLE MANAJEMEN LAPORAN & OFFICER ACTIONS */}
-          <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs space-y-6">
-            
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-              <div>
-                <h3 className="text-base font-extrabold text-slate-900">
-                  Manajemen Laporan Pencemaran Sungai
-                </h3>
-                <p className="text-xs text-slate-500 font-medium mt-0.5">
-                  Urutan antrean laporan disusun berdasarkan Urgency Score ($W = U + \alpha \times S$).
-                </p>
-              </div>
-
-              {/* Status Filter Tabs */}
-              <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl overflow-x-auto scrollbar-none">
-                {[
-                  { id: "semua", label: "Semua" },
-                  { id: "terverifikasi", label: "Terverifikasi 🔴" },
-                  { id: "diproses", label: "Diproses 🔵" },
-                  { id: "selesai", label: "Selesai 🟢" },
-                  { id: "ditolak", label: "Ditolak ⚪" },
-                ].map((tab) => (
+              {/* RECENT REPORTS OVERVIEW */}
+              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs space-y-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div>
+                    <h3 className="text-base font-extrabold text-slate-900">
+                      Ringkasan Antrean Laporan Spasial Terkini
+                    </h3>
+                    <p className="text-xs text-slate-500 font-medium mt-0.5">
+                      Menampilkan antrean laporan warga teratas berdasarkan Urgency Score.
+                    </p>
+                  </div>
                   <button
-                    key={tab.id}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
-                      activeTab === tab.id
-                        ? "bg-[#0284C7] text-white shadow-sm"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-white"
-                    }`}
+                    onClick={() => setActiveNav("laporan")}
+                    className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer self-start md:self-auto"
                   >
-                    {tab.label}
+                    <span>Buka Manajemen Laporan Lengkap</span>
+                    <ChevronRight className="w-4 h-4" />
                   </button>
-                ))}
-              </div>
-            </div>
+                </div>
 
-            {/* Table */}
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-slate-700 border-collapse">
-                <thead>
-                  <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-200/80 text-[11px]">
-                    <th className="py-3.5 px-4">No. Tiket</th>
-                    <th className="py-3.5 px-4">Segmen Sungai & Lokasi</th>
-                    <th className="py-3.5 px-4">Kategori Pencemaran</th>
-                    <th className="py-3.5 px-4 text-center">Urgency Score</th>
-                    <th className="py-3.5 px-4">Status Penanganan</th>
-                    <th className="py-3.5 px-4 text-right">Aksi Dinas</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-slate-100 font-medium">
-                  {filteredReports.length === 0 ? (
-                    <tr>
-                      <td colSpan={6} className="py-10 text-center text-slate-400 font-medium">
-                        Tidak ada laporan yang sesuai dengan filter.
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredReports.map((report) => (
-                      <tr key={report.id} className="hover:bg-slate-50/80 transition-colors">
-                        
-                        <td className="py-4 px-4 font-mono font-extrabold text-[#0284C7]">
-                          {report.ticketNo}
-                          <span className="block text-[10px] text-slate-400 font-sans font-normal mt-0.5">
-                            {new Date(report.createdAt).toLocaleDateString("id-ID")}
-                          </span>
-                        </td>
-
-                        <td className="py-4 px-4 max-w-xs">
-                          <span className="block font-bold text-slate-900 truncate">{report.riverName}</span>
-                          <span className="block text-[11px] text-slate-500 truncate mt-0.5">{report.locationDetail}</span>
-                        </td>
-
-                        <td className="py-4 px-4">
-                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-slate-700 text-[11px] font-semibold">
-                            {report.categoryLabel}
-                          </span>
-                        </td>
-
-                        <td className="py-4 px-4 text-center">
-                          <div className="inline-flex flex-col items-center justify-center px-3 py-1 rounded-xl bg-amber-50 border border-amber-200">
-                            <span className="font-extrabold text-sm text-amber-700">{report.urgencyScore}</span>
-                            <span className="text-[9px] text-amber-600 font-semibold">{report.upvotes} Upvotes</span>
-                          </div>
-                        </td>
-
-                        <td className="py-4 px-4">
-                          {report.status === "pending" && (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 text-amber-700 border border-amber-200 text-[11px] font-bold">
-                              Pending 🟠
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs text-slate-700 border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-200/80 text-[11px]">
+                        <th className="py-3.5 px-4">No. Tiket</th>
+                        <th className="py-3.5 px-4">Segmen Sungai & Lokasi</th>
+                        <th className="py-3.5 px-4">Kategori Pencemaran</th>
+                        <th className="py-3.5 px-4 text-center">Urgency Score</th>
+                        <th className="py-3.5 px-4">Status Penanganan</th>
+                        <th className="py-3.5 px-4 text-right">Aksi Dinas</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 font-medium">
+                      {reports.slice(0, 5).map((report) => (
+                        <tr key={report.id} className="hover:bg-slate-50/80 transition-colors">
+                          <td className="py-4 px-4 font-mono font-extrabold text-[#0284C7]">
+                            {report.ticketNo}
+                          </td>
+                          <td className="py-4 px-4 max-w-xs">
+                            <span className="block font-bold text-slate-900 truncate">{report.riverName}</span>
+                            <span className="block text-[11px] text-slate-500 truncate mt-0.5">{report.locationDetail}</span>
+                          </td>
+                          <td className="py-4 px-4">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-slate-700 text-[11px] font-semibold">
+                              {report.categoryLabel}
                             </span>
-                          )}
-                          {report.status === "terverifikasi" && (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-700 border border-rose-200 text-[11px] font-bold">
-                              <span className="w-1.5 h-1.5 rounded-full bg-rose-500 animate-pulse" />
-                              Terverifikasi 🔴
-                            </span>
-                          )}
-                          {report.status === "diproses" && (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-sky-50 text-sky-700 border border-sky-200 text-[11px] font-bold">
-                              <span className="w-1.5 h-1.5 rounded-full bg-sky-500 animate-spin" />
-                              Diproses 🔵
-                            </span>
-                          )}
-                          {report.status === "selesai" && (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-[11px] font-bold">
-                              <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
-                              Selesai 🟢
-                            </span>
-                          )}
-                          {report.status === "ditolak" && (
-                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-slate-200 text-slate-700 border border-slate-300 text-[11px] font-bold">
-                              Ditolak ⚪
-                            </span>
-                          )}
-                        </td>
-
-                        <td className="py-4 px-4 text-right">
-                          <div className="flex items-center justify-end gap-2">
+                          </td>
+                          <td className="py-4 px-4 text-center">
+                            <div className="inline-flex flex-col items-center justify-center px-3 py-1 rounded-xl bg-amber-50 border border-amber-200">
+                              <span className="font-extrabold text-sm text-amber-700">{report.urgencyScore}</span>
+                              <span className="text-[9px] text-amber-600 font-semibold">{report.upvotes} Upvotes</span>
+                            </div>
+                          </td>
+                          <td className="py-4 px-4">
+                            {report.status === "pending" && <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-700 font-bold border border-amber-200 text-[11px]">Pending 🟠</span>}
+                            {report.status === "terverifikasi" && <span className="px-3 py-1 rounded-full bg-rose-50 text-rose-700 font-bold border border-rose-200 text-[11px]">Terverifikasi 🔴</span>}
+                            {report.status === "diproses" && <span className="px-3 py-1 rounded-full bg-sky-50 text-sky-700 font-bold border border-sky-200 text-[11px]">Diproses 🔵</span>}
+                            {report.status === "selesai" && <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 text-[11px]">Selesai 🟢</span>}
+                            {report.status === "ditolak" && <span className="px-3 py-1 rounded-full bg-slate-200 text-slate-700 font-bold border border-slate-300 text-[11px]">Ditolak ⚪</span>}
+                          </td>
+                          <td className="py-4 px-4 text-right">
                             <button
                               onClick={() => {
                                 setSelectedReport(report);
@@ -792,35 +917,329 @@ export default function DinasDashboard() {
                                 setAfterImagePreview(report.afterImage || null);
                                 setShowActionModal(true);
                               }}
-                              className="px-3 py-1.5 rounded-xl bg-[#0284C7] hover:bg-[#0284C7]/90 text-white font-bold text-xs transition-all shadow-sm cursor-pointer"
+                              className="px-3 py-1.5 rounded-xl bg-[#0284C7] hover:bg-[#0284C7]/90 text-white font-bold text-xs transition-all cursor-pointer shadow-sm"
                             >
                               Tindak Lanjuti
                             </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </>
+          )}
 
-                            {/* Fitur B.3 Reject Button */}
-                            {report.status !== "selesai" && report.status !== "ditolak" && (
-                              <button
-                                onClick={() => {
-                                  setSelectedReport(report);
-                                  setShowRejectModal(true);
-                                }}
-                                className="px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs transition-all cursor-pointer"
-                                title="Tolak Laporan"
-                              >
-                                <Ban className="w-4 h-4" />
-                              </button>
-                            )}
-                          </div>
-                        </td>
+          {/* ============================================================ */}
+          {/* VIEW 2: PETA DENSITY GIS PAGE                                */}
+          {/* ============================================================ */}
+          {activeNav === "peta" && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                    Peta Spasial GIS Density & Hotspot Pencemaran Sungai
+                  </h2>
+                  <p className="text-xs text-slate-500 font-medium mt-1">
+                    Visualisasi sebaran koordinat titik laporan pencemaran di seluruh segmen wilayah sungai Jabodetabek.
+                  </p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold flex items-center gap-1.5">
+                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse" />
+                    GIS Live Server Feed Active
+                  </span>
+                </div>
+              </div>
 
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
+              {/* Full Interactive Map Container */}
+              <div className="bg-white p-6 rounded-[32px] border border-slate-200/80 shadow-xs">
+                <RiverGISMap />
+              </div>
             </div>
+          )}
 
-          </div>
+          {/* ============================================================ */}
+          {/* VIEW 3: MANAJEMEN LAPORAN PAGE                               */}
+          {/* ============================================================ */}
+          {activeNav === "laporan" && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                    Modul Manajemen & Penanganan Tiket Laporan Spasial
+                  </h2>
+                  <p className="text-xs text-slate-500 font-medium mt-1">
+                    Kelola antrean tiket warga, disposisi penugasan ke petugas lapangan, serta pembaruan status closed-loop.
+                  </p>
+                </div>
+                <button
+                  onClick={handleExportData}
+                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs transition-all shadow-sm flex items-center gap-2 cursor-pointer self-start md:self-auto"
+                >
+                  <Download className="w-4 h-4" />
+                  <span>Ekspor Rekap Laporan</span>
+                </button>
+              </div>
+
+              {/* Full Table Component */}
+              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs space-y-6">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                  <div className="flex items-center gap-2">
+                    <span className="font-extrabold text-sm text-slate-900">Daftar Antrean Tiket Spasial</span>
+                    <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 text-xs font-bold">
+                      {filteredReports.length} Tiket
+                    </span>
+                  </div>
+
+                  {/* Filter Tabs */}
+                  <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl overflow-x-auto scrollbar-none">
+                    {[
+                      { id: "semua", label: "Semua" },
+                      { id: "terverifikasi", label: "Terverifikasi 🔴" },
+                      { id: "diproses", label: "Diproses 🔵" },
+                      { id: "selesai", label: "Selesai 🟢" },
+                      { id: "ditolak", label: "Ditolak ⚪" },
+                    ].map((tab) => (
+                      <button
+                        key={tab.id}
+                        onClick={() => setActiveTab(tab.id)}
+                        className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                          activeTab === tab.id
+                            ? "bg-[#0284C7] text-white shadow-sm"
+                            : "text-slate-600 hover:text-slate-900 hover:bg-white"
+                        }`}
+                      >
+                        {tab.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs text-slate-700 border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-200/80 text-[11px]">
+                        <th className="py-3.5 px-4">No. Tiket</th>
+                        <th className="py-3.5 px-4">Segmen Sungai & Lokasi</th>
+                        <th className="py-3.5 px-4">Kategori Pencemaran</th>
+                        <th className="py-3.5 px-4 text-center">Urgency Score</th>
+                        <th className="py-3.5 px-4">Status Penanganan</th>
+                        <th className="py-3.5 px-4 text-right">Aksi Dinas</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 font-medium">
+                      {filteredReports.length === 0 ? (
+                        <tr>
+                          <td colSpan={6} className="py-10 text-center text-slate-400 font-medium">
+                            Tidak ada laporan yang sesuai dengan filter.
+                          </td>
+                        </tr>
+                      ) : (
+                        filteredReports.map((report) => (
+                          <tr key={report.id} className="hover:bg-slate-50/80 transition-colors">
+                            <td className="py-4 px-4 font-mono font-extrabold text-[#0284C7]">
+                              {report.ticketNo}
+                              <span className="block text-[10px] text-slate-400 font-sans font-normal mt-0.5">
+                                {new Date(report.createdAt).toLocaleDateString("id-ID")}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4 max-w-xs">
+                              <span className="block font-bold text-slate-900 truncate">{report.riverName}</span>
+                              <span className="block text-[11px] text-slate-500 truncate mt-0.5">{report.locationDetail}</span>
+                            </td>
+                            <td className="py-4 px-4">
+                              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-slate-700 text-[11px] font-semibold">
+                                {report.categoryLabel}
+                              </span>
+                            </td>
+                            <td className="py-4 px-4 text-center">
+                              <div className="inline-flex flex-col items-center justify-center px-3 py-1 rounded-xl bg-amber-50 border border-amber-200">
+                                <span className="font-extrabold text-sm text-amber-700">{report.urgencyScore}</span>
+                                <span className="text-[9px] text-amber-600 font-semibold">{report.upvotes} Upvotes</span>
+                              </div>
+                            </td>
+                            <td className="py-4 px-4">
+                              {report.status === "pending" && <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-700 font-bold border border-amber-200 text-[11px]">Pending 🟠</span>}
+                              {report.status === "terverifikasi" && <span className="px-3 py-1 rounded-full bg-rose-50 text-rose-700 font-bold border border-rose-200 text-[11px]">Terverifikasi 🔴</span>}
+                              {report.status === "diproses" && <span className="px-3 py-1 rounded-full bg-sky-50 text-sky-700 font-bold border border-sky-200 text-[11px]">Diproses 🔵</span>}
+                              {report.status === "selesai" && <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 text-[11px]">Selesai 🟢</span>}
+                              {report.status === "ditolak" && <span className="px-3 py-1 rounded-full bg-slate-200 text-slate-700 font-bold border border-slate-300 text-[11px]">Ditolak ⚪</span>}
+                            </td>
+                            <td className="py-4 px-4 text-right">
+                              <div className="flex items-center justify-end gap-2">
+                                <button
+                                  onClick={() => {
+                                    setSelectedReport(report);
+                                    setUpdateStatus(report.status === "selesai" ? "selesai" : "diproses");
+                                    setAssignedOfficerId(report.assignedOfficerId || "off-3");
+                                    setOfficerNoteInput(report.officerNote || "");
+                                    setAfterImagePreview(report.afterImage || null);
+                                    setShowActionModal(true);
+                                  }}
+                                  className="px-3 py-1.5 rounded-xl bg-[#0284C7] hover:bg-[#0284C7]/90 text-white font-bold text-xs transition-all cursor-pointer shadow-sm"
+                                >
+                                  Tindak Lanjuti
+                                </button>
+                                {report.status !== "selesai" && report.status !== "ditolak" && (
+                                  <button
+                                    onClick={() => {
+                                      setSelectedReport(report);
+                                      setShowRejectModal(true);
+                                    }}
+                                    className="px-2.5 py-1.5 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-700 border border-rose-200 font-bold text-xs transition-all cursor-pointer"
+                                    title="Tolak Laporan"
+                                  >
+                                    <Ban className="w-4 h-4" />
+                                  </button>
+                                )}
+                              </div>
+                            </td>
+                          </tr>
+                        ))
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* ============================================================ */}
+          {/* VIEW 4: TIM & BEBAN KERJA PAGE                               */}
+          {/* ============================================================ */}
+          {activeNav === "petugas" && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                    Manajemen Tim Armada Lapangan & Beban Kerja DLH
+                  </h2>
+                  <p className="text-xs text-slate-500 font-medium mt-1">
+                    Pantau daftar petugas aktif, wilayah penugasan, kapasitas penanganan tiket, dan beban kerja armada pembersih sungai.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowAddOfficerModal(true)}
+                  className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs transition-all shadow-sm flex items-center gap-2 cursor-pointer self-start sm:self-auto"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>Tambah Petugas Lapangan</span>
+                </button>
+              </div>
+
+              {/* Officers Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {officers.map((officer) => (
+                  <div key={officer.id} className="bg-white p-6 rounded-[28px] border border-slate-200/80 shadow-xs space-y-4 hover:shadow-md transition-all flex flex-col justify-between">
+                    <div className="space-y-3.5">
+                      {/* Avatar & Officer Name */}
+                      <div className="flex items-center gap-3.5">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0284C7] to-purple-600 text-white font-extrabold text-base flex items-center justify-center shadow-md shrink-0 font-mono tracking-wider">
+                          {getInitials(officer.name)}
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-extrabold text-sm text-slate-900 leading-snug truncate" title={officer.name}>{officer.name}</h3>
+                          <span className="text-[11px] font-semibold text-slate-400 block font-mono">NIP: {officer.nip}</span>
+                        </div>
+                      </div>
+
+                      {/* Role Badge Pill */}
+                      <div>
+                        <span className="inline-flex items-center px-3 py-1 rounded-xl bg-purple-50 text-purple-700 border border-purple-200/80 text-[10px] font-extrabold uppercase tracking-wide">
+                          {officer.roleLabel}
+                        </span>
+                      </div>
+
+                      {/* Details Info */}
+                      <div className="p-3 rounded-2xl bg-slate-50 border border-slate-100 text-xs space-y-2 font-medium text-slate-600">
+                        <div className="flex justify-between items-center gap-2">
+                          <span className="shrink-0 text-slate-500">Wilayah Tugas:</span>
+                          <strong className="text-slate-800 font-bold truncate text-right">{officer.region}</strong>
+                        </div>
+                        <div className="flex justify-between items-center gap-2">
+                          <span className="shrink-0 text-slate-500">Telepon/WA:</span>
+                          <strong className="text-slate-800 font-mono font-bold">{officer.phone}</strong>
+                        </div>
+                        <div className="flex justify-between items-center gap-2">
+                          <span className="shrink-0 text-slate-500">Email Resmi:</span>
+                          <strong className="text-slate-800 font-mono text-[11px] truncate max-w-[160px]">{officer.email}</strong>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Workload & Performance */}
+                    <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
+                      <div>
+                        <span className="text-[10px] text-slate-400 font-bold uppercase block">Beban Kerja Aktif</span>
+                        <span className="font-mono font-extrabold text-rose-600 text-sm">{officer.activeWorkload} Tiket</span>
+                      </div>
+                      <div className="text-right">
+                        <span className="text-[10px] text-slate-400 font-bold uppercase block">Tugas Selesai</span>
+                        <span className="font-mono font-extrabold text-emerald-600 text-sm">{officer.completedTasks} Tiket</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* ============================================================ */}
+          {/* VIEW 5: AUDIT LOG AKTIVITAS PAGE                            */}
+          {/* ============================================================ */}
+          {activeNav === "audit" && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                    Audit Log Aktivitas & Log Mutasi Tiket Transparan
+                  </h2>
+                  <p className="text-xs text-slate-500 font-medium mt-1">
+                    Rekam jejak transparan seluruh aksi pengubahan status tiket, disposisi petugas, dan catatan dinas untuk akuntabilitas publik.
+                  </p>
+                </div>
+                <span className="px-3.5 py-1.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold self-start sm:self-auto">
+                  {auditLogs.length} Entri Log Terekam
+                </span>
+              </div>
+
+              {/* Audit Log Table Container */}
+              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs space-y-4">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-left text-xs text-slate-700 border-collapse">
+                    <thead>
+                      <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-200/80 text-[11px]">
+                        <th className="py-3.5 px-4">Waktu</th>
+                        <th className="py-3.5 px-4">No. Tiket</th>
+                        <th className="py-3.5 px-4">Aktor / Petugas</th>
+                        <th className="py-3.5 px-4">Peran</th>
+                        <th className="py-3.5 px-4">Aksi Dinas</th>
+                        <th className="py-3.5 px-4">Detail Perubahan</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-100 font-medium">
+                      {auditLogs.map((log) => (
+                        <tr key={log.id} className="hover:bg-slate-50/80 transition-colors">
+                          <td className="py-4 px-4 font-mono text-[11px] text-slate-500 whitespace-nowrap">{log.timestamp}</td>
+                          <td className="py-4 px-4 font-mono font-extrabold text-[#0284C7] whitespace-nowrap">{log.ticketNo}</td>
+                          <td className="py-4 px-4 font-bold text-slate-900 whitespace-nowrap">{log.actorName}</td>
+                          <td className="py-4 px-4">
+                            <span className="px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200 text-[10px] font-extrabold uppercase whitespace-nowrap">
+                              {log.actorRole.replace("_", " ")}
+                            </span>
+                          </td>
+                          <td className="py-4 px-4 font-extrabold text-slate-900 whitespace-nowrap">{log.action}</td>
+                          <td className="py-4 px-4 text-slate-600 max-w-sm leading-relaxed">{log.details}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          )}
 
         </div>
       </main>
@@ -832,9 +1251,6 @@ export default function DinasDashboard() {
             
             <div className="p-6 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-sky-100 text-[#0284C7] flex items-center justify-center">
-                  <ShieldCheck className="w-5 h-5" />
-                </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="text-base font-bold text-slate-900">Tindak Lanjut Lapangan DLH</h3>
@@ -857,7 +1273,12 @@ export default function DinasDashboard() {
               
               <div className="p-4 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-2">
                 <div className="flex justify-between items-center text-slate-600">
-                  <span>Pelapor Warga: <strong className="text-slate-900">{selectedReport.reporterName}</strong></span>
+                  <span>
+                    Pelapor Warga:{" "}
+                    <strong className="text-slate-900">
+                      {selectedReport.isAnonymous ? "Warga Anonim (Privasi Terjaga 🕵️)" : selectedReport.reporterName}
+                    </strong>
+                  </span>
                   <span>Urgency Score: <strong className="text-amber-600">{selectedReport.urgencyScore} Poin</strong></span>
                 </div>
                 <div className="text-slate-600">
@@ -925,7 +1346,14 @@ export default function DinasDashboard() {
                   <div>
                     <span className="block text-[10px] text-slate-500 font-semibold mb-1">Foto Kondisi Awal (Before)</span>
                     <div className="h-32 rounded-2xl overflow-hidden border border-slate-200 relative">
-                      <img src={selectedReport.beforeImages[0]} alt="Before" className="w-full h-full object-cover" />
+                      <img
+                        src={selectedReport.beforeImages[0]}
+                        alt="Before"
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = "/assets/sungai/Mengerikan! Ini Penampakan Pencemaran Sungai di Jakarta.jpeg";
+                        }}
+                      />
                       <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-lg bg-rose-600 text-white text-[10px] font-bold">
                         Before (Warga)
                       </span>
@@ -937,7 +1365,14 @@ export default function DinasDashboard() {
                     <div className="h-32 rounded-2xl overflow-hidden border-2 border-dashed border-slate-300 bg-slate-50/60 flex flex-col items-center justify-center relative cursor-pointer hover:border-[#0284C7] hover:bg-sky-50/30 transition-all">
                       {afterImagePreview ? (
                         <>
-                          <img src={afterImagePreview} alt="After Preview" className="w-full h-full object-cover" />
+                          <img
+                            src={afterImagePreview}
+                            alt="After Preview"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              (e.target as HTMLImageElement).src = "/assets/sungai/thumb-citarum-563x353.jpg";
+                            }}
+                          />
                           <button
                             type="button"
                             onClick={() => setAfterImagePreview(null)}
@@ -1135,34 +1570,101 @@ export default function DinasDashboard() {
         </div>
       )}
 
-      {/* AUDIT LOG MODAL (Fitur B.1 Audit Trail) */}
-      {showAuditModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-md overflow-y-auto animate-fadeIn">
-          <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-100 p-6 space-y-4 text-slate-800 text-xs">
-            <div className="flex items-center justify-between border-b border-slate-100 pb-3">
-              <h3 className="font-extrabold text-base text-slate-900 flex items-center gap-2">
-                <History className="w-5 h-5 text-[#0284C7]" />
-                Audit Trail Log Aktivitas Petugas DLH
-              </h3>
-              <button onClick={() => setShowAuditModal(false)} className="w-7 h-7 rounded-full bg-slate-100">
-                <X className="w-4 h-4 mx-auto text-slate-500" />
+
+      {/* MODAL TAMBAH PETUGAS LAPANGAN */}
+      {showAddOfficerModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-[32px] max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl border border-slate-100">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h3 className="text-lg font-extrabold text-slate-900">Tambah Petugas Armada DLH</h3>
+                <p className="text-xs text-slate-500 font-medium">Registrasi anggota tim baru penugasan wilayah sungai</p>
+              </div>
+              <button
+                onClick={() => setShowAddOfficerModal(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200 transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
-              {auditLogs.map((log) => (
-                <div key={log.id} className="p-3.5 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-slate-900">{log.action}</span>
-                    <span className="font-mono text-[10px] text-slate-400">{log.timestamp}</span>
-                  </div>
-                  <p className="text-xs text-slate-600 font-medium">{log.details}</p>
-                  <div className="text-[10px] text-slate-500 font-semibold pt-1 border-t border-slate-200/60">
-                    Oleh: {log.actorName} ({log.actorRole}) | Tiket: <span className="font-mono text-[#0284C7]">{log.ticketNo}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <form onSubmit={handleAddOfficer} className="space-y-4">
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">Nama Lengkap Petugas</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Ahmad Subagja, S.T."
+                  value={newOfficerName}
+                  onChange={(e) => setNewOfficerName(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">NIP / ID Petugas</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: 19850412 201001 1 009"
+                  value={newOfficerNip}
+                  onChange={(e) => setNewOfficerNip(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-mono font-semibold focus:outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">Peran Penugasan</label>
+                <select
+                  value={newOfficerRole}
+                  onChange={(e) => setNewOfficerRole(e.target.value as OfficerRole)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-purple-500"
+                >
+                  <option value="petugas_lapangan">Petugas Lapangan</option>
+                  <option value="korwil">Koordinator Wilayah (Korwil)</option>
+                  <option value="super_admin">Super Admin DLH</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">Wilayah Penugasan</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: Jakarta Selatan / Sungai Ciliwung"
+                  value={newOfficerRegion}
+                  onChange={(e) => setNewOfficerRegion(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">Nomor Telepon / WhatsApp</label>
+                <input
+                  type="text"
+                  placeholder="Contoh: 0812-3456-7890"
+                  value={newOfficerPhone}
+                  onChange={(e) => setNewOfficerPhone(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-mono font-semibold focus:outline-none focus:border-purple-500"
+                />
+              </div>
+
+              <div className="pt-3 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAddOfficerModal(false)}
+                  className="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs transition-colors shadow-md shadow-purple-600/20 cursor-pointer"
+                >
+                  Simpan Petugas
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}

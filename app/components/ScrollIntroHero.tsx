@@ -291,12 +291,9 @@ export default function ScrollIntroHero() {
 
           {/* Title & Brand Tagline */}
           <div className="flex flex-col items-center">
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-[#0F172A] drop-shadow-sm flex items-center gap-1">
-              /RIVER<span className="text-[#0284C7]">SE</span>
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-[#0F172A] drop-shadow-sm">
+              RIVERSE
             </h1>
-            <span className="text-xs md:text-sm font-bold tracking-[0.25em] text-sky-700 uppercase mt-1">
-              Active River System ゼロズ
-            </span>
           </div>
 
           {/* Subtitle & Info Pill */}
@@ -304,13 +301,6 @@ export default function ScrollIntroHero() {
             <p className="text-base md:text-xl font-semibold text-slate-700 tracking-wide max-w-xl">
               Platform Monitoring & Pelaporan Sungai <span className="text-[#0284C7] font-bold">Crowdsourced</span>
             </p>
-            <button
-              onClick={scrollToBeranda}
-              className="mt-4 flex items-center gap-2 px-4 py-2 rounded-full bg-[#0284C7]/10 border border-[#0284C7]/30 text-sky-900 text-xs font-bold shadow-sm backdrop-blur-md hover:bg-[#0284C7]/20 transition-all pointer-events-auto cursor-pointer"
-            >
-              <Waves className="w-4 h-4 text-[#0284C7] animate-bounce" />
-              <span>Scroll Ke Bawah Untuk Memulai Animasi</span>
-            </button>
           </motion.div>
         </motion.div>
 
@@ -342,10 +332,10 @@ export default function ScrollIntroHero() {
           <div className="p-3 rounded-2xl bg-white/90 shadow-2xl border border-sky-200 mb-3">
             <ShieldCheck className="w-8 h-8 text-[#0284C7]" />
           </div>
-          <span className="text-2xl md:text-4xl font-extrabold text-white tracking-tight drop-shadow">
+          <span className="text-2xl md:text-4xl font-extrabold text-[#0F172A] tracking-tight drop-shadow-sm">
             Ekosistem Terintegrasi
           </span>
-          <p className="mt-2 text-xs md:text-sm font-bold text-sky-300 tracking-wider uppercase">
+          <p className="mt-2 text-xs md:text-sm font-bold text-[#0284C7] tracking-wider uppercase">
             Mari Berpartisipasi & Gunakan Sistem RIVERSE Sekarang
           </p>
         </motion.div>

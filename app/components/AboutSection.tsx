@@ -50,10 +50,6 @@ export default function AboutSection() {
 
         {/* Content Wrapper Layer */}
         <div className="relative z-10 px-4 sm:px-6 lg:px-8 pt-32 pb-40 max-w-4xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-white text-xs font-bold uppercase tracking-widest mb-6 shadow-sm">
-            {/* <Sparkles className="w-3.5 h-3.5 text-sky-200" /> */}
-            Tentang Kami
-          </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-white leading-tight">
             Mewujudkan Sungai Indonesia <br className="hidden sm:block" />
             <span className="text-white drop-shadow-sm">Bersih, Transparan & Berkelanjutan</span>

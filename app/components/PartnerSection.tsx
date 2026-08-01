@@ -33,9 +33,6 @@ export default function PartnerSection() {
       <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white to-transparent pointer-events-none z-10" />
       <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 mb-12">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#0284C7]/10 text-[#0284C7] text-xs font-bold uppercase tracking-wider mb-4 border border-[#0284C7]/20">
-          <Handshake className="w-4 h-4" /> Partner & Kolaborasi Institusi
-        </div>
         <h2 className="text-3xl sm:text-4xl font-extrabold text-[#0F172A] tracking-tight">
           Kolaborasi Strategis untuk Kelestarian Sungai
         </h2>

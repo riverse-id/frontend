@@ -67,10 +67,6 @@ export default function ContactSection() {
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-[#E0F2FE] border border-sky-200 text-[#0284C7] text-xs font-bold uppercase tracking-wider mb-4 shadow-sm">
-            <Sparkles className="w-3.5 h-3.5 text-[#0284C7]" />
-            Kontak & Layanan Pengaduan
-          </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
             Hubungi Tim RIVERSE & <br className="hidden sm:block" />
             <span className="text-[#0284C7]">Layanan Pengaduan Darurat Sungai</span>
