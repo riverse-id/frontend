@@ -403,21 +403,20 @@ export default function DinasDashboard() {
       {/* 1. LEFT SIDEBAR NAVIGATION */}
       <aside className="w-full md:w-64 bg-white border-r border-slate-200/80 flex flex-col flex-shrink-0 z-30 md:sticky md:top-0 md:h-screen md:overflow-y-auto">
         <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0284C7] to-sky-600 p-0.5 shadow-md flex items-center justify-center">
-              <Image
-                src="/assets/logo-new.png"
-                alt="RIVERSE Logo"
-                width={36}
-                height={36}
-                className="h-full w-full object-contain"
-              />
-            </div>
+          <Link href="/" className="flex items-center gap-3 group">
+            <Image
+              src="/assets/logo-new.png"
+              alt="RIVERSE Logo"
+              width={44}
+              height={44}
+              className="h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              priority
+            />
             <div className="flex flex-col">
-              <span className="font-extrabold text-lg tracking-tight text-slate-900 leading-none">
-                RIVER<span className="text-[#0284C7]">SE</span>
+              <span className="font-extrabold text-xl tracking-tight text-[#0F172A] leading-none">
+                RIVERSE
               </span>
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">Portal Dinas DLH</span>
+              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">PORTAL DINAS DLH</span>
             </div>
           </Link>
         </div>
