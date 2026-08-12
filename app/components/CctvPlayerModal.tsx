@@ -2,7 +2,7 @@
 
 import React from "react";
 import { createPortal } from "react-dom";
-import { X, Camera, Video, MapPin } from "lucide-react";
+import { X, MapPin } from "lucide-react";
 import { CctvPoint } from "../../lib/store";
 
 interface CctvPlayerModalProps {
@@ -75,26 +75,21 @@ export default function CctvPlayerModal({ cctv, onClose }: CctvPlayerModalProps)
       >
         {/* Header */}
         <div className="p-5 sm:p-6 bg-gradient-to-r from-sky-50 via-white to-white border-b border-slate-100 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-11 h-11 rounded-2xl bg-[#0284C7] text-white flex items-center justify-center shadow-md shadow-sky-200 shrink-0">
-              <Video className="w-5 h-5" />
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h3 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight truncate">
+                {cctv.name}
+              </h3>
+              <span className={`px-2.5 py-0.5 rounded-full border text-[10px] font-bold ${status.cls}`}>
+                {status.label}
+              </span>
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-2 flex-wrap">
-                <h3 className="text-base sm:text-lg font-extrabold text-slate-900 tracking-tight truncate">
-                  {cctv.name}
-                </h3>
-                <span className={`px-2.5 py-0.5 rounded-full border text-[10px] font-bold ${status.cls}`}>
-                  {status.label}
-                </span>
-              </div>
-              <p className="text-xs text-slate-500 font-medium mt-0.5 flex items-center gap-1.5 min-w-0">
-                <MapPin className="w-3.5 h-3.5 text-[#0284C7] shrink-0" />
-                <span className="truncate">
-                  {cctv.riverName} — {cctv.locationDetail}
-                </span>
-              </p>
-            </div>
+            <p className="text-xs text-slate-500 font-medium mt-0.5 flex items-center gap-1.5 min-w-0">
+              <MapPin className="w-3.5 h-3.5 text-[#0284C7] shrink-0" />
+              <span className="truncate">
+                {cctv.riverName} — {cctv.locationDetail}
+              </span>
+            </p>
           </div>
 
           <button
@@ -128,7 +123,6 @@ export default function CctvPlayerModal({ cctv, onClose }: CctvPlayerModalProps)
             </div>
           ) : (
             <div className="w-full aspect-video rounded-2xl bg-slate-100 border border-dashed border-slate-300 flex flex-col items-center justify-center gap-2 text-slate-500">
-              <Camera className="w-10 h-10 text-slate-400" />
               <span className="text-sm font-bold">Stream tidak tersedia</span>
               <span className="text-xs text-slate-400">
                 Titik CCTV ini belum memiliki URL stream live.

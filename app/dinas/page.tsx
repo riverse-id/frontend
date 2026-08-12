@@ -1618,8 +1618,7 @@ export default function DinasDashboard() {
             <div className="space-y-6 animate-fadeIn">
               <div className="bg-white p-6 sm:p-7 rounded-[28px] border border-slate-200/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
-                  <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
-                    <Camera className="w-5 h-5 text-[#0284C7]" />
+                  <h2 className="text-xl font-extrabold text-slate-900">
                     Manajemen CCTV Monitoring Sungai
                   </h2>
                   <p className="text-xs text-slate-500 font-medium mt-1">
@@ -1647,8 +1646,7 @@ export default function DinasDashboard() {
               <div className="bg-white p-6 sm:p-7 rounded-[28px] border border-slate-200/80 shadow-sm space-y-5">
                 <div className="flex items-center justify-between gap-3 flex-wrap">
                   <div>
-                    <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
-                      <Video className="w-4 h-4 text-[#0284C7]" />
+                    <h3 className="text-sm font-extrabold text-slate-900">
                       Daftar Titik CCTV Terdaftar
                     </h3>
                     <p className="text-xs text-slate-500 font-medium mt-0.5">
@@ -1675,14 +1673,9 @@ export default function DinasDashboard() {
                         className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-3"
                       >
                         <div className="flex items-start justify-between gap-3">
-                          <div className="flex items-center gap-3 min-w-0">
-                            <div className="w-10 h-10 rounded-xl bg-[#0284C7]/10 text-[#0284C7] flex items-center justify-center shrink-0">
-                              <Video className="w-5 h-5" />
-                            </div>
-                            <div className="min-w-0">
-                              <h4 className="font-extrabold text-xs text-slate-900 truncate">{cam.name}</h4>
-                              <p className="text-[11px] text-slate-500 truncate font-medium">{cam.riverName}</p>
-                            </div>
+                          <div className="min-w-0">
+                            <h4 className="font-extrabold text-xs text-slate-900 truncate">{cam.name}</h4>
+                            <p className="text-[11px] text-slate-500 truncate font-medium mt-0.5">{cam.riverName}</p>
                           </div>
                           <span className={`px-2 py-0.5 rounded-full border text-[10px] font-bold whitespace-nowrap ${camStatus.cls}`}>
                             {camStatus.label}
@@ -2161,8 +2154,7 @@ export default function DinasDashboard() {
           <div className="bg-white rounded-[32px] max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl border border-slate-100 my-auto">
             <div className="flex items-center justify-between border-b border-slate-100 pb-4">
               <div>
-                <h3 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-                  <Camera className="w-5 h-5 text-[#0284C7]" />
+                <h3 className="text-lg font-extrabold text-slate-900">
                   Tambah Titik CCTV
                 </h3>
                 <p className="text-xs text-slate-500 font-medium mt-1">
