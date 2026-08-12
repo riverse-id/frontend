@@ -1,4 +1,4 @@
-# 🌊 RIVERSE — Smart River Monitoring & GIS Reporting Platform
+# RIVERSE — Smart River Monitoring & GIS Reporting Platform
 ### *Humanity OS Solution for River Ecosystem Preservation*
 > **Platform Sistem Informasi Geografis (SIG) Partisipatif untuk Pemantauan & Pelaporan Pencemaran Sungai secara Real-Time.**
 
@@ -12,38 +12,38 @@
 
 ---
 
-## 🏛️ Instansi
+## Instansi
 **Universitas Amikom Yogyakarta**
 
-## 👥 Anggota Tim (Wong Menangan)
+## Anggota Tim (Wong Menangan)
 - **Ketua** : Muhammad Firdaus Chuzaeni
 - **Anggota 1** : Nisa Athifah As Sodri
 - **Anggota 2** : Wasima Juhaina
 
 ---
 
-## 📌 Deskripsi Karya
+## Deskripsi Karya
 
-### 🚀 Latar Belakang & Masalah
+### Latar Belakang & Masalah
 Berdasarkan data Kementerian Lingkungan Hidup (KLH), sebesar **70,7% dari 4.482 lokasi pemantauan sungai di Indonesia berstatus tercemar**. Meskipun tingkat literasi digital masyarakat tinggi, partisipasi dalam pengawasan lingkungan secara digital masih sangat minim. Hal ini disebabkan oleh *interface design failure* pada platform pengaduan umum yang birokratis, rumit, serta tidak memberikan kepastian tindak lanjut.
 
-### 💡 Solusi & Konsep Humanity OS
+### Solusi & Konsep Humanity OS
 **RIVERSE** hadir sebagai solusi berbasis **Humanity OS** yang mengintegrasikan pendekatan *Human-Centered Design (HCD)* dan *Eco-Emotional Visual Language*. RIVERSE menghubungkan kepedulian warga dengan aksi nyata **Dinas Lingkungan Hidup (DLH)** melalui mekanisme pelaporan berbasis lokasi yang bebas hambatan (*frictionless report* < 90 detik) tanpa prosedur pendaftaran yang membingungkan.
 
 ---
 
-## ⚡ Fitur Inovasi Unggulan
+## Fitur Inovasi Unggulan
 
 | Fitur Utama | Deskripsi & Nilai Tambah | Impact bagi Pengguna / DLH |
 | :--- | :--- | :--- |
-| 🗺️ **Geotagging & Peta GIS Interaktif** | Pemetaan titik pencemaran spasial secara *real-time* menggunakan Leaflet.js & PostGIS. | Memudahkan pemantauan visual persebaran sampah dari hulu ke hilir secara akurat. |
-| 🛡️ **Smart Geofencing (<500m)** | Algoritma pemindaian lokasi otomatis untuk mendeteksi laporan ganda dalam radius 500 meter. | Mencegah redundansi data & penumpukan pin laporan ganda di lokasi yang sama. |
-| 👍 **Community Upvote** | Fitur dukungan publik untuk aduan warga di wilayah sekitarnya. | Menentukan skala prioritas aduan yang otomatis diteruskan ke Dashboard DLH. |
-| 🔄 **Workflow & Visual Before-After** | Tracking status penanganan berjenjang disertai penggeser foto interaktif *Before vs After*. | Menjamin transparansi, akuntabilitas, dan kepuasan visual bagi pelapor. |
+| **Geotagging & Peta GIS Interaktif** | Pemetaan titik pencemaran spasial secara *real-time* menggunakan Leaflet.js & PostGIS. | Memudahkan pemantauan visual persebaran sampah dari hulu ke hilir secara akurat. |
+| **Smart Geofencing (<500m)** | Algoritma pemindaian lokasi otomatis untuk mendeteksi laporan ganda dalam radius 500 meter. | Mencegah redundansi data & penumpukan pin laporan ganda di lokasi yang sama. |
+| **Community Upvote** | Fitur dukungan publik untuk aduan warga di wilayah sekitarnya. | Menentukan skala prioritas aduan yang otomatis diteruskan ke Dashboard DLH. |
+| **Workflow & Visual Before-After** | Tracking status penanganan berjenjang disertai penggeser foto interaktif *Before vs After*. | Menjamin transparansi, akuntabilitas, dan kepuasan visual bagi pelapor. |
 
 ---
 
-## 🎯 Relevansi Tema & Dukungan SDGs
+## Relevansi Tema & Dukungan SDGs
 RIVERSE dirancang untuk mendukung ketercapaian target **Indeks Kualitas Air (IKA) Nasional** serta 3 poin utama **Sustainable Development Goals (SDGs)**:
 - **SDG 6 (Clean Water and Sanitation)**: Menjaga kebersihan sumber air permukaan masyarakat dari kontaminasi limbah berbahaya.
 - **SDG 13 (Climate Action)**: Memperluas akses partisipasi digital warga dalam aksi mitigasi pencemaran lingkungan hidup.
@@ -51,7 +51,7 @@ RIVERSE dirancang untuk mendukung ketercapaian target **Indeks Kualitas Air (IKA
 
 ---
 
-## 🛠️ Tech Stack & Arsitektur
+## Tech Stack & Arsitektur
 
 - **Frontend Framework**: [Next.js 16 (App Router)](https://nextjs.org/) + [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
 - **Styling & Design System**: [Tailwind CSS](https://tailwindcss.com/) + Custom Design Tokens (`#0F172A`, `#0284C7`, `#E0F2FE`, `#F8FAFC`, `#FFFFFF`)
@@ -62,16 +62,16 @@ RIVERSE dirancang untuk mendukung ketercapaian target **Indeks Kualitas Air (IKA
 
 ---
 
-## 📖 Panduan Penggunaan Platform RIVERSE
+## Panduan Penggunaan Platform RIVERSE
 
-### 🌊 A. Modul Warga (Masyarakat Umum)
+### A. Modul Warga (Masyarakat Umum)
 
 #### 1. Tata Cara Melaporkan Pencemaran Sungai:
 1. **Buka Menu Pelaporan**: Akses halaman utama dan pilih menu **Buat Laporan** atau klik tombol **Buat Laporan Sekarang**.
 2. **Tentukan Titik Lokasi**: Pilih alur atau titik sungai yang mengalami pencemaran pada **Peta GIS Interaktif**.
 3. **Konfirmasi Titik Spasial**: Klik tombol **Lapor Titik Ini** pada jendela informasi lokasi yang muncul di peta.
 4. **Isi Formulir Pengaduan**: Lengkapi detail laporan, mulai dari kategori pencemaran, patokan lokasi, deskripsi kejadian, hingga foto bukti lapangan.
-5. **Kirim Laporan**: Klik tombol **Kirim Laporan Spasial Sekarang** untuk menerbitkan aduan ke dalam sistem GIS.
+5. **Kirim Laporan**: Klik tombol **Kirim Laporan** untuk menerbitkan aduan ke dalam sistem GIS.
 
 #### 2. Tata Cara Mendukung (Upvote) Laporan Warga Lain:
 1. **Eksplorasi Daftar Laporan**: Gulir ke bawah pada menu Buat Laporan hingga menemukan bagian **Dukung & Pantau Laporan Warga**.
@@ -80,7 +80,7 @@ RIVERSE dirancang untuk mendukung ketercapaian target **Indeks Kualitas Air (IKA
 
 ---
 
-### 🏛️ B. Modul Administrator & Petugas (Dinas Lingkungan Hidup)
+### B. Modul Administrator & Petugas (Dinas Lingkungan Hidup)
 
 #### 1. Akses Portal Komando & Otentikasi Keamanan:
 - Klik tombol **Masuk** pada navbar, lalu masukkan **NIP / ID Petugas** dan **Kata Sandi**.
@@ -97,14 +97,14 @@ RIVERSE dirancang untuk mendukung ketercapaian target **Indeks Kualitas Air (IKA
 
 ---
 
-### ♿ C. Fitur Aksesibilitas (Disabilitas)
+### C. Fitur Aksesibilitas (Disabilitas)
 RIVERSE berkomitmen menyediakan antarmuka inklusif berstandar **WCAG 2.1 AA** bagi pengguna berkebutuhan khusus melalui widget aksesibilitas terintegrasi:
 - **Penyesuaian Teks & Kontras**: Pengaturan ukuran font, Mode Kontras Tinggi (*High Contrast*), Skala Abu-Abu (*Grayscale*), dan Inversi Warna.
 - **Kenyamanan Membaca & Navigasi**: Pilihan Font Mudah Dibaca (*Dyslexia Friendly*), Garis Bawah Tautan, Penyesuaian Spasi Huruf, serta Fitur Pengurangan Animasi (*Reduce Motion*).
 
 ---
 
-## 📁 Struktur Direktori Proyek
+## Struktur Direktori Proyek
 
 ```
 frontend-1/
@@ -151,7 +151,7 @@ frontend-1/
 
 ---
 
-## 🚀 Panduan Memulai (Getting Started)
+## Panduan Memulai (Getting Started)
 
 ### Prasyarat
 Pastikan sistem Anda telah terpasang:
@@ -183,12 +183,12 @@ npm run start
 
 ---
 
-## 🔗 Tautan / Link Deploy Website
-- 🌐 **Live Website**: [https://riverse.vercel.app](https://riverse.vercel.app)
-- 📦 **Repository GitHub**: [https://github.com/riverse-id/frontend](https://github.com/riverse-id/frontend)
+## Tautan / Link Deploy Website
+- **Live Website**: [https://riverse.vercel.app](https://riverse.vercel.app)
+- **Repository GitHub**: [https://github.com/riverse-id/frontend](https://github.com/riverse-id/frontend)
 
 ---
 
-## 📄 Lisensi & Hak Cipta
+## Lisensi & Hak Cipta
 © 2026 **Tim Wong Menangan — Universitas Amikom Yogyakarta**. Seluruh Hak Cipta Dilindungi Undang-Undang.  
 Dikembangkan untuk mendukung pelestarian ekosistem sungai dan digitalisasi pengawasan lingkungan hidup di Indonesia.
