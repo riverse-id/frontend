@@ -203,52 +203,54 @@ export default function ReportDetailModal({
                 <span className="text-[10px] text-slate-400 font-semibold">Geser garis slider untuk melihat perbedaan</span>
               </div>
 
-              <div className="relative w-full h-64 sm:h-80 rounded-2xl overflow-hidden select-none border border-slate-200 shadow-md">
+              <div className="relative w-full h-64 sm:h-80 rounded-2xl overflow-hidden select-none border border-slate-200 shadow-md group">
                 {/* Background Image (After - Clean) */}
                 <img
                   src={report.afterImage}
-                  alt="After"
-                  onClick={() => setActiveLightBoxImage(report.afterImage!)}
-                  className="absolute inset-0 w-full h-full object-cover cursor-pointer"
+                  alt="Kondisi Setelah Dibersihkan (After)"
+                  className="absolute inset-0 w-full h-full object-cover pointer-events-none"
                 />
-                <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-emerald-600 text-white font-bold text-[10px] shadow-md">
+                <span className="absolute top-3 right-3 px-3 py-1 rounded-full bg-emerald-600 text-white font-bold text-[10px] shadow-md pointer-events-none z-10">
                   AFTER (Selesai Clean)
                 </span>
 
-                {/* Foreground Image (Before - Dirty) with Clip Path */}
-                <div
-                  style={{ width: `${sliderPos}%` }}
-                  className="absolute top-0 left-0 bottom-0 overflow-hidden border-r-2 border-white shadow-2xl"
-                >
-                  <img
-                    src={report.beforeImages[0]}
-                    alt="Before"
-                    onClick={() => setActiveLightBoxImage(report.beforeImages[0])}
-                    className="absolute top-0 left-0 w-full h-full object-cover max-w-none cursor-pointer"
-                    style={{ width: "100%", height: "100%" }}
-                  />
-                  <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-rose-600 text-white font-bold text-[10px] shadow-md">
-                    BEFORE (Kondisi Awal)
-                  </span>
-                </div>
+                {/* Foreground Image (Before - Dirty) with Non-Warping Clip Path */}
+                <img
+                  src={report.beforeImages[0]}
+                  alt="Kondisi Awal (Before)"
+                  className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                  style={{
+                    clipPath: `polygon(0 0, ${sliderPos}% 0, ${sliderPos}% 100%, 0 100%)`,
+                  }}
+                />
+                <span className="absolute top-3 left-3 px-3 py-1 rounded-full bg-rose-600 text-white font-bold text-[10px] shadow-md pointer-events-none z-10">
+                  BEFORE (Kondisi Awal)
+                </span>
 
-                {/* Slider Divider Drag Handle */}
+                {/* Slider Divider Line */}
                 <div
                   style={{ left: `${sliderPos}%` }}
-                  className="absolute top-0 bottom-0 w-1 bg-white cursor-ew-resize flex items-center justify-center -ml-0.5 shadow-xl"
+                  className="absolute top-0 bottom-0 w-0.5 bg-white shadow-[0_0_8px_rgba(0,0,0,0.6)] pointer-events-none z-20"
+                />
+
+                {/* Slider Center Circular Drag Handle */}
+                <div
+                  style={{ left: `${sliderPos}%` }}
+                  className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-9 h-9 rounded-full bg-[#0284C7] text-white flex items-center justify-center shadow-xl border-2 border-white pointer-events-none z-20 group-hover:scale-110 transition-transform"
                 >
-                  <input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={sliderPos}
-                    onChange={(e) => setSliderPos(Number(e.target.value))}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize"
-                  />
-                  <div className="w-8 h-8 rounded-full bg-[#0284C7] text-white flex items-center justify-center shadow-lg border-2 border-white">
-                    <Sliders className="w-4 h-4" />
-                  </div>
+                  <Sliders className="w-4 h-4" />
                 </div>
+
+                {/* Full Container Range Input - Captures Touch & Drag Events Everywhere */}
+                <input
+                  type="range"
+                  min="0"
+                  max="100"
+                  value={sliderPos}
+                  onChange={(e) => setSliderPos(Number(e.target.value))}
+                  className="absolute inset-0 w-full h-full opacity-0 cursor-ew-resize z-30 m-0 p-0"
+                  aria-label="Geser perbandingan Before After"
+                />
               </div>
             </div>
           ) : (
