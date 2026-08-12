@@ -17,9 +17,12 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
-    if (pathname === "/lapor") {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (pathname?.startsWith("/lapor")) {
       setActiveNav("lapor");
+      return;
+    }
+
+    if (!isLanding) {
       return;
     }
 
@@ -42,7 +45,7 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
 
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
-  }, [pathname]);
+  }, [pathname, isLanding]);
 
   const NAV_ITEMS = [
     { id: "beranda", label: "Beranda", href: "/#beranda" },

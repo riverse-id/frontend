@@ -18,14 +18,12 @@ import {
 } from "lucide-react";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import ReportDetailModal from "../components/ReportDetailModal";
 import { MOCK_REPORTS } from "../../lib/store";
 import { Report } from "../../lib/types";
 
 export default function LaporanSayaPage() {
   const [activeTab, setActiveTab] = useState<"dibuat" | "didukung">("dibuat");
   const [reports, setReports] = useState<Report[]>(MOCK_REPORTS);
-  const [selectedReport, setSelectedReport] = useState<Report | null>(null);
 
   // Filter My Created Reports vs My Voted Reports
   const myCreatedReports = reports.filter((r) => r.reporterName === "Budi Santoso");
@@ -201,13 +199,13 @@ export default function LaporanSayaPage() {
                     <span className="text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-1 rounded-lg border border-amber-200">
                       {report.upvotes} Vote
                     </span>
-                    <button
-                      onClick={() => setSelectedReport(report)}
-                      className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer"
+                    <Link
+                      href={`/laporan/${encodeURIComponent(report.ticketNo || report.id)}`}
+                      className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-[#0284C7] text-white text-xs font-bold transition-all flex items-center gap-1 cursor-pointer shadow-xs"
                     >
                       <span>Lihat Detail</span>
                       <ChevronRight className="w-3.5 h-3.5" />
-                    </button>
+                    </Link>
                   </div>
                 </div>
               </div>
@@ -306,15 +304,6 @@ export default function LaporanSayaPage() {
         )}
 
       </main>
-
-      {/* Public Report Detail Modal */}
-      {selectedReport && (
-        <ReportDetailModal
-          report={selectedReport}
-          onClose={() => setSelectedReport(null)}
-          onVote={handleVote}
-        />
-      )}
 
       <Footer />
     </div>

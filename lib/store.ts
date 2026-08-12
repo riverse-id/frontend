@@ -898,6 +898,34 @@ export function voteReport(reportId: string): Report | null {
   return updated;
 }
 
+/**
+ * Find a report by ID or Ticket Number (case-insensitive)
+ */
+export function getReportByIdOrTicket(idOrTicket: string): Report | undefined {
+  if (!idOrTicket) return undefined;
+  const decoded = decodeURIComponent(idOrTicket).trim();
+  const reports = getStoredReports();
+  
+  // 1. Direct ID match
+  let found = reports.find((r) => r.id === decoded || r.id.toLowerCase() === decoded.toLowerCase());
+  if (found) return found;
+
+  // 2. Direct Ticket Number match (e.g. DLH-2026-7000)
+  found = reports.find((r) => r.ticketNo.toLowerCase() === decoded.toLowerCase());
+  if (found) return found;
+
+  // 3. Normalized Ticket Match (handling case, spaces, or without prefix e.g. "7000" or "dlh-2026-7000")
+  const cleanQuery = decoded.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+  found = reports.find((r) => {
+    const cleanTicket = r.ticketNo.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+    const cleanId = r.id.replace(/[^a-zA-Z0-9]/g, "").toLowerCase();
+    return cleanTicket === cleanQuery || cleanId === cleanQuery || cleanTicket.endsWith(cleanQuery);
+  });
+
+  return found;
+}
+
+
 // =====================================================================
 // CCTV MONITORING POINTS (GIS Layer)
 // =====================================================================

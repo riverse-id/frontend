@@ -19,8 +19,11 @@ import {
   UserCheck,
   Layers,
   Copy,
-  Check
+  Check,
+  ExternalLink
 } from "lucide-react";
+import { useToast } from "./ToastProvider";
+
 
 interface ReportDetailModalProps {
   report: Report | null;
@@ -33,6 +36,7 @@ export default function ReportDetailModal({
   onClose,
   onVote,
 }: ReportDetailModalProps) {
+  const { showToast } = useToast();
   const [sliderPos, setSliderPos] = useState<number>(50);
   const [hasVoted, setHasVoted] = useState<boolean>(false);
   const [copied, setCopied] = useState<boolean>(false);
@@ -75,14 +79,30 @@ export default function ReportDetailModal({
     if (!hasVoted) {
       onVote(report.id);
       setHasVoted(true);
+      showToast("Terima kasih! Dukungan Anda berhasil ditambahkan (+1 Vote).", "success");
     }
   };
 
-  const handleCopyLink = () => {
-    if (typeof window !== "undefined") {
-      navigator.clipboard.writeText(window.location.href);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+  const handleCopyLink = async () => {
+    if (typeof window !== "undefined" && report) {
+      const shareUrl = `${window.location.origin}/laporan/${encodeURIComponent(report.ticketNo || report.id)}`;
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        setCopied(true);
+        showToast(`Tautan laporan #${report.ticketNo} berhasil disalin ke clipboard!`, "success");
+        setTimeout(() => setCopied(false), 2500);
+      } catch {
+        // Fallback for older browsers
+        const textarea = document.createElement("textarea");
+        textarea.value = shareUrl;
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand("copy");
+        document.body.removeChild(textarea);
+        setCopied(true);
+        showToast(`Tautan laporan #${report.ticketNo} berhasil disalin ke clipboard!`, "success");
+        setTimeout(() => setCopied(false), 2500);
+      }
     }
   };
 
@@ -391,10 +411,20 @@ export default function ReportDetailModal({
               <button
                 onClick={handleCopyLink}
                 className="flex-1 sm:flex-none px-4 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+                title="Salin tautan langsung menuju laporan ini"
               >
                 {copied ? <Check className="w-4 h-4 text-emerald-600" /> : <Copy className="w-4 h-4" />}
-                <span>{copied ? "Tautan Tersalin!" : "Bagikan Laporan"}</span>
+                <span>{copied ? "Tautan Tersalin!" : "Salin Tautan"}</span>
               </button>
+
+              <a
+                href={`/laporan/${encodeURIComponent(report.ticketNo || report.id)}`}
+                className="px-3.5 py-3 rounded-2xl bg-sky-50 hover:bg-sky-100 text-[#0284C7] font-bold text-xs flex items-center justify-center gap-1.5 border border-sky-200/80 transition-all"
+                title="Buka halaman detail khusus laporan ini"
+              >
+                <span>Halaman Khusus</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </a>
             </div>
           </div>
 
