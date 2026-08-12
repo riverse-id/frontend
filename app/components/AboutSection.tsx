@@ -121,7 +121,7 @@ export default function AboutSection() {
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 via-[#0F172A]/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/20 to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 text-white">
               <span className="block text-xs font-bold truncate">Pencemaran Pesisir</span>
               <span className="text-[10px] text-sky-200 flex items-center gap-1 mt-0.5">
@@ -138,7 +138,7 @@ export default function AboutSection() {
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-transparent to-transparent" />
             <div className="absolute bottom-3 left-3 right-3 text-white">
               <span className="block text-xs font-bold truncate">Sungai Ciliwung</span>
               <span className="text-[10px] text-sky-200 flex items-center gap-1 mt-0.5">
@@ -155,7 +155,7 @@ export default function AboutSection() {
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 via-[#0F172A]/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-navy/20 to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 text-white">
               <span className="block text-xs font-bold truncate">Pembersihan Hilir</span>
               <span className="text-[10px] text-emerald-300 flex items-center gap-1 mt-0.5 font-medium">
@@ -172,7 +172,7 @@ export default function AboutSection() {
               fill
               className="object-cover group-hover:scale-110 transition-transform duration-700"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/90 via-transparent to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-navy/90 via-transparent to-transparent" />
             <div className="absolute bottom-3 left-3 right-3 text-white">
               <span className="block text-xs font-bold truncate">Bantaran Sungai</span>
               <span className="text-[10px] text-sky-200 flex items-center gap-1 mt-0.5">
@@ -195,7 +195,7 @@ export default function AboutSection() {
           transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           className="max-w-3xl mb-8"
         >
-          <h3 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
+          <h3 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-ink tracking-tight leading-tight">
             Solusi Digital untuk Perlindungan & Kelestarian Sungai Kita
           </h3>
         </motion.div>
@@ -240,7 +240,7 @@ export default function AboutSection() {
               fill
               className="object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/40 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-navy/40 to-transparent" />
           </div>
 
           {/* Text Right */}
@@ -248,7 +248,7 @@ export default function AboutSection() {
             style={{ transform: "translateZ(25px)" }}
             className="md:col-span-7 space-y-4 transition-transform duration-300"
           >
-            <h4 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] leading-snug">
+            <h4 className="text-2xl sm:text-3xl font-extrabold text-ink leading-snug">
               Kami Mempercepat Transformasi Tata Kelola Sungai Indonesia
             </h4>
             <p className="text-slate-600 text-sm sm:text-base leading-relaxed">

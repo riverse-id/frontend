@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { LogIn, Menu, X } from "lucide-react";
 import { usePathname } from "next/navigation";
+import ThemeToggle from "./ThemeToggle";
 
 interface NavbarProps {
   opacity?: number;
@@ -12,6 +13,7 @@ interface NavbarProps {
 
 export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
   const pathname = usePathname();
+  const isLanding = pathname === "/";
   const [activeNav, setActiveNav] = useState("beranda");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -72,7 +74,7 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
               priority
             />
             <div className="flex flex-col">
-              <span className="font-extrabold text-lg sm:text-xl tracking-tight text-[#0F172A]">
+              <span className="font-extrabold text-lg sm:text-xl tracking-tight text-ink">
                 RIVERSE
               </span>
             </div>
@@ -101,6 +103,10 @@ export default function Navbar({ opacity = 1, className = "" }: NavbarProps) {
 
           {/* Right Action Button & Mobile Hamburger Toggle */}
           <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+            {!isLanding && (
+              <ThemeToggle className="bg-slate-100/80 text-slate-700 hover:text-[#0284C7] hover:bg-slate-200/80" />
+            )}
+
             <a
               href="/dinas"
               className="flex items-center gap-2 px-4 sm:px-5.5 py-2 sm:py-2.5 rounded-full bg-[#0284C7] text-white text-xs font-bold shadow-md shadow-[#0284C7]/20 hover:bg-[#0284C7]/90 transition-all hover:scale-105 active:scale-95"

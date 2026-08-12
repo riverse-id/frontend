@@ -123,7 +123,7 @@ const RiverCardItem = React.memo(function RiverCardItem({
           className="object-cover transition-transform duration-700 group-hover:scale-110"
           sizes="(max-width: 768px) 200px, 260px"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0F172A]/85 via-black/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-navy/85 via-black/20 to-transparent" />
 
         {/* Status Badge */}
         <div className="absolute top-2 left-2">
@@ -212,7 +212,7 @@ export default function ScrollIntroHero() {
   const portalTextScale = useTransform(smoothProgress, [0.64, 0.74, 0.84], [0.85, 1, 1.15]);
 
   return (
-    <div ref={containerRef} className="relative h-[250vh] w-full bg-[#0F172A] selection:bg-[#0284C7] selection:text-white">
+    <div ref={containerRef} className="relative h-[250vh] w-full bg-navy selection:bg-[#0284C7] selection:text-white">
       
       {/* Sticky Header Navbar */}
       <motion.div style={{ opacity: navbarOpacity }} className="pointer-events-auto z-50 fixed top-0 left-0 right-0">
@@ -220,7 +220,7 @@ export default function ScrollIntroHero() {
       </motion.div>
 
       {/* Sticky Viewport Container */}
-      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-[#0F172A]">
+      <div className="sticky top-0 h-screen w-full overflow-hidden flex items-center justify-center bg-navy">
 
         {/* Phase 1 Light/White Background Layer */}
         <motion.div
@@ -237,7 +237,7 @@ export default function ScrollIntroHero() {
         {/* Ambient Dark Navy Slate Base */}
         <motion.div
           style={{ opacity: ambientBackgroundOpacity }}
-          className="absolute inset-0 bg-[#0F172A] pointer-events-none z-10"
+          className="absolute inset-0 bg-navy pointer-events-none z-10"
         />
 
         {/* Glowing Aperture Portal Circle (Zeroz Light Flash Effect) */}
@@ -291,7 +291,7 @@ export default function ScrollIntroHero() {
 
           {/* Title & Brand Tagline */}
           <div className="flex flex-col items-center">
-            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-[#0F172A] drop-shadow-sm">
+            <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-ink drop-shadow-sm">
               RIVERSE
             </h1>
           </div>
@@ -332,7 +332,7 @@ export default function ScrollIntroHero() {
           <div className="p-3 rounded-2xl bg-white/90 shadow-2xl border border-sky-200 mb-3">
             <ShieldCheck className="w-8 h-8 text-[#0284C7]" />
           </div>
-          <span className="text-2xl md:text-4xl font-extrabold text-[#0F172A] tracking-tight drop-shadow-sm">
+          <span className="text-2xl md:text-4xl font-extrabold text-ink tracking-tight drop-shadow-sm">
             Ekosistem Terintegrasi
           </span>
           <p className="mt-2 text-xs md:text-sm font-bold text-[#0284C7] tracking-wider uppercase">

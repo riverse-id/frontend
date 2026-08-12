@@ -80,7 +80,7 @@ export default function FeaturesOverview() {
                     <div className="w-7 h-7 rounded-lg bg-[#0284C7]/10 flex items-center justify-center">
                       <MapPin className="w-4 h-4 text-[#0284C7]" />
                     </div>
-                    <span className="text-xs font-bold text-[#0F172A]">Peta GIS Riverse Live</span>
+                    <span className="text-xs font-bold text-ink">Peta GIS Riverse Live</span>
                   </div>
                   <span className="text-[10px] font-bold text-emerald-600 bg-emerald-50 px-2.5 py-0.5 rounded-full border border-emerald-200">
                     Real-Time GIS
@@ -93,7 +93,7 @@ export default function FeaturesOverview() {
 
               {/* Card 2: GIS Status Indicator */}
               <div className="rounded-2xl bg-white p-3.5 shadow-xl border border-sky-100 hover:border-sky-400/70 hover:shadow-2xl hover:shadow-[#0284C7]/25 transform hover:-translate-y-1 transition-all cursor-pointer">
-                <div className="flex items-center gap-1.5 mb-2.5 text-[#0F172A] text-xs font-bold">
+                <div className="flex items-center gap-1.5 mb-2.5 text-ink text-xs font-bold">
                   <ShieldCheck className="w-4 h-4 text-[#0284C7]" />
                   <span>Status GIS Palette</span>
                 </div>
@@ -115,7 +115,7 @@ export default function FeaturesOverview() {
 
               {/* Card 3: Geofencing & Anti-Spam */}
               <div className="rounded-2xl bg-white p-3.5 shadow-xl border border-sky-100 hover:border-sky-400/70 hover:shadow-2xl hover:shadow-[#0284C7]/25 transform hover:-translate-y-1 transition-all cursor-pointer">
-                <div className="flex items-center gap-1.5 mb-2 text-[#0F172A] text-xs font-bold">
+                <div className="flex items-center gap-1.5 mb-2 text-ink text-xs font-bold">
                   <Navigation className="w-4 h-4 text-[#0284C7]" />
                   <span>Smart Geofencing</span>
                 </div>
@@ -137,7 +137,7 @@ export default function FeaturesOverview() {
               </div>
 
               {/* Card 4: Community Escalation */}
-              <div className="col-span-2 rounded-2xl bg-gradient-to-r from-sky-500 via-[#0284C7] to-[#0F172A] p-4 text-white shadow-2xl transform hover:-translate-y-1 transition-transform flex items-center justify-between">
+              <div className="col-span-2 rounded-2xl bg-gradient-to-r from-sky-500 via-[#0284C7] to-navy p-4 text-white shadow-2xl transform hover:-translate-y-1 transition-transform flex items-center justify-between">
                 <div>
                   <span className="text-[10px] font-extrabold uppercase tracking-wider block text-sky-200">
                     Verifikasi Komunitas

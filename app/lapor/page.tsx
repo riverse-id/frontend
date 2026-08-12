@@ -493,19 +493,46 @@ export default function LaporPage() {
                 <span>Sebelumnya</span>
               </button>
 
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
-                <button
-                  key={pageNum}
-                  onClick={() => setCurrentPage(pageNum)}
-                  className={`w-8 h-8 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-                    safePage === pageNum
-                      ? "bg-[#0284C7] text-white shadow-md shadow-[#0284C7]/20"
-                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
-                  }`}
-                >
-                  {pageNum}
-                </button>
-              ))}
+              {(() => {
+                const pages: (number | "…")[] = [];
+                if (totalPages <= 5) {
+                  for (let i = 1; i <= totalPages; i++) pages.push(i);
+                } else {
+                  pages.push(1);
+                  if (safePage > 3) pages.push("…");
+                  for (
+                    let i = Math.max(2, safePage - 1);
+                    i <= Math.min(totalPages - 1, safePage + 1);
+                    i++
+                  ) {
+                    pages.push(i);
+                  }
+                  if (safePage < totalPages - 2) pages.push("…");
+                  pages.push(totalPages);
+                }
+                return pages.map((pageNum, idx) =>
+                  pageNum === "…" ? (
+                    <span
+                      key={`dots-${idx}`}
+                      className="px-1 text-xs text-slate-400 font-bold select-none"
+                    >
+                      …
+                    </span>
+                  ) : (
+                    <button
+                      key={pageNum}
+                      onClick={() => setCurrentPage(pageNum)}
+                      className={`w-8 h-8 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                        safePage === pageNum
+                          ? "bg-[#0284C7] text-white shadow-md shadow-[#0284C7]/20"
+                          : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                      }`}
+                    >
+                      {pageNum}
+                    </button>
+                  )
+                );
+              })()}
 
               <button
                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}

@@ -11,6 +11,8 @@ import {
   Layers,
   Sparkles,
   Camera,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { getStoredCctv, CctvPoint } from "../../lib/store";
 import CctvPlayerModal from "./CctvPlayerModal";
@@ -557,6 +559,7 @@ export default function RiverGISMap({
   const geojsonLayerRef = useRef<L.GeoJSON | null>(null);
   const markersGroupRef = useRef<L.LayerGroup | null>(null);
   const cctvGroupRef = useRef<L.LayerGroup | null>(null);
+  const tileLayerRef = useRef<L.TileLayer | null>(null);
   const selectedPinRef = useRef<L.Marker | null>(null);
 
   const [activeFilter, setActiveFilter] = useState<string>("semua");
@@ -569,6 +572,11 @@ export default function RiverGISMap({
   const [showCctv, setShowCctv] = useState(true);
   const [cctvPoints, setCctvPoints] = useState<CctvPoint[]>(() => getStoredCctv());
   const [playingCctv, setPlayingCctv] = useState<CctvPoint | null>(null);
+  const [basemapMode, setBasemapMode] = useState<"light" | "dark">(() =>
+    typeof document !== "undefined" && document.documentElement.classList.contains("dark")
+      ? "dark"
+      : "light"
+  );
 
   // Initialize Leaflet Map Instance with GeoJSON Rivers & Report Markers
   useEffect(() => {
@@ -587,16 +595,18 @@ export default function RiverGISMap({
       keyboard: interactive,
     });
 
-    // High-Definition CartoDB Tile Layer
-    L.tileLayer(
-      "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-      {
-        attribution:
-          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-        subdomains: "abcd",
-        maxZoom: 19,
-      }
-    ).addTo(map);
+    // High-Definition CartoDB Tile Layer (follows site theme at init)
+    const initialUrl =
+      basemapMode === "dark"
+        ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        : "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+    const tileLayer = L.tileLayer(initialUrl, {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 19,
+    }).addTo(map);
+    tileLayerRef.current = tileLayer;
 
     // Zoom Controls top-right (Only when interactive is true)
     if (interactive) {
@@ -869,6 +879,27 @@ export default function RiverGISMap({
     return () => window.removeEventListener("riverse_cctv_play", handlePlay);
   }, [cctvPoints]);
 
+  // Swap basemap tiles when map theme changes
+  useEffect(() => {
+    const layer = tileLayerRef.current;
+    if (!layer) return;
+    const url =
+      basemapMode === "dark"
+        ? "https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+        : "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png";
+    layer.setUrl(url);
+  }, [basemapMode]);
+
+  // Follow the site-wide theme toggle automatically
+  useEffect(() => {
+    const onTheme = (e: Event) => {
+      const mode = (e as CustomEvent<{ mode?: string }>).detail?.mode;
+      if (mode === "dark" || mode === "light") setBasemapMode(mode);
+    };
+    window.addEventListener("riverse_theme_changed", onTheme);
+    return () => window.removeEventListener("riverse_theme_changed", onTheme);
+  }, []);
+
   // Locate User's Browser GPS Position
   const handleLocateUser = () => {
     if (!navigator.geolocation) return;
@@ -928,6 +959,20 @@ export default function RiverGISMap({
               </p>
             </div>
           </div>
+
+          {/* Basemap Dark/Light Switcher */}
+          <button
+            onClick={() => setBasemapMode((m) => (m === "dark" ? "light" : "dark"))}
+            className="flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer self-start xl:self-center shrink-0 bg-white border border-slate-200 text-slate-600 hover:text-[#0284C7] hover:border-sky-200"
+            title={basemapMode === "dark" ? "Ganti Peta ke Mode Terang" : "Ganti Peta ke Mode Gelap"}
+          >
+            {basemapMode === "dark" ? (
+              <Sun className="w-4 h-4 text-[#0284C7]" />
+            ) : (
+              <Moon className="w-4 h-4 text-[#0284C7]" />
+            )}
+            <span>{basemapMode === "dark" ? "Peta Terang" : "Peta Gelap"}</span>
+          </button>
 
           {/* CCTV Layer Toggle */}
           <button

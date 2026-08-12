@@ -8,10 +8,14 @@ import ContactSection from "./components/ContactSection";
 import Image from "next/image";
 import { ArrowRight, MapPin, ShieldCheck, Mail } from "lucide-react";
 import Footer from "./components/Footer";
+import ForceLightMode from "./components/ForceLightMode";
 
 export default function Home() {
   return (
-    <main className="min-h-screen bg-[#F8FAFC] font-sans selection:bg-[#0284C7] selection:text-white">
+    <main className="min-h-screen bg-canvas font-sans selection:bg-[#0284C7] selection:text-white">
+      {/* Landing selalu mode terang */}
+      <ForceLightMode />
+
       {/* 1. Animated Scroll Intro & Portal Hero Sequence */}
       <ScrollIntroHero />
 
@@ -43,7 +47,7 @@ export default function Home() {
             <div className="absolute -top-24 -right-24 w-72 h-72 bg-[#0284C7]/10 rounded-full blur-3xl pointer-events-none" />
 
             <div className="max-w-2xl relative z-10">
-              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
+              <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-ink tracking-tight leading-tight">
                 Lihat Pencemaran Sungai? <br className="hidden sm:block" />
                 <span className="text-[#0284C7]">Laporkan Sekarang!</span>
               </h2>
