@@ -244,7 +244,8 @@ function PaginationControls({
 
 export default function DinasDashboard() {
   const { showToast } = useToast();
-  // Authentication State
+  const [mounted, setMounted] = useState<boolean>(false);
+  // Authentication State (synced after mount to prevent hydration mismatch)
   const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
   const [nipInput, setNipInput] = useState<string>("19880512 201201 1 004");
   const [passwordInput, setPasswordInput] = useState<string>("••••••••");
@@ -262,6 +263,8 @@ export default function DinasDashboard() {
     setTimeout(() => {
       setIsAuthenticating(false);
       setIsLoggedIn(true);
+      localStorage.setItem("riverse_dinas_session", "1");
+      localStorage.setItem("riverse_dinas_role", currentRole);
       showToast("Akses Petugas Dinas DLH berhasil dikonfirmasi!", "success");
     }, 500);
   };
@@ -275,6 +278,8 @@ export default function DinasDashboard() {
     setTimeout(() => {
       setIsAuthenticating(false);
       setIsLoggedIn(true);
+      localStorage.setItem("riverse_dinas_session", "1");
+      localStorage.setItem("riverse_dinas_role", "super_admin");
       showToast("Login Petugas Dinas DLH Berhasil!", "success");
     }, 600);
   };
@@ -308,6 +313,19 @@ export default function DinasDashboard() {
 
   // Role Management State
   const [currentRole, setCurrentRole] = useState<OfficerRole>("super_admin");
+
+  // Sync auth session and role on client mount
+  useEffect(() => {
+    setMounted(true);
+    const session = localStorage.getItem("riverse_dinas_session");
+    if (session === "1") {
+      setIsLoggedIn(true);
+    }
+    const r = localStorage.getItem("riverse_dinas_role");
+    if (r === "super_admin" || r === "korwil" || r === "petugas_lapangan") {
+      setCurrentRole(r as OfficerRole);
+    }
+  }, []);
 
   // Filters & Search
   const [activeTab, setActiveTab] = useState<string>("semua");
@@ -658,6 +676,20 @@ export default function DinasDashboard() {
     showToast(`${filteredReports.length} laporan berhasil diekspor ke Excel!`, "success");
   };
 
+  // Loading shell until client mounted (prevents hydration mismatch)
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-[#0F172A] flex items-center justify-center">
+        <div className="flex flex-col items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0284C7] to-sky-400 flex items-center justify-center shadow-lg shadow-sky-500/20 animate-pulse">
+            <span className="text-white font-extrabold text-sm tracking-wider">RD</span>
+          </div>
+          <p className="text-xs font-semibold text-slate-400">Memuat Portal Dinas DLH...</p>
+        </div>
+      </div>
+    );
+  }
+
   // Render Login View if not authenticated
   if (!isLoggedIn) {
     return (
@@ -673,7 +705,7 @@ export default function DinasDashboard() {
         {/* Top Navbar Header: Back button on top-left */}
         <header className="relative z-20 p-6 sm:px-12 flex items-center justify-between">
           <Link
-            href="/"
+            href="/#beranda"
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/90 hover:bg-slate-100 border border-slate-200/90 text-xs font-bold text-slate-700 shadow-sm transition-all hover:scale-105 active:scale-95"
           >
             <ArrowLeft className="w-4 h-4 text-[#0284C7]" />
@@ -804,7 +836,7 @@ export default function DinasDashboard() {
         
         {/* Brand Header */}
         <div className={`p-5 sm:p-6 border-b border-white/10 flex items-center justify-between ${isSidebarCollapsed ? "lg:justify-center lg:px-0" : ""}`}>
-          <Link href="/" className="flex items-center gap-3 group" title="RIVERSE">
+          <Link href="/#beranda" className="flex items-center gap-3 group" title="RIVERSE">
             <Image
               src="/assets/logo-putih.png"
               alt="RIVERSE Logo"
@@ -994,7 +1026,7 @@ export default function DinasDashboard() {
 
           <div className={`grid gap-2 ${isSidebarCollapsed ? "grid-cols-1" : "grid-cols-2"}`}>
             <Link
-              href="/"
+              href="/#beranda"
               className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold text-slate-300 bg-white/5 hover:bg-white/10 hover:text-white border border-white/5 transition-all"
               title="Kembali ke Beranda"
             >
@@ -1002,7 +1034,11 @@ export default function DinasDashboard() {
               <span className={isSidebarCollapsed ? "hidden" : ""}>Beranda</span>
             </Link>
             <button
-              onClick={() => setIsLoggedIn(false)}
+              onClick={() => {
+                setIsLoggedIn(false);
+                localStorage.removeItem("riverse_dinas_session");
+                localStorage.removeItem("riverse_dinas_role");
+              }}
               title={isSidebarCollapsed ? "Keluar" : undefined}
               className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all cursor-pointer"
             >

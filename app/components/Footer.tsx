@@ -32,7 +32,7 @@ export default function Footer() {
             Navigasi Halaman
           </span>
           <div className="flex flex-col gap-2 text-xs">
-            <a href="/" className="hover:text-white transition-colors">Beranda</a>
+            <a href="/#beranda" className="hover:text-white transition-colors">Beranda</a>
             <a href="/#tentang-kami" className="hover:text-white transition-colors">Tentang Kami</a>
             <a href="/#cara-kerja" className="hover:text-white transition-colors">Cara Kerja</a>
             <a href="/#partner" className="hover:text-white transition-colors">Partner & Kolaborasi</a>
