@@ -51,6 +51,7 @@ import {
 import dynamic from "next/dynamic";
 import { useToast } from "../components/ToastProvider";
 import CctvPlayerModal from "../components/CctvPlayerModal";
+import { exportRowsToExcel } from "../../lib/exportExcel";
 import { INITIAL_OFFICERS, MOCK_REPORTS, MOCK_AUDIT_LOGS, INITIAL_SYSTEM_CONFIG, getStoredReports, saveStoredReports, getStoredCctv, addCctvPoint, removeCctvPoint, CctvPoint, CctvStatus } from "../../lib/store";
 import { Report, Officer, AuditLog, SystemConfig, OfficerRole, ReportStatus } from "../../lib/types";
 
@@ -596,6 +597,65 @@ export default function DinasDashboard() {
       setExportMessage(null);
       alert("Berkas PDF & Excel Rekapitulasi Laporan DLH berhasil diunduh ke perangkat Anda.");
     }, 1500);
+  };
+
+  const REPORT_STATUS_LABEL: Record<string, string> = {
+    pending: "Pending 🟠",
+    terverifikasi: "Terverifikasi 🔴",
+    diproses: "Diproses 🔵",
+    selesai: "Selesai 🟢",
+    ditolak: "Ditolak ⚪",
+  };
+
+  const handleExportOfficers = () => {
+    if (officers.length === 0) return;
+    exportRowsToExcel({
+      fileName: `RIVERSE_Tim_Petugas_${new Date().toISOString().slice(0, 10)}.xlsx`,
+      sheetName: "Tim Petugas DLH",
+      columns: [
+        { header: "Nama Petugas", accessor: (o: Officer) => o.name },
+        { header: "NIP", accessor: (o: Officer) => o.nip },
+        { header: "Peran", accessor: (o: Officer) => o.roleLabel },
+        { header: "Wilayah Tugas", accessor: (o: Officer) => o.region },
+        { header: "Telepon / WA", accessor: (o: Officer) => o.phone },
+        { header: "Email", accessor: (o: Officer) => o.email },
+        { header: "Beban Kerja Aktif", accessor: (o: Officer) => o.activeWorkload },
+        { header: "Tugas Selesai", accessor: (o: Officer) => o.completedTasks },
+      ],
+      rows: officers,
+    });
+    showToast(`${officers.length} data petugas berhasil diekspor ke Excel!`, "success");
+  };
+
+  const handleExportReports = () => {
+    if (filteredReports.length === 0) return;
+    exportRowsToExcel({
+      fileName: `RIVERSE_Manajemen_Laporan_${new Date().toISOString().slice(0, 10)}.xlsx`,
+      sheetName: "Manajemen Laporan",
+      columns: [
+        { header: "No. Tiket", accessor: (r: Report) => r.ticketNo },
+        {
+          header: "Tanggal Dibuat",
+          accessor: (r: Report) => new Date(r.createdAt).toLocaleDateString("id-ID"),
+        },
+        { header: "Sungai / Segmen", accessor: (r: Report) => r.riverName },
+        { header: "Lokasi", accessor: (r: Report) => r.locationDetail },
+        { header: "Wilayah", accessor: (r: Report) => r.region },
+        { header: "Kategori", accessor: (r: Report) => r.categoryLabel },
+        {
+          header: "Status",
+          accessor: (r: Report) => REPORT_STATUS_LABEL[r.status] || r.status,
+        },
+        { header: "Urgency Score", accessor: (r: Report) => r.urgencyScore },
+        { header: "Upvotes", accessor: (r: Report) => r.upvotes },
+        {
+          header: "Pelapor",
+          accessor: (r: Report) => (r.isAnonymous ? "Anonim" : r.reporterName),
+        },
+      ],
+      rows: filteredReports,
+    });
+    showToast(`${filteredReports.length} laporan berhasil diekspor ke Excel!`, "success");
   };
 
   // Render Login View if not authenticated
@@ -1402,11 +1462,11 @@ export default function DinasDashboard() {
                   </p>
                 </div>
                 <button
-                  onClick={handleExportData}
+                  onClick={handleExportReports}
                   className="px-4 py-2.5 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white font-extrabold text-xs transition-all shadow-sm flex items-center gap-2 cursor-pointer self-start md:self-auto"
                 >
                   <Download className="w-4 h-4" />
-                  <span>Ekspor Rekap Laporan</span>
+                  <span>Ekspor Rekap Laporan (Excel)</span>
                 </button>
               </div>
 
@@ -1550,13 +1610,22 @@ export default function DinasDashboard() {
                     Pantau daftar petugas aktif, wilayah penugasan, kapasitas penanganan tiket, dan beban kerja armada pembersih sungai.
                   </p>
                 </div>
-                <button
-                  onClick={() => setShowAddOfficerModal(true)}
-                  className="px-4 py-2.5 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white font-extrabold text-xs transition-all shadow-sm flex items-center gap-2 cursor-pointer self-start sm:self-auto"
-                >
-                  <PlusCircle className="w-4 h-4" />
-                  <span>Tambah Petugas Lapangan</span>
-                </button>
+                <div className="flex items-center gap-2 self-start sm:self-auto">
+                  <button
+                    onClick={handleExportOfficers}
+                    className="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200/80 font-extrabold text-xs transition-all shadow-xs flex items-center gap-2 cursor-pointer"
+                  >
+                    <Download className="w-4 h-4 text-slate-600" />
+                    <span>Ekspor Excel</span>
+                  </button>
+                  <button
+                    onClick={() => setShowAddOfficerModal(true)}
+                    className="px-4 py-2.5 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white font-extrabold text-xs transition-all shadow-sm flex items-center gap-2 cursor-pointer"
+                  >
+                    <PlusCircle className="w-4 h-4" />
+                    <span>Tambah Petugas Lapangan</span>
+                  </button>
+                </div>
               </div>
 
               {/* Officers Grid */}
