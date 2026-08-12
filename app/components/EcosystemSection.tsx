@@ -167,7 +167,7 @@ function FlipStepCard({
             </div>
 
             {/* Title */}
-            <h3 className="text-xl font-extrabold text-[#0F172A] mb-3 group-hover:text-[#0284C7] transition-colors leading-snug relative z-10">
+            <h3 className="text-xl font-extrabold text-ink mb-3 group-hover:text-[#0284C7] transition-colors leading-snug relative z-10">
               {step.title}
             </h3>
 
@@ -260,7 +260,7 @@ export default function EcosystemSection() {
           transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-ink tracking-tight leading-tight">
             4 Langkah Mudah Laporkan Pencemaran Sungai
           </h2>
           <p className="mt-4 text-sm sm:text-base text-slate-600 leading-relaxed font-medium">

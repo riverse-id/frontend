@@ -79,7 +79,7 @@ export default function ContactSection() {
           transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
           className="text-center max-w-3xl mx-auto mb-16"
         >
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-ink tracking-tight leading-tight">
             Hubungi Tim RIVERSE & <br className="hidden sm:block" />
             <span className="text-[#0284C7]">Layanan Pengaduan Darurat Sungai</span>
           </h2>
@@ -95,7 +95,7 @@ export default function ContactSection() {
           <div className="lg:col-span-5 space-y-6">
 
             {/* Emergency Callout Card */}
-            <div className="relative rounded-3xl p-6 sm:p-7 bg-gradient-to-br from-[#0284C7] via-[#0284C7] to-[#0F172A] text-white shadow-xl overflow-hidden">
+            <div className="relative rounded-3xl p-6 sm:p-7 bg-gradient-to-br from-[#0284C7] via-[#0284C7] to-navy text-white shadow-xl overflow-hidden">
               <div className="absolute top-0 right-0 -mr-6 -mt-6 w-32 h-32 rounded-full bg-white/10 blur-xl pointer-events-none" />
               <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/80 border border-rose-400/50 text-white text-[10px] font-extrabold uppercase tracking-wider w-max mb-4 shadow-sm">
                 <span className="w-2 h-2 rounded-full bg-white animate-ping" />
@@ -135,7 +135,7 @@ export default function ContactSection() {
                   <MapPin className="w-5 h-5" />
                 </div>
                 <div>
-                  <h4 className="text-sm font-extrabold text-[#0F172A]">Kantor Riverse</h4>
+                  <h4 className="text-sm font-extrabold text-ink">Kantor Riverse</h4>
                   <p className="text-xs text-slate-600 leading-relaxed mt-1 font-medium">
                     Universitas Amikom Yogyakarta, Jl. Ring Road Utara, Condongcatur, Depok, Sleman, DIY Yogyakarta 55281.
                   </p>
@@ -150,7 +150,7 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Email Resmi</span>
-                    <span className="text-sm sm:text-base font-extrabold text-[#0F172A]">kontak@riverse.id</span>
+                    <span className="text-sm sm:text-base font-extrabold text-ink">kontak@riverse.id</span>
                   </div>
                 </div>
                 <button
@@ -180,7 +180,7 @@ export default function ContactSection() {
                   </div>
                   <div>
                     <span className="block text-[10px] font-bold text-slate-400 uppercase tracking-wider">Telepon Kantor</span>
-                    <span className="text-sm sm:text-base font-extrabold text-[#0F172A]">(0274) 884201</span>
+                    <span className="text-sm sm:text-base font-extrabold text-ink">(0274) 884201</span>
                   </div>
                 </div>
                 <a
@@ -197,7 +197,7 @@ export default function ContactSection() {
 
           {/* RIGHT COLUMN: Interactive Form (7 Cols) */}
           <div className="lg:col-span-7 rounded-3xl p-6 sm:p-10 bg-white border border-slate-200/90 shadow-xl shadow-slate-200/40 relative hover:shadow-2xl hover:shadow-[#0284C7]/20 hover:border-sky-400/70 transition-all">
-            <h3 className="text-2xl font-extrabold text-[#0F172A] mb-2">
+            <h3 className="text-2xl font-extrabold text-ink mb-2">
               Kirim Pesan atau Pertanyaan
             </h3>
             <p className="text-xs text-slate-600 mb-8 font-medium">

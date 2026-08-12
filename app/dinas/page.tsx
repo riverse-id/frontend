@@ -51,6 +51,7 @@ import {
 import dynamic from "next/dynamic";
 import { useToast } from "../components/ToastProvider";
 import CctvPlayerModal from "../components/CctvPlayerModal";
+import ThemeToggle from "../components/ThemeToggle";
 import { exportRowsToExcel } from "../../lib/exportExcel";
 import { INITIAL_OFFICERS, MOCK_REPORTS, MOCK_AUDIT_LOGS, INITIAL_SYSTEM_CONFIG, getStoredReports, saveStoredReports, getStoredCctv, addCctvPoint, removeCctvPoint, CctvPoint, CctvStatus } from "../../lib/store";
 import { Report, Officer, AuditLog, SystemConfig, OfficerRole, ReportStatus } from "../../lib/types";
@@ -679,7 +680,7 @@ export default function DinasDashboard() {
   // Loading shell until client mounted (prevents hydration mismatch)
   if (!mounted) {
     return (
-      <div className="min-h-screen bg-[#0F172A] flex items-center justify-center">
+      <div className="min-h-screen bg-navy flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-[#0284C7] to-sky-400 flex items-center justify-center shadow-lg shadow-sky-500/20 animate-pulse">
             <span className="text-white font-extrabold text-sm tracking-wider">RD</span>
@@ -721,7 +722,7 @@ export default function DinasDashboard() {
         <main className="relative z-20 flex-1 flex items-center justify-center p-4 sm:p-6">
           <div className="w-full max-w-md overflow-hidden bg-white border border-slate-200/90 rounded-[36px] shadow-2xl shadow-slate-200/80">
             {/* Brand Header Band */}
-            <div className="relative bg-gradient-to-br from-[#0284C7] via-[#0369A1] to-[#0F172A] px-8 py-8 text-center overflow-hidden">
+            <div className="relative bg-gradient-to-br from-[#0284C7] via-[#0369A1] to-navy px-8 py-8 text-center overflow-hidden">
               <div className="absolute -top-10 -right-10 w-44 h-44 bg-white/10 rounded-full blur-2xl pointer-events-none" />
               <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-sky-400/10 rounded-full blur-2xl pointer-events-none" />
               <Image
@@ -821,7 +822,7 @@ export default function DinasDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0F172A] text-slate-800 font-sans flex flex-col lg:flex-row selection:bg-[#0284C7] selection:text-white relative p-0 lg:p-3.5 gap-0 lg:gap-3.5">
+    <div className="min-h-screen bg-navy text-slate-800 font-sans flex flex-col lg:flex-row selection:bg-[#0284C7] selection:text-white relative p-0 lg:p-3.5 gap-0 lg:gap-3.5">
       
       {/* Dark Mobile Backdrop Overlay */}
       {isMobileSidebarOpen && (
@@ -832,7 +833,7 @@ export default function DinasDashboard() {
       )}
 
       {/* 1. LEFT SIDEBAR NAVIGATION (Modern Dark Sleek Drawer matching image) */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-72 ${isSidebarCollapsed ? "lg:w-[76px]" : "lg:w-60"} bg-[#0F172A] text-slate-300 flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out lg:translate-x-0 lg:sticky lg:top-3.5 lg:z-30 lg:h-[calc(100vh-28px)] lg:overflow-y-auto ${isMobileSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"}`}>
+      <aside className={`fixed inset-y-0 left-0 z-50 w-72 ${isSidebarCollapsed ? "lg:w-[76px]" : "lg:w-60"} bg-navy text-slate-300 flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out lg:translate-x-0 lg:sticky lg:top-3.5 lg:z-30 lg:h-[calc(100vh-28px)] lg:overflow-y-auto ${isMobileSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"}`}>
         
         {/* Brand Header */}
         <div className={`p-5 sm:p-6 border-b border-white/10 flex items-center justify-between ${isSidebarCollapsed ? "lg:justify-center lg:px-0" : ""}`}>
@@ -1050,7 +1051,7 @@ export default function DinasDashboard() {
       </aside>
 
       {/* 2. MAIN CONTENT AREA (Bento Rounded White/Light Canvas matching image) */}
-      <main className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC] rounded-none lg:rounded-[32px] border border-slate-200/80 shadow-2xl overflow-hidden min-h-screen lg:min-h-[calc(100vh-28px)]">
+      <main className="flex-1 flex flex-col min-w-0 bg-canvas rounded-none lg:rounded-[32px] border border-slate-200/80 shadow-2xl overflow-hidden min-h-screen lg:min-h-[calc(100vh-28px)]">
         
         {/* TOP HEADER BAR */}
         <header className="bg-white border-b border-slate-200/80 px-5 sm:px-8 py-4 flex items-center justify-between gap-4 sticky top-0 z-20 shadow-xs">
@@ -1087,6 +1088,8 @@ export default function DinasDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
+            <ThemeToggle className="bg-slate-100 text-slate-600 hover:text-[#0284C7] hover:bg-slate-200" />
+
             {/* User Profile Avatar in Header (Clickable) */}
             <button
               type="button"
@@ -1280,7 +1283,7 @@ export default function DinasDashboard() {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
                 
                 {/* Bottom Widget 1 (Col 1-4): Total Bobot Urgensi (Dark Pill Card) */}
-                <div className="lg:col-span-4 bg-gradient-to-br from-[#0F172A] to-slate-900 text-white rounded-3xl p-5 shadow-sm flex items-center gap-4">
+                <div className="lg:col-span-4 bg-gradient-to-br from-navy to-slate-900 text-white rounded-3xl p-5 shadow-sm flex items-center gap-4">
                   <div className="w-14 h-14 rounded-full border-4 border-[#0284C7]/40 flex items-center justify-center shrink-0 text-center font-extrabold text-base text-sky-300">
                     {totalUrgency}
                   </div>
@@ -1306,7 +1309,7 @@ export default function DinasDashboard() {
                 </div>
 
                 {/* Bottom Widget 3 (Col 8-12): Komunitas RIVERSE Banner */}
-                <div className="lg:col-span-5 bg-gradient-to-br from-[#0284C7] via-[#0369A1] to-[#0F172A] text-white rounded-3xl p-5 sm:p-6 shadow-md relative overflow-hidden flex flex-col justify-between gap-4">
+                <div className="lg:col-span-5 bg-gradient-to-br from-[#0284C7] via-[#0369A1] to-navy text-white rounded-3xl p-5 sm:p-6 shadow-md relative overflow-hidden flex flex-col justify-between gap-4">
                   <div className="absolute top-0 right-0 w-36 h-36 bg-sky-300/20 rounded-full blur-2xl pointer-events-none" />
                   
                   <div className="flex items-center justify-between">

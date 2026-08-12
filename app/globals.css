@@ -2,6 +2,8 @@
 @import "leaflet/dist/leaflet.css";
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --font-poppins: 'Poppins', sans-serif;
   --background: #F8FAFC;
@@ -28,6 +30,13 @@
   --color-marker-done: #22C55E;
 }
 
+/* Semantic tokens (var-based so they flip in dark mode) */
+@theme {
+  --color-ink: #0F172A;
+  --color-navy: #0F172A;
+  --color-canvas: #F8FAFC;
+}
+
 html {
   scroll-behavior: smooth;
   scroll-padding-top: 6rem;
@@ -38,6 +47,223 @@ body {
   color: var(--foreground);
   font-family: 'Poppins', system-ui, -apple-system, sans-serif;
   overflow-x: hidden;
+}
+
+/* ===================================================================== */
+/* DARK MODE & HIGH CONTRAST — remap theme tokens on class activate       */
+/* ===================================================================== */
+.dark,
+.a11y-hc {
+  color-scheme: dark;
+  --background: #0B1220;
+  --foreground: #E2E8F0;
+
+  /* Card / surfaces */
+  --color-white: #0F172A;
+  --color-ink: #F1F5F9;
+  --color-navy: #1E293B;
+  --color-canvas: #0B1220;
+  --color-zinc-900: #E2E8F0;
+
+  /* Slate scale → dark surfaces + light text */
+  --color-slate-50: #1E293B;
+  --color-slate-100: #243244;
+  --color-slate-200: #334155;
+  --color-slate-300: #475569;
+  --color-slate-400: #64748B;
+  --color-slate-500: #94A3B8;
+  --color-slate-600: #CBD5E1;
+  --color-slate-700: #E2E8F0;
+  --color-slate-800: #F1F5F9;
+  --color-slate-900: #F8FAFC;
+  --color-slate-950: #0B1220;
+
+  /* Sky scale → darker blue fills, lighter blue text */
+  --color-sky-50: #0E2A40;
+  --color-sky-100: #12354F;
+  --color-sky-200: #1B4A6E;
+  --color-sky-300: #38BDF8;
+  --color-sky-400: #38BDF8;
+  --color-sky-500: #0EA5E9;
+  --color-sky-600: #38BDF8;
+  --color-sky-700: #7DD3FC;
+  --color-sky-800: #BAE6FD;
+  --color-sky-900: #E0F2FE;
+  --color-sky-950: #0C1B2A;
+
+  /* Red status scale */
+  --color-red-50: #3F1217;
+  --color-red-100: #4C1D22;
+  --color-red-200: #7F1D1D;
+  --color-red-300: #DC2626;
+  --color-red-400: #EF4444;
+  --color-red-500: #EF4444;
+  --color-red-600: #F87171;
+  --color-red-700: #FCA5A5;
+  --color-red-800: #FECACA;
+  --color-red-900: #FEE2E2;
+  --color-red-950: #FEE2E2;
+
+  /* Emerald status scale */
+  --color-emerald-50: #052E1C;
+  --color-emerald-100: #0B3D24;
+  --color-emerald-200: #166534;
+  --color-emerald-300: #10B981;
+  --color-emerald-400: #34D399;
+  --color-emerald-500: #22C55E;
+  --color-emerald-600: #4ADE80;
+  --color-emerald-700: #6EE7B7;
+  --color-emerald-800: #A7F3D0;
+  --color-emerald-900: #D1FAE5;
+  --color-emerald-950: #D1FAE5;
+
+  /* Amber status scale */
+  --color-amber-50: #3A2A0C;
+  --color-amber-100: #452F0F;
+  --color-amber-200: #92400E;
+  --color-amber-300: #F59E0B;
+  --color-amber-400: #FBBF24;
+  --color-amber-500: #F59E0B;
+  --color-amber-600: #FBBF24;
+  --color-amber-700: #FCD34D;
+  --color-amber-800: #FDE68A;
+  --color-amber-900: #FEF3C7;
+  --color-amber-950: #FEF3C7;
+}
+
+/* Keep text-white legible on colored/dark elements (white token becomes dark card) */
+.dark .text-white {
+  color: #ffffff;
+}
+
+/* Keep dark button/gradient backgrounds dark even though slate-800/900 now map to light text */
+.dark .bg-slate-900,
+.dark .bg-slate-900\/60,
+.dark .bg-slate-900\/70,
+.dark .bg-slate-900\/75,
+.dark .bg-slate-900\/80,
+.dark .bg-slate-900\/90 {
+  background-color: #1E293B;
+}
+.dark .bg-slate-800 {
+  background-color: #243244;
+}
+.dark .bg-slate-800\/80 {
+  background-color: #243244;
+}
+.dark .bg-slate-800\/90 {
+  background-color: #334155;
+}
+.dark .from-slate-900 {
+  --tw-gradient-from: #1E293B;
+}
+.dark .to-slate-900 {
+  --tw-gradient-to: #1E293B;
+}
+.dark .via-slate-800 {
+  --tw-gradient-via: #243244;
+}
+.dark .via-slate-900 {
+  --tw-gradient-via: #1E293B;
+}
+.dark .to-slate-800 {
+  --tw-gradient-to: #243244;
+}
+.dark .bg-slate-950\/60,
+.dark .bg-slate-950\/70,
+.dark .bg-slate-950\/75,
+.dark .bg-slate-950\/85,
+.dark .bg-slate-950\/90 {
+  background-color: rgba(2, 6, 23, 0.85);
+}
+
+/* High-contrast variant keeps dark buttons/gradients dark (mirror of dark) */
+.a11y-hc .bg-slate-900,
+.a11y-hc .bg-slate-900\/60,
+.a11y-hc .bg-slate-900\/70,
+.a11y-hc .bg-slate-900\/75,
+.a11y-hc .bg-slate-900\/80,
+.a11y-hc .bg-slate-900\/90 {
+  background-color: #0B1220;
+}
+.a11y-hc .bg-slate-800,
+.a11y-hc .bg-slate-800\/80,
+.a11y-hc .bg-slate-800\/90 {
+  background-color: #1E293B;
+}
+.a11y-hc .from-slate-900 {
+  --tw-gradient-from: #0B1220;
+}
+.a11y-hc .to-slate-900 {
+  --tw-gradient-to: #0B1220;
+}
+.a11y-hc .via-slate-800 {
+  --tw-gradient-via: #1E293B;
+}
+.a11y-hc .to-slate-800 {
+  --tw-gradient-to: #1E293B;
+}
+.a11y-hc .text-white {
+  color: #ffffff;
+}
+
+/* ===================================================================== */
+/* ACCESSIBILITY TOOLS                                                   */
+/* ===================================================================== */
+.a11y-readable,
+.a11y-readable * {
+  font-family: "Comic Sans MS", "Comic Sans", "Trebuchet MS", "Segoe UI", sans-serif !important;
+  font-weight: 400;
+}
+
+.a11y-underline a {
+  text-decoration: underline !important;
+  text-underline-offset: 3px;
+}
+
+.a11y-spacing,
+.a11y-spacing * {
+  letter-spacing: 0.08em !important;
+}
+
+.a11y-motion *,
+.a11y-motion *::before,
+.a11y-motion *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+html.a11y-grayscale {
+  filter: grayscale(100%);
+}
+
+html.a11y-invert {
+  filter: invert(1) hue-rotate(180deg);
+}
+
+/* Leaflet popups follow dark theme */
+.dark .leaflet-popup-content-wrapper,
+.dark .leaflet-popup-tip {
+  background: #1E293B;
+  color: #E2E8F0;
+}
+.dark .leaflet-container {
+  background: #0B1220;
+}
+.dark .leaflet-bar a,
+.dark .leaflet-control-zoom a {
+  background: #1E293B;
+  color: #E2E8F0;
+}
+
+/* Aperture effects follow theme */
+.dark .bg-aperture-radial {
+  background: radial-gradient(circle at center, rgba(18, 53, 79, 0.95) 0%, rgba(2, 132, 199, 0.8) 45%, rgba(2, 6, 23, 0.98) 100%);
+}
+.dark .bg-aperture-portal {
+  background: radial-gradient(circle at center, #0F172A 0%, rgba(18, 53, 79, 0.9) 35%, rgba(2, 132, 199, 0.95) 75%, #020617 100%);
 }
 
 /* Keyboard accessibility: visible focus ring everywhere */

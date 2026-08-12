@@ -40,7 +40,7 @@ export default function PartnerSection() {
         transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
         className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10 mb-12"
       >
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
+        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-ink tracking-tight leading-tight">
           Kolaborasi Strategis untuk Kelestarian Sungai
         </h2>
         <p className="mt-3 text-sm sm:text-base text-slate-600 max-w-xl mx-auto font-medium">

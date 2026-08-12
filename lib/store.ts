@@ -1,4 +1,4 @@
-import { Report, Officer, AuditLog, SystemConfig, ReportStatus, ReportCategory } from "./types";
+import { Report, Officer, AuditLog, SystemConfig, ReportStatus, ReportCategory, StatusTimeline } from "./types";
 
 export const INITIAL_SYSTEM_CONFIG: SystemConfig = {
   globalThreshold: 50,
@@ -43,7 +43,371 @@ export const INITIAL_OFFICERS: Officer[] = [
     activeWorkload: 2,
     completedTasks: 76,
   },
+  {
+    id: "off-4",
+    name: "Ahmad Subagja, S.T.",
+    nip: "19850412 201001 1 009",
+    role: "petugas_lapangan",
+    roleLabel: "Petugas Lapangan Armada Ciliwung",
+    region: "Kalibata - Tebet (Ciliwung)",
+    phone: "+62 821-2233-4455",
+    email: "ahmad.subagja@dlh.jakarta.go.id",
+    activeWorkload: 3,
+    completedTasks: 61,
+  },
+  {
+    id: "off-5",
+    name: "Dewi Anggraini, S.T.",
+    nip: "19881203 201103 2 004",
+    role: "korwil",
+    roleLabel: "Koordinator Wilayah Jakarta Timur",
+    region: "Jakarta Timur (Cipinang - Sunter)",
+    phone: "+62 812-8877-6655",
+    email: "dewi.anggraini@dlh.jakarta.go.id",
+    activeWorkload: 5,
+    completedTasks: 88,
+  },
+  {
+    id: "off-6",
+    name: "Rudi Hartono",
+    nip: "19910114 201403 1 011",
+    role: "petugas_lapangan",
+    roleLabel: "Petugas Lapangan Pasukan Oranye",
+    region: "Sunter - Kelapa Gading",
+    phone: "+62 856-3344-2211",
+    email: "rudi.hartono@dlh.jakarta.go.id",
+    activeWorkload: 1,
+    completedTasks: 53,
+  },
+  {
+    id: "off-7",
+    name: "Ratna Dewi Kusuma, S.Si.",
+    nip: "19870622 201012 2 008",
+    role: "korwil",
+    roleLabel: "Koordinator Wilayah Jakarta Utara",
+    region: "Jakarta Utara (BKB - Marunda)",
+    phone: "+62 813-5566-7788",
+    email: "ratna.dewi@dlh.jakarta.go.id",
+    activeWorkload: 4,
+    completedTasks: 97,
+  },
+  {
+    id: "off-8",
+    name: "Bambang Setiawan",
+    nip: "19950930 202006 1 014",
+    role: "petugas_lapangan",
+    roleLabel: "Petugas Lapangan Armada Ciliwung",
+    region: "Depok - Jagakarsa (Ciliwung Hulu)",
+    phone: "+62 823-4455-6677",
+    email: "bambang.setiawan@dlh.jakarta.go.id",
+    activeWorkload: 2,
+    completedTasks: 34,
+  },
+  {
+    id: "off-9",
+    name: "Sari Puspita, S.E.",
+    nip: "19920318 201603 2 010",
+    role: "petugas_lapangan",
+    roleLabel: "Petugas Lapangan Monitoring",
+    region: "Bekasi - Bantargebang",
+    phone: "+62 838-9911-2233",
+    email: "sari.puspita@dlh.jakarta.go.id",
+    activeWorkload: 0,
+    completedTasks: 41,
+  },
+  {
+    id: "off-10",
+    name: "Hendra Gunawan",
+    nip: "19841107 200904 1 006",
+    role: "korwil",
+    roleLabel: "Koordinator Wilayah Jakarta Barat",
+    region: "Jakarta Barat (Angke - Mookervart)",
+    phone: "+62 811-6677-8899",
+    email: "hendra.gunawan@dlh.jakarta.go.id",
+    activeWorkload: 6,
+    completedTasks: 109,
+  },
+  {
+    id: "off-11",
+    name: "Lilis Marlina, A.Md.",
+    nip: "19940626 201703 2 012",
+    role: "petugas_lapangan",
+    roleLabel: "Petugas Lapangan Pasukan Oranye",
+    region: "Cengkareng - Kalideres",
+    phone: "+62 852-7788-9900",
+    email: "lilis.marlina@dlh.jakarta.go.id",
+    activeWorkload: 2,
+    completedTasks: 47,
+  },
+  {
+    id: "off-12",
+    name: "Taufik Hidayat, S.T.",
+    nip: "19881219 201101 1 013",
+    role: "petugas_lapangan",
+    roleLabel: "Petugas Lapangan Armada Cisadane",
+    region: "Kota Tangerang - Serpong",
+    phone: "+62 822-1122-3344",
+    email: "taufik.hidayat@dlh.jakarta.go.id",
+    activeWorkload: 3,
+    completedTasks: 58,
+  },
+  {
+    id: "off-13",
+    name: "Nina Marliana",
+    nip: "19951105 202110 2 015",
+    role: "petugas_lapangan",
+    roleLabel: "Petugas Lapangan Monitoring",
+    region: "Pesanggrahan - Kebayoran",
+    phone: "+62 895-2233-4455",
+    email: "nina.marliana@dlh.jakarta.go.id",
+    activeWorkload: 1,
+    completedTasks: 29,
+  },
+  {
+    id: "off-14",
+    name: "Yusuf Maulana, S.Kom.",
+    nip: "19890213 201108 1 016",
+    role: "petugas_lapangan",
+    roleLabel: "Petugas Lapangan Data Spasial",
+    region: "Jatinegara - Cipinang",
+    phone: "+62 817-5566-7788",
+    email: "yusuf.maulana@dlh.jakarta.go.id",
+    activeWorkload: 2,
+    completedTasks: 63,
+  },
+  {
+    id: "off-15",
+    name: "Fitri Handayani",
+    nip: "19930827 201605 2 017",
+    role: "petugas_lapangan",
+    roleLabel: "Petugas Lapangan Pasukan Oranye",
+    region: "Tanjung Priok - Marunda",
+    phone: "+62 899-3344-5566",
+    email: "fitri.handayani@dlh.jakarta.go.id",
+    activeWorkload: 4,
+    completedTasks: 71,
+  },
 ];
+
+const IMAGE_POOL = [
+  "/assets/sungai/026016200_1633163690-20211002-Pencemaran_Teluk_Jakarta_oleh_Paracetamol-1.jpg",
+  "/assets/sungai/Mengerikan! Ini Penampakan Pencemaran Sungai di Jakarta.jpeg",
+  "/assets/sungai/antarafoto-bantaran-sungai-penuh-sampah-230624-adm-1.jpg",
+  "/assets/sungai/pencemaran-teluk-jakarta-9r95-dom.jpg",
+  "/assets/sungai/_ (1).jpeg",
+  "/assets/sungai/Potret Lautan Sampah di Teluk Jakarta.jpeg",
+  "/assets/sungai/5d58fc880697c.jpg",
+  "/assets/sungai/5d8be82dc4958.jpg",
+];
+
+const RIVER_POOL = [
+  "Kali Ciliwung - Segmen Manggarai",
+  "Kali Ciliwung - Segmen Kalibata",
+  "Kali Ciliwung - Segmen Depok Hulu",
+  "Kali Pesanggrahan - Segmen Bintaro",
+  "Kali Pesanggrahan - Segmen Kebon Jeruk",
+  "Kali Cisadane - Segmen Kota Tangerang",
+  "Kali Cisadane - Segmen Serpong",
+  "Kali Angke - Segmen Cengkareng",
+  "Kali Sunter - Segmen Kelapa Gading",
+  "Kali Cipinang - Segmen Jatinegara",
+  "Kali Krukut - Segmen Tanah Abang",
+  "Kali Bekasi - Segmen Bendung Bekasi",
+  "Kali Mookervart - Segmen Kalideres",
+  "Banjir Kanal Barat - Segmen Manggarai",
+  "Banjir Kanal Timur - Segmen Cipinang",
+];
+
+const LOCATION_POOL = [
+  "Dekat Pintu Air Manggarai RT 05/03",
+  "Bantaran Jembatan Kalibata",
+  "Belakang Pabrik tekstil Jl. Raya Depok",
+  "Jembatan penyeberangan Bintaro",
+  "Samping Kompleks Kebon Jeruk",
+  "Bendung Cisadane Kota Tangerang",
+  "Bantaran Serpong segmen jembatan",
+  "Jembatan Cengkareng RT 02/07",
+  "Polder Danau Sunter Selatan",
+  "Bantaran Jatinegara samping pasar",
+  "Jembatan Tanah Abang RT 01/04",
+  "Hilir Bendung Bekasi Jl. Mayor Oking",
+  "Perbatasan Kalideres - Tangerang",
+  "Sluice gate BKB Manggarai",
+  "Bantaran BKT Cipinang Muara",
+];
+
+const REPORTER_POOL = [
+  "Budi Santoso",
+  "Siti Rahma",
+  "Ahmad Hidayat",
+  "Dewi Lestari",
+  "Rian Kurniawan",
+  "Putri Ayu",
+  "Andi Saputra",
+  "Maya Sari",
+  "Fajar Nugroho",
+  "Intan Permatasari",
+  "Rizky Ramadhan",
+  "Nadia Kusuma",
+  "Doni Pratama",
+  "Laila Fitriani",
+  "Bayu Setiawan",
+  "Ratna Dewi",
+];
+
+const REGION_POOL = [
+  "Jakarta Selatan",
+  "Jakarta Timur",
+  "Jakarta Utara",
+  "Jakarta Barat",
+  "Jakarta Pusat",
+  "Kota Bekasi",
+  "Kota Tangerang",
+  "Kota Depok",
+];
+
+const CATEGORY_POOL = [
+  { id: "sampah", label: "Tumpukan Sampah Plastik", desc: "Penumpukan sampah plastik rumah tangga dan kayu bekas yang menyumbat aliran air." },
+  { id: "limbah-cair", label: "Limbah Cair Industri", desc: "Air sungai berubah warna keruh kehitaman dan mengeluarkan cairan berbusa pekat." },
+  { id: "bau-warna", label: "Busa & Air Berbau", desc: "Tumpukan busa putih tebal dan bau asam menyengat tercium hingga jarak jauh." },
+  { id: "tanggul", label: "Kerusakan Tanggul & Longsor", desc: "Tanah longsor dan erosi bantaran akibat debit air deras setelah hujan." },
+];
+
+const OFFICER_ACTORS = [
+  "Ir. Bambang Wijaya, M.T.",
+  "Drs. Heru Prasetyo",
+  "Suryadi Pasukan Oranye",
+  "Ahmad Subagja, S.T.",
+  "Dewi Anggraini, S.T.",
+  "Rudi Hartono",
+  "Ratna Dewi Kusuma, S.Si.",
+];
+
+const STATUS_SEQ: ReportStatus[] = [
+  "pending",
+  "terverifikasi",
+  "diproses",
+  "selesai",
+  "terverifikasi",
+  "selesai",
+  "pending",
+  "diproses",
+  "ditolak",
+  "terverifikasi",
+];
+
+function buildGeneratedReports(): Report[] {
+  const DAY = 86400000;
+  const BASE = Date.UTC(2026, 6, 25, 8, 0);
+  const list: Report[] = [];
+
+  for (let i = 0; i < 44; i++) {
+    const river = RIVER_POOL[i % RIVER_POOL.length];
+    const cat = CATEGORY_POOL[i % CATEGORY_POOL.length];
+    const status = STATUS_SEQ[i % STATUS_SEQ.length];
+    const reporter = REPORTER_POOL[i % REPORTER_POOL.length];
+    const region = REGION_POOL[(i * 3) % REGION_POOL.length];
+    const isAnon = i % 5 === 0;
+    const upvotes = ((i * 17) % 58) + 6;
+    const urgency = upvotes * 2 + ((i * 7) % 22);
+    const createdMs = BASE - ((i * 13) % 24) * DAY - ((i * 5) % 9) * 3600000;
+    const created = new Date(createdMs).toISOString();
+    const ticketNo = `DLH-2026-${String(7000 - i * 11)}`;
+    const officer = OFFICER_ACTORS[i % OFFICER_ACTORS.length];
+
+    const timeline: StatusTimeline[] = [
+      {
+        status: "pending",
+        label: "Laporan Dibuat Warga",
+        timestamp: new Date(createdMs).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" }),
+        actor: isAnon ? "Warga Anonim" : reporter,
+      },
+    ];
+    if (status === "terverifikasi" || status === "diproses" || status === "selesai" || status === "ditolak") {
+      timeline.push({
+        status: "terverifikasi",
+        label: "Mencapai Threshold (Diteruskan ke DLH)",
+        timestamp: new Date(createdMs + 2 * 3600000).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" }),
+        actor: "Sistem Otomatis",
+      });
+    }
+    if (status === "diproses" || status === "selesai") {
+      timeline.push({
+        status: "diproses",
+        label: "Tim Lapangan Didisposisikan",
+        timestamp: new Date(createdMs + 5 * 3600000).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" }),
+        actor: officer,
+      });
+    }
+    if (status === "selesai") {
+      timeline.push({
+        status: "selesai",
+        label: "Closed-Loop Selesai Pembersihan",
+        timestamp: new Date(createdMs + 10 * 3600000).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" }),
+        actor: officer,
+      });
+    }
+    if (status === "ditolak") {
+      timeline.push({
+        status: "ditolak",
+        label: "Laporan Ditolak / Tidak Valid",
+        timestamp: new Date(createdMs + 3 * 3600000).toLocaleString("id-ID", { dateStyle: "short", timeStyle: "short" }),
+        actor: "Administrator DLH",
+      });
+    }
+
+    list.push({
+      id: `rpt-gen-${i + 200}`,
+      ticketNo,
+      riverName: river,
+      region,
+      category: cat.id as ReportCategory,
+      categoryLabel: cat.label,
+      locationDetail: LOCATION_POOL[i % LOCATION_POOL.length],
+      lat: -6.1 - (i % 5) * 0.05,
+      lng: 106.6 + (i % 8) * 0.04,
+      description: cat.desc,
+      reporterName: isAnon ? "Warga Anonim" : reporter,
+      isAnonymous: isAnon,
+      upvotes,
+      voteThreshold: 50,
+      urgencyScore: urgency,
+      status,
+      createdAt: created,
+      updatedAt: new Date(createdMs + (status === "selesai" ? 10 : 3) * 3600000).toISOString(),
+      beforeImages: [IMAGE_POOL[i % IMAGE_POOL.length]],
+      afterImage:
+        status === "selesai"
+          ? "/assets/sungai/thumb-citarum-563x353.jpg"
+          : undefined,
+      officerNote:
+        status === "selesai"
+          ? "Telah diangkut sampah menggunakan armada DLH. Kondisi aliran kembali normal sesuai SOP."
+          : undefined,
+      assignedOfficerId: status === "diproses" || status === "selesai" ? `off-${(i % 12) + 3}` : undefined,
+      assignedOfficerName: status === "diproses" || status === "selesai" ? officer : undefined,
+      subReports:
+        i % 7 === 0
+          ? [
+              {
+                id: `sub-gen-${i}`,
+                reporterName: REPORTER_POOL[(i + 3) % REPORTER_POOL.length],
+                category: cat.id as ReportCategory,
+                categoryLabel: cat.label,
+                description: "Foto tambahan dari warga lain memperkuat bukti pencemaran di lokasi.",
+                images: [IMAGE_POOL[(i + 2) % IMAGE_POOL.length]],
+                createdAt: new Date(createdMs + 3600000).toISOString(),
+                lat: -6.1 - (i % 5) * 0.05,
+                lng: 106.6 + (i % 8) * 0.04,
+              },
+            ]
+          : [],
+      timeline,
+    });
+  }
+
+  return list;
+}
 
 export const MOCK_REPORTS: Report[] = [
   {
@@ -196,7 +560,56 @@ export const MOCK_REPORTS: Report[] = [
       { status: "pending", label: "Laporan Dibuat (Mengumpulkan Vote)", timestamp: "2026-07-31 09:10", actor: "Rian Kurniawan" },
     ],
   },
+  ...buildGeneratedReports(),
 ];
+
+const LOG_ACTIONS = [
+  { action: "Disposisi Tim Lapangan", details: "Menugaskan petugas armada ke lokasi titik GIS laporan." },
+  { action: "Update Status (DIPROSES)", details: "Petugas mulai melakukan penanganan pembersihan di lapangan." },
+  { action: "Update Status (SELESAI)", details: "Closed-loop selesai, dokumentasi Before vs After diunggah." },
+  { action: "Eskalasi Threshold", details: "Vote mencapai threshold. Status otomatis menjadi Terverifikasi 🔴." },
+  { action: "Tolak Laporan (REJECT)", details: "Laporan ditolak karena duplikat / foto tidak relevan." },
+  { action: "Unggah Bukti After", details: "Dokumentasi foto pembersihan diunggah ke tiket." },
+];
+
+function buildGeneratedAuditLogs(): AuditLog[] {
+  const DAY = 86400000;
+  const BASE = Date.UTC(2026, 6, 25, 9, 0);
+  const logs: AuditLog[] = [];
+
+  for (let i = 0; i < 26; i++) {
+    const action = LOG_ACTIONS[i % LOG_ACTIONS.length];
+    const actor = OFFICER_ACTORS[(i * 2) % OFFICER_ACTORS.length];
+    const actorRole =
+      actor === "Ir. Bambang Wijaya, M.T."
+        ? "Super Admin"
+        : actor.startsWith("Drs.")
+        ? "Koordinator Wilayah"
+        : actor === "Sistem Spasial Auto"
+        ? "Automated System"
+        : "Petugas Lapangan";
+    const stamp = new Date(BASE - ((i * 7) % 20) * DAY - ((i * 11) % 24) * 3600000 - (i * 31) % 60);
+
+    logs.push({
+      id: `log-gen-${i + 100}`,
+      timestamp: stamp.toLocaleString("id-ID", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      }),
+      ticketNo: `DLH-2026-${String(7000 - ((i * 11) % 44) * 11)}`,
+      actorName: actor,
+      actorRole,
+      action: action.action,
+      details: action.details,
+    });
+  }
+
+  return logs;
+}
 
 export const MOCK_AUDIT_LOGS: AuditLog[] = [
   {
@@ -217,9 +630,10 @@ export const MOCK_AUDIT_LOGS: AuditLog[] = [
     action: "Eskalasi Threshold",
     details: "Vote mencapai 64/50 (+142 Urgency Score). Status otomatis menjadi Terverifikasi 🔴.",
   },
+  ...buildGeneratedAuditLogs(),
 ];
 
-const STORAGE_KEY = "riverse_reports_db_v1";
+const STORAGE_KEY = "riverse_reports_db_v2";
 
 const fixImagePath = (path: string | undefined, defaultPath: string): string => {
   if (
