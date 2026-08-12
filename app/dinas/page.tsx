@@ -51,7 +51,6 @@ import {
 import dynamic from "next/dynamic";
 import { useToast } from "../components/ToastProvider";
 import CctvPlayerModal from "../components/CctvPlayerModal";
-import ThemeToggle from "../components/ThemeToggle";
 import { exportRowsToExcel } from "../../lib/exportExcel";
 import { INITIAL_OFFICERS, MOCK_REPORTS, MOCK_AUDIT_LOGS, INITIAL_SYSTEM_CONFIG, getStoredReports, saveStoredReports, getStoredCctv, addCctvPoint, removeCctvPoint, CctvPoint, CctvStatus } from "../../lib/store";
 import { Report, Officer, AuditLog, SystemConfig, OfficerRole, ReportStatus } from "../../lib/types";
@@ -1088,8 +1087,6 @@ export default function DinasDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
-            <ThemeToggle className="bg-slate-100 text-slate-600 hover:text-[#0284C7] hover:bg-slate-200" />
-
             {/* User Profile Avatar in Header (Clickable) */}
             <button
               type="button"
