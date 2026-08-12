@@ -323,18 +323,6 @@ export default function DinasDashboard() {
   const [showAuditModal, setShowAuditModal] = useState<boolean>(false);
   const [showProfileModal, setShowProfileModal] = useState<boolean>(false);
 
-  // Lock body scroll when profile modal is open
-  useEffect(() => {
-    if (showProfileModal) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [showProfileModal]);
-
   // Action Form Inputs
   const [updateStatus, setUpdateStatus] = useState<ReportStatus>("diproses");
   const [assignedOfficerId, setAssignedOfficerId] = useState<string>("off-3");
@@ -862,11 +850,90 @@ export default function DinasDashboard() {
         </div>
 
         {/* Sidebar Footer: User Profile & Actions */}
-        <div className={`border-t border-white/10 ${isSidebarCollapsed ? "p-3 space-y-2.5" : "p-4 space-y-3"}`}>
+        <div className={`relative border-t border-white/10 ${isSidebarCollapsed ? "p-3 space-y-2.5" : "p-4 space-y-3"}`}>
+          {/* Floating Small Profile Card right above profile button */}
+          {showProfileModal && (
+            <>
+              {/* Click outside to close */}
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setShowProfileModal(false)}
+              />
+
+              {/* Compact Floating Profile Popover */}
+              <div
+                className={`absolute bottom-full mb-2.5 z-50 animate-slideUp bg-[#1E293B] border border-white/15 shadow-2xl rounded-2xl p-4 text-white text-left ${
+                  isSidebarCollapsed ? "left-2 w-64" : "left-3 right-3"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-2.5 mb-2.5">
+                  <div className="flex items-center gap-2.5 min-w-0">
+                    <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#0284C7] to-sky-400 text-white font-extrabold flex items-center justify-center text-xs shadow-md shrink-0">
+                      BW
+                    </div>
+                    <div className="min-w-0">
+                      <h4 className="text-xs font-bold text-white truncate leading-tight">Ir. Bambang Wijaya, M.T.</h4>
+                      <p className="text-[10px] text-sky-400 font-mono truncate">Super Admin DLH</p>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setShowProfileModal(false)}
+                    className="p-1 text-slate-400 hover:text-white rounded-lg hover:bg-white/10 transition-colors cursor-pointer"
+                    title="Tutup"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                <div className="space-y-1.5 text-[10px] text-slate-300">
+                  <div className="flex justify-between items-center py-0.5">
+                    <span className="text-slate-400">NIP:</span>
+                    <span className="font-mono text-slate-200 font-bold">19880512 201201 1 004</span>
+                  </div>
+                  <div className="flex justify-between items-center py-0.5">
+                    <span className="text-slate-400">Instansi:</span>
+                    <span className="text-slate-200 font-medium">Dinas Lingkungan Hidup</span>
+                  </div>
+                  <div className="flex justify-between items-center py-0.5">
+                    <span className="text-slate-400">Tingkat Akses:</span>
+                    <span className="text-[#38BDF8] font-bold">Level 1 (Super Admin)</span>
+                  </div>
+                  <div className="flex justify-between items-center py-0.5">
+                    <span className="text-slate-400">Status:</span>
+                    <span className="text-emerald-400 font-bold">Aktif</span>
+                  </div>
+                </div>
+
+                <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center gap-2">
+                  <Link
+                    href="/"
+                    onClick={() => setShowProfileModal(false)}
+                    className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-[10px] font-bold text-slate-300 bg-white/5 hover:bg-white/10 hover:text-white border border-white/5 transition-all"
+                  >
+                    <ArrowLeft className="w-3 h-3" />
+                    <span>Beranda</span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowProfileModal(false);
+                      setIsLoggedIn(false);
+                    }}
+                    className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-[10px] font-bold text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all cursor-pointer"
+                  >
+                    <LogOut className="w-3 h-3" />
+                    <span>Keluar</span>
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
+
           {/* User Profile Avatar & Name (Clickable) */}
           <button
             type="button"
-            onClick={() => setShowProfileModal(true)}
+            onClick={() => setShowProfileModal(!showProfileModal)}
             className={`w-full flex items-center gap-3 transition-all text-left cursor-pointer group ${
               isSidebarCollapsed
                 ? "justify-center p-0 bg-transparent border-0 hover:scale-105"
@@ -2313,102 +2380,6 @@ export default function DinasDashboard() {
 
       {/* CCTV Live Player Modal */}
       <CctvPlayerModal cctv={playingCctv} onClose={() => setPlayingCctv(null)} />
-
-      {/* USER PROFILE DETAIL MODAL */}
-      {showProfileModal &&
-        typeof document !== "undefined" &&
-        createPortal(
-          <div
-            className="fixed inset-0 z-[999999] bg-slate-950/70 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn"
-            onClick={() => setShowProfileModal(false)}
-          >
-            <div
-              className="bg-white rounded-[32px] max-w-md w-full overflow-hidden shadow-2xl border border-slate-200/90 my-auto animate-scaleUp text-left"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header Banner */}
-              <div className="relative bg-gradient-to-br from-[#0284C7] via-[#0369A1] to-[#0F172A] p-6 pb-14 text-white">
-                <button
-                  onClick={() => setShowProfileModal(false)}
-                  className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center transition-all cursor-pointer"
-                  title="Tutup Profil"
-                >
-                  <X className="w-4 h-4" />
-                </button>
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-white/20 text-[10px] font-bold uppercase tracking-wider text-sky-200">
-                  <ShieldCheck className="w-3.5 h-3.5" />
-                  Profil Petugas Resmi DLH
-                </span>
-              </div>
-
-              {/* Profile Info Body */}
-              <div className="px-6 pb-6 pt-0 relative">
-                {/* Avatar with Negative Margin */}
-                <div className="flex items-end justify-between -mt-10 mb-4">
-                  <div className="w-20 h-20 rounded-2xl bg-gradient-to-br from-[#0284C7] to-sky-400 text-white font-extrabold flex items-center justify-center text-2xl shadow-xl ring-4 ring-white">
-                    BW
-                  </div>
-                  <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-extrabold">
-                    Akun Aktif
-                  </span>
-                </div>
-
-                <div>
-                  <h3 className="text-lg font-extrabold text-slate-900 tracking-tight leading-tight">
-                    Ir. Bambang Wijaya, M.T.
-                  </h3>
-                  <p className="text-xs text-[#0284C7] font-bold mt-0.5">
-                    Super Admin DLH / Kepala Bidang Pengawasan Sungai
-                  </p>
-                </div>
-
-                {/* Data Grid */}
-                <div className="mt-5 space-y-2.5 bg-slate-50 p-4 rounded-2xl border border-slate-200/80 text-xs">
-                  <div className="flex items-center justify-between py-1 border-b border-slate-200/60">
-                    <span className="text-slate-500 font-medium">NIP Pegawai</span>
-                    <span className="font-mono font-bold text-slate-800">19880512 201201 1 004</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1 border-b border-slate-200/60">
-                    <span className="text-slate-500 font-medium">Instansi</span>
-                    <span className="font-bold text-slate-800">Dinas Lingkungan Hidup</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1 border-b border-slate-200/60">
-                    <span className="text-slate-500 font-medium">Tingkat Akses</span>
-                    <span className="font-bold text-[#0284C7]">Level 1 (Super Admin)</span>
-                  </div>
-                  <div className="flex items-center justify-between py-1">
-                    <span className="text-slate-500 font-medium">Wilayah Pantau</span>
-                    <span className="font-bold text-slate-800">DAS Bodetabek & DKI</span>
-                  </div>
-                </div>
-
-                {/* Quick Actions */}
-                <div className="mt-5 grid grid-cols-2 gap-2.5">
-                  <Link
-                    href="/"
-                    onClick={() => setShowProfileModal(false)}
-                    className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold transition-all"
-                  >
-                    <ArrowLeft className="w-3.5 h-3.5" />
-                    <span>Beranda</span>
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowProfileModal(false);
-                      setIsLoggedIn(false);
-                    }}
-                    className="flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs font-bold transition-all cursor-pointer"
-                  >
-                    <LogOut className="w-3.5 h-3.5" />
-                    <span>Keluar Akun</span>
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>,
-          document.body
-        )}
 
     </div>
   );
