@@ -63,7 +63,7 @@ export default function LaporanSayaPage() {
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row sm:items-center justify-between gap-6">
           <div>
             <Link
-              href="/"
+              href="/#beranda"
               className="inline-flex items-center gap-2 text-xs text-sky-400 font-bold hover:text-sky-300 transition-colors mb-3"
             >
               <ArrowLeft className="w-4 h-4" />
