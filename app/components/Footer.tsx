@@ -11,7 +11,7 @@ export default function Footer() {
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-xl bg-white/10 p-1 flex items-center justify-center">
               <Image
-                src="/assets/logo-new.png"
+                src="/assets/logo-putih.png"
                 alt="RIVERSE Logo"
                 width={36}
                 height={36}

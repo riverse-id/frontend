@@ -33,6 +33,13 @@ export default function LaporanSayaPage() {
 
   const displayedReports = activeTab === "dibuat" ? myCreatedReports : myVotedReports;
 
+  // Pagination (configurable per page)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
+  const totalPages = Math.ceil(displayedReports.length / pageSize) || 1;
+  const safePage = Math.min(currentPage, totalPages);
+  const pagedReports = displayedReports.slice((safePage - 1) * pageSize, safePage * pageSize);
+
   const handleVote = (reportId: string) => {
     setReports((prev) =>
       prev.map((r) =>
@@ -88,7 +95,10 @@ export default function LaporanSayaPage() {
         {/* Filter Navigation Tabs */}
         <div className="flex items-center gap-2 border-b border-slate-200 pb-4">
           <button
-            onClick={() => setActiveTab("dibuat")}
+            onClick={() => {
+              setActiveTab("dibuat");
+              setCurrentPage(1);
+            }}
             className={`px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === "dibuat"
                 ? "bg-[#0284C7] text-white shadow-md shadow-[#0284C7]/20"
@@ -100,7 +110,10 @@ export default function LaporanSayaPage() {
           </button>
 
           <button
-            onClick={() => setActiveTab("didukung")}
+            onClick={() => {
+              setActiveTab("didukung");
+              setCurrentPage(1);
+            }}
             className={`px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all cursor-pointer flex items-center gap-2 ${
               activeTab === "didukung"
                 ? "bg-[#0284C7] text-white shadow-md shadow-[#0284C7]/20"
@@ -127,7 +140,7 @@ export default function LaporanSayaPage() {
               </Link>
             </div>
           ) : (
-            displayedReports.map((report) => (
+            pagedReports.map((report) => (
               <div
                 key={report.id}
                 className="bg-white rounded-3xl border border-slate-200/90 shadow-xs hover:shadow-md transition-all overflow-hidden flex flex-col justify-between"
@@ -148,22 +161,22 @@ export default function LaporanSayaPage() {
                     <div className="absolute top-3 right-3">
                       {report.status === "pending" && (
                         <span className="px-2.5 py-1 rounded-full bg-amber-500 text-white font-bold text-[10px] shadow-sm">
-                          Pending 🟠
+                          Pending
                         </span>
                       )}
                       {report.status === "terverifikasi" && (
                         <span className="px-2.5 py-1 rounded-full bg-rose-600 text-white font-bold text-[10px] shadow-sm">
-                          Terverifikasi 🔴
+                          Terverifikasi
                         </span>
                       )}
                       {report.status === "diproses" && (
                         <span className="px-2.5 py-1 rounded-full bg-sky-600 text-white font-bold text-[10px] shadow-sm">
-                          Diproses 🔵
+                          Diproses
                         </span>
                       )}
                       {report.status === "selesai" && (
                         <span className="px-2.5 py-1 rounded-full bg-emerald-600 text-white font-bold text-[10px] shadow-sm">
-                          Selesai 🟢
+                          Selesai
                         </span>
                       )}
                     </div>
@@ -201,6 +214,69 @@ export default function LaporanSayaPage() {
             ))
           )}
         </div>
+
+        {/* Pagination Controls */}
+        {displayedReports.length > 0 && (
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+            <div className="flex items-center gap-2.5 text-xs font-medium text-slate-500 flex-wrap">
+              <span>
+                Menampilkan{" "}
+                <strong className="text-slate-800">
+                  {displayedReports.length === 0 ? 0 : (safePage - 1) * pageSize + 1}–
+                  {Math.min(safePage * pageSize, displayedReports.length)}
+                </strong>{" "}
+                dari <strong className="text-slate-800">{displayedReports.length}</strong> data
+              </span>
+              <label className="flex items-center gap-1.5">
+                <span className="hidden sm:inline text-slate-400">Tampilkan:</span>
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="px-2 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-700 cursor-pointer outline-none focus:border-[#0284C7]"
+                >
+                  {[3, 6, 9, 12].map((n) => (
+                    <option key={n} value={n}>
+                      {n} / hal.
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
+            <div className="flex items-center gap-1.5">
+              <button
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                disabled={safePage === 1}
+                className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 transition-all cursor-pointer"
+              >
+                Sebelumnya
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((pageNum) => (
+                <button
+                  key={pageNum}
+                  onClick={() => setCurrentPage(pageNum)}
+                  className={`w-8 h-8 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                    safePage === pageNum
+                      ? "bg-[#0284C7] text-white shadow-md shadow-[#0284C7]/20"
+                      : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              ))}
+              <button
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                disabled={safePage === totalPages}
+                className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 transition-all cursor-pointer"
+              >
+                Berikutnya
+              </button>
+            </div>
+          </div>
+        )}
 
       </main>
 

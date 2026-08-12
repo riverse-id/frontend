@@ -483,3 +483,109 @@ export function voteReport(reportId: string): Report | null {
   saveStoredReports(currentReports);
   return updated;
 }
+
+// =====================================================================
+// CCTV MONITORING POINTS (GIS Layer)
+// =====================================================================
+
+export type CctvStatus = "aktif" | "offline" | "perbaikan";
+
+export interface CctvPoint {
+  id: string;
+  name: string;
+  riverName: string;
+  locationDetail: string;
+  lat: number;
+  lng: number;
+  status: CctvStatus;
+  streamUrl?: string;
+  createdAt: string;
+}
+
+// Data titik CCTV dari LIST-CCTV.md (DPUPR Kota Tangsel Streams)
+export const INITIAL_CCTV: CctvPoint[] = [
+  {
+    id: "cctv-001",
+    name: "CCTV Jembatan Polor",
+    riverName: "Kali Pesanggrahan",
+    locationDetail: "Jembatan Polor, Kota Tangerang Selatan",
+    lat: -6.3006,
+    lng: 106.74,
+    status: "aktif",
+    streamUrl: "https://cctv.dpuprkotang.info/stream.html?src=Jembatan%20Polor&embed=true",
+    createdAt: "2026-07-01T08:00:00Z",
+  },
+  {
+    id: "cctv-002",
+    name: "CCTV Cipulir Estate",
+    riverName: "Kali Pesanggrahan",
+    locationDetail: "Cipulir Estate, Jakarta Selatan",
+    lat: -6.284,
+    lng: 106.751,
+    status: "aktif",
+    streamUrl: "https://cctv.dpuprkotang.info/stream.html?src=Cipulir%20Estate&embed=true",
+    createdAt: "2026-07-03T09:30:00Z",
+  },
+  {
+    id: "cctv-003",
+    name: "CCTV Pintu 3 Paninggilan",
+    riverName: "Kali Cisadane",
+    locationDetail: "Pintu 3 Paninggilan Utara, Kota Tangerang",
+    lat: -6.178,
+    lng: 106.65,
+    status: "aktif",
+    streamUrl: "https://cctv.dpuprkotang.info/stream.html?src=Pintu%203%20Paninggilan&embed=true",
+    createdAt: "2026-07-05T10:15:00Z",
+  },
+  {
+    id: "cctv-004",
+    name: "CCTV Alamanda",
+    riverName: "Kali Cisadane",
+    locationDetail: "Kawasan Alamanda, Serpong / BSD",
+    lat: -6.291,
+    lng: 106.668,
+    status: "aktif",
+    streamUrl: "https://cctv.dpuprkotang.info/stream.html?src=Alamanda&embed=true",
+    createdAt: "2026-07-06T13:45:00Z",
+  },
+];
+
+const CCTV_KEY = "riverse_cctv_db_v1";
+
+export function getStoredCctv(): CctvPoint[] {
+  if (typeof window === "undefined") return INITIAL_CCTV;
+  try {
+    const data = localStorage.getItem(CCTV_KEY);
+    if (data) {
+      const parsed = JSON.parse(data);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch (e) {
+    console.error("Failed to read stored CCTV:", e);
+  }
+  return INITIAL_CCTV;
+}
+
+export function saveStoredCctv(list: CctvPoint[]): void {
+  if (typeof window === "undefined") return;
+  try {
+    localStorage.setItem(CCTV_KEY, JSON.stringify(list));
+    window.dispatchEvent(new Event("riverse_cctv_updated"));
+  } catch (e) {
+    console.error("Failed to save CCTV:", e);
+  }
+}
+
+export function addCctvPoint(input: Omit<CctvPoint, "id" | "createdAt">): CctvPoint {
+  const newPoint: CctvPoint = {
+    ...input,
+    id: `cctv-${Date.now()}`,
+    createdAt: new Date().toISOString(),
+  };
+  saveStoredCctv([newPoint, ...getStoredCctv()]);
+  return newPoint;
+}
+
+export function removeCctvPoint(id: string): void {
+  saveStoredCctv(getStoredCctv().filter((c) => c.id !== id));
+}

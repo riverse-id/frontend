@@ -105,7 +105,13 @@ export default function AboutSection() {
       {/* FLOATING MEDIA CARDS (Overlapping Header into Content)       */}
       {/* ============================================================ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-20 -mt-20 sm:-mt-24">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 items-end">
+        <motion.div
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+          className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 items-end"
+        >
           
           {/* Card 1: Tall Portrait */}
           <div className="relative h-64 sm:h-80 rounded-3xl overflow-hidden shadow-2xl border-4 border-white transform hover:-translate-y-2 transition-all duration-300 group">
@@ -175,18 +181,24 @@ export default function AboutSection() {
             </div>
           </div>
 
-        </div>
+        </motion.div>
       </div>
 
       {/* ============================================================ */}
       {/* MIDDLE SECTION: Solusi & 2-Column Paragraph Grid              */}
       {/* ============================================================ */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20">
-        <div className="max-w-3xl mb-8">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          className="max-w-3xl mb-8"
+        >
           <h3 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
             Solusi Digital untuk Perlindungan & Kelestarian Sungai Kita
           </h3>
-        </div>
+        </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 sm:gap-12 text-slate-600 text-sm sm:text-base leading-relaxed">
           <p>
@@ -206,6 +218,10 @@ export default function AboutSection() {
           ref={tiltCardRef}
           onMouseMove={handleCardMouseMove}
           onMouseLeave={handleCardMouseLeave}
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-60px" }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
           style={{
             rotateX,
             rotateY,

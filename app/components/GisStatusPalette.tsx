@@ -51,11 +51,10 @@ export const STATUS_PALETTE_ITEMS: StatusItem[] = [
     id: "tercemar",
     step: 2,
     label: "Tercemar",
-    emoji: "🔴",
     badge: "Prioritas DLH",
     sublabel: "Limbah Cair & Bahaya",
     description: "Segmen sungai atau laporan dengan indikasi pencemaran limbah cair industri, zat kimia, atau bau busuk menyengat.",
-    weightInfo: "High Urgency 🔴",
+    weightInfo: "High Urgency",
     color: {
       bg: "bg-rose-50/70 hover:bg-rose-50",
       border: "border-rose-200/90",
@@ -72,11 +71,10 @@ export const STATUS_PALETTE_ITEMS: StatusItem[] = [
     id: "sampah",
     step: 3,
     label: "Banyak Sampah",
-    emoji: "🟠",
     badge: "Timbulan Sampah",
     sublabel: "Limbah Padat & Plastik",
     description: "Penumpukan sampah rumah tangga, limbah padat, atau mikroplastik yang menumpuk di bantaran alur sungai.",
-    weightInfo: "Medium Urgency 🟠",
+    weightInfo: "Medium Urgency",
     color: {
       bg: "bg-amber-50/70 hover:bg-amber-50",
       border: "border-amber-200/90",
@@ -93,11 +91,10 @@ export const STATUS_PALETTE_ITEMS: StatusItem[] = [
     id: "selesai",
     step: 4,
     label: "Bersih / Selesai",
-    emoji: "🟢",
     badge: "Before vs After",
     sublabel: "Segmen Normal & Clear",
     description: "Kondisi air terpantau jernih/bersih atau laporan pembersihan sungai yang telah diselesaikan oleh tim DLH.",
-    weightInfo: "Resolved / Clean 🟢",
+    weightInfo: "Resolved / Clean",
     color: {
       bg: "bg-emerald-50/70 hover:bg-emerald-50",
       border: "border-emerald-200/90",
@@ -151,7 +148,6 @@ export default function GisStatusPalette() {
                 }`}
               >
                 <span>{item.label}</span>
-                {item.emoji && <span className="text-[11px]">{item.emoji}</span>}
               </button>
             );
           })}

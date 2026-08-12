@@ -9,23 +9,23 @@
 **RIVERSE** adalah sistem informasi geografis (GIS) berbasis partisipasi publik (*crowdsourcing*) yang mengintegrasikan pemantauan kondisi pencemaran sungai secara *real-time* dengan tata kelola penanganan limbah oleh **Dinas Lingkungan Hidup (DLH)**. Platform ini menjembatani aspirasi masyarakat dan tindakan responsif pemerintah melalui mekanisme verifikasi bertingkat, penanganan lokasi presisi, dan transparansi *closed-loop*.
 
 ### 1.2 Palet Warna (Color Palette)
-Desain visual RIVERSE mengusung nuansa *River Sage & Clean Water* yang dipadukan dengan *Color-Coded Status Markers* untuk kemudahan navigasi GIS.
+Desain visual RIVERSE mengusung tema *Modern Ocean & Clean River GIS* yang memadukan palet warna modern (Dark Navy `#0F172A`, Sky Blue `#0284C7`, Light Sky `#E0F2FE`, Slate Canvas `#F8FAFC`, dan Pure White `#FFFFFF`) dengan *Color-Coded Status Markers* untuk kemudahan navigasi GIS.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
 │                           BRAND COLOR PALETTE                           │
 ├──────────────┬──────────────┬──────────────┬──────────────┬─────────────┤
-│  Primary     │  Secondary   │  Mint Accent │ Surface Light│ Pure White  │
-│  #0284C7    │  #79AC78     │  #B0D9B1     │  #D0E7D2     │ #FFFFFF     │
+│ 1. Dark Navy │ 2. Sky Blue  │ 3. Light Sky │ 4. Slate 50  │ 5. PureWhite│
+│   #0F172A    │   #0284C7    │   #E0F2FE    │   #F8FAFC    │   #FFFFFF   │
 └──────────────┴──────────────┴──────────────┴──────────────┴─────────────┘
 ```
 
 #### Color Tokens Specs:
-- **Primary (Deep Sage)**: `#618264` — Header, Navbar, Tombol Utama, Teks Judul Penting.
-- **Secondary (River Mint)**: `#79AC78` — Accent Interactive, Active States, Hover States, Secondary Buttons.
-- **Mint Accent (Soft Meadow)**: `#B0D9B1` — Chip Tag, Badge Verifikasi, Soft Highlight Container.
-- **Surface Light (Ice Tint)**: `#D0E7D2` — Card Background, Input Fields, Modal Neutral Backdrop.
-- **Pure White**: `#FFFFFF` — Main Canvas Background, Floating Modal Content.
+- **1. Dark Navy**: `#0F172A` — Header, Navbar, Dark Sections, Teks Utama (High-Contrast Heading & Body Text), Border Kontras.
+- **2. Sky Blue**: `#0284C7` — Primary Brand Accent, Tombol Utama (CTA Button), Active Navigation, Focus Indicator, Interactive Elements.
+- **3. Light Sky**: `#E0F2FE` — Chip Tag, Badge Verifikasi, Soft Highlight Container, Active Tab Fill, Light Accent Borders.
+- **4. Slate Light**: `#F8FAFC` — Canvas Background Utama Halaman, Input Fields Neutral Surface, Section Neutral Backdrop.
+- **5. Pure White**: `#FFFFFF` — Card Background, Floating Modal Content, Dropdown Menu, Panel Putih.
 
 #### GIS Marker Status Palette:
 - 🟠 **Pending (Oranye)**: `#F97316` — Laporan baru diunggah, menunggu verifikasi komunitas.
@@ -36,14 +36,14 @@ Desain visual RIVERSE mengusung nuansa *River Sage & Clean Water* yang dipadukan
 ---
 
 ### 1.3 Tipografi (Typography Rules)
-Sistem tipografi RIVERSE menggunakan font **Poppins** dengan hierarki ukuran yang presisi dan konsisten:
+Sistem tipografi RIVERSE menggunakan font **Poppins** (Bold, Semibold, Medium, Regular) dengan hierarki ukuran yang presisi dan konsisten sesuai acuan Moodboard:
 
 | Hierarki Element | Font Family | Size (px) | Weight | Line Height | Usage |
 | :--- | :--- | :--- | :--- | :--- | :--- |
 | **Heading 1** | Poppins | `24px` | Bold (`700`) / Semibold (`600`) | `32px` | Judul Halaman, Hero Title, Section Utama |
 | **Heading 2** | Poppins | `16px` | Semibold (`600`) / Medium (`500`) | `24px` | Title Card, Header Modal, Sub-section |
-| **Subheading** | Poppins | `14px` | Medium (`500`) | `20px` | Label Form, Status Badge, Tab Navigasi |
-| **Paragraph** | Poppins | `12px` | Regular (`400`) | `18px` | Teks Deskripsi Laporan, Body Text, Meta Info |
+| **Subheading** | Poppins | `14px` | Medium (`500`) / Semibold (`600`) | `20px` | Label Form, Status Badge, Tab Navigasi |
+| **Paragraph** | Poppins | `12px` | Regular (`400`) / Medium (`500`) | `18px` | Teks Deskripsi Laporan, Body Text, Meta Info |
 
 ---
 
@@ -291,7 +291,7 @@ erDiagram
 ### 7.1 Layout Utama & Komponen Interaktif
 
 1. **Header & Navigation Bar**:
-   - **Logo RIVERSE** (Warna Primary `#618264` & River Mint `#79AC78`).
+   - **Logo RIVERSE** (Warna Dark Navy `#0F172A` & Sky Blue `#0284C7`).
    - **Search & Filter Bar**: Filter status marker (Pending, Terverifikasi, Diproses, Selesai), filter nama sungai, filter rentang tanggal.
    - **SSO Login Button / User Profile Card**.
 
@@ -308,8 +308,8 @@ erDiagram
    - Header: *Pemberitahuan Lokasi Laporan Terdekat (< 500m)*
    - Visual comparison singkat laporan eksisting di titik tersebut.
    - Dual Action Card:
-     - **Card A (Rekomendasi)**: "Dukung Laporan Eksisting" (Button Color: `#79AC78` River Mint).
-     - **Card B**: "Buat Sub-Report Baru" (Button Variant: Outlined `#618264` Deep Sage).
+     - **Card A (Rekomendasi)**: "Dukung Laporan Eksisting" (Button Color: `#0284C7` Sky Blue).
+     - **Card B**: "Buat Sub-Report Baru" (Button Variant: Outlined `#0284C7` Sky Blue / Background `#E0F2FE` Light Sky).
 
 4. **DLH Officer Dashboard Interface**:
    - **Heatmap View Switcher**: Peta panas tingkat urgensi limbah sungai.

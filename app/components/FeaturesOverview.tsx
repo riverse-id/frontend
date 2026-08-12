@@ -2,6 +2,7 @@
 
 import React from "react";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import {
   MapPin,
   ShieldCheck,
@@ -34,7 +35,13 @@ export default function FeaturesOverview() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
           
           {/* LEFT COLUMN: Bold Blue Headline, Copywriting, CTA Button */}
-          <div className="lg:col-span-6 flex flex-col items-start space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-6 flex flex-col items-start space-y-6"
+          >
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0284C7] leading-tight tracking-tight">
               Lapor Sungai Tercemar Cuma 5 Menit!
             </h2>
@@ -54,11 +61,17 @@ export default function FeaturesOverview() {
                 <ArrowRight className="w-5 h-5" />
               </a>
             </div>
-          </div>
+          </motion.div>
 
           {/* RIGHT COLUMN: 3D Tilted Perspective Cards Showcase */}
-          <div className="lg:col-span-6 relative w-full perspective-[1200px]">
-            <div className="relative grid grid-cols-2 gap-4 [transform:rotateY(-12deg)_rotateX(7deg)_rotateZ(2deg)] sm:[transform:rotateY(-15deg)_rotateX(9deg)_rotateZ(3deg)] hover:[transform:rotateY(-4deg)_rotateX(3deg)_rotateZ(1deg)] transition-transform duration-700 ease-out">
+          <motion.div
+            initial={{ opacity: 0, y: 32 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-80px" }}
+            transition={{ duration: 0.6, delay: 0.12, ease: [0.16, 1, 0.3, 1] }}
+            className="lg:col-span-6 relative w-full perspective-[1200px]"
+          >
+            <div className="relative grid grid-cols-2 gap-4 [transform:none] sm:[transform:rotateY(-12deg)_rotateX(7deg)_rotateZ(2deg)] lg:[transform:rotateY(-15deg)_rotateX(9deg)_rotateZ(3deg)] hover:[transform:rotateY(-4deg)_rotateX(3deg)_rotateZ(1deg)] transition-transform duration-700 ease-out">
               
               {/* Card 1: Live Interactive GIS Map */}
               <div className="col-span-2 rounded-2xl bg-white p-4 shadow-2xl border border-sky-100 backdrop-blur-md transform hover:-translate-y-1 transition-transform">
@@ -86,15 +99,15 @@ export default function FeaturesOverview() {
                 </div>
                 <div className="space-y-1.5 text-[10px]">
                   <div className="flex items-center justify-between p-1.5 rounded-lg bg-rose-50 border border-rose-100">
-                    <span className="font-semibold text-rose-900">Tercemar 🔴</span>
+                    <span className="font-semibold text-rose-900">Tercemar</span>
                     <span className="text-rose-700">Limbah / Bahaya</span>
                   </div>
                   <div className="flex items-center justify-between p-1.5 rounded-lg bg-amber-50 border border-amber-100">
-                    <span className="font-semibold text-amber-900">Banyak Sampah 🟠</span>
+                    <span className="font-semibold text-amber-900">Banyak Sampah</span>
                     <span className="text-amber-700">Plastik / Pemukiman</span>
                   </div>
                   <div className="flex items-center justify-between p-1.5 rounded-lg bg-emerald-50 border border-emerald-100">
-                    <span className="font-semibold text-emerald-900">Bersih / Selesai 🟢</span>
+                    <span className="font-semibold text-emerald-900">Bersih / Selesai</span>
                     <span className="text-emerald-700">Normal / Terawat</span>
                   </div>
                 </div>
@@ -142,7 +155,7 @@ export default function FeaturesOverview() {
               </div>
 
             </div>
-          </div>
+          </motion.div>
 
         </div>
       </div>

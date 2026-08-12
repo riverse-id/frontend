@@ -20,8 +20,11 @@ import {
   AlertTriangle,
   RefreshCw,
   ChevronRight,
+  ChevronLeft,
   X,
   Camera,
+  Video,
+  Play,
   Mail,
   Phone,
   ArrowUpRight,
@@ -36,7 +39,9 @@ import {
   Download,
   Ban,
   Clock,
+  Crosshair,
   ThumbsUp,
+  Trash2,
   FileCheck,
   ArrowLeft,
   PlusCircle,
@@ -44,7 +49,8 @@ import {
 } from "lucide-react";
 import dynamic from "next/dynamic";
 import { useToast } from "../components/ToastProvider";
-import { INITIAL_OFFICERS, MOCK_REPORTS, MOCK_AUDIT_LOGS, INITIAL_SYSTEM_CONFIG, getStoredReports, saveStoredReports } from "../../lib/store";
+import CctvPlayerModal from "../components/CctvPlayerModal";
+import { INITIAL_OFFICERS, MOCK_REPORTS, MOCK_AUDIT_LOGS, INITIAL_SYSTEM_CONFIG, getStoredReports, saveStoredReports, getStoredCctv, addCctvPoint, removeCctvPoint, CctvPoint, CctvStatus } from "../../lib/store";
 import { Report, Officer, AuditLog, SystemConfig, OfficerRole, ReportStatus } from "../../lib/types";
 
 const RiverGISMap = dynamic(() => import("../components/RiverGISMap"), {
@@ -64,6 +70,175 @@ const getInitials = (name: string): string => {
   if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
   return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
 };
+
+function SemiCircleGauge({ value = 72 }: { value?: number }) {
+  const radius = 56;
+  const circumference = Math.PI * radius;
+  const strokeDashoffset = circumference - (value / 100) * circumference;
+  return (
+    <div className="relative flex flex-col items-center justify-center my-1">
+      <svg className="w-44 h-24 overflow-visible" viewBox="0 0 140 75">
+        {/* Background Track */}
+        <path
+          d="M 14 70 A 56 56 0 0 1 126 70"
+          fill="none"
+          stroke="#E2E8F0"
+          strokeWidth="14"
+          strokeLinecap="round"
+        />
+        {/* Progress Arc */}
+        <path
+          d="M 14 70 A 56 56 0 0 1 126 70"
+          fill="none"
+          stroke="url(#gauge-gradient)"
+          strokeWidth="14"
+          strokeLinecap="round"
+          strokeDasharray={circumference}
+          strokeDashoffset={strokeDashoffset}
+          className="transition-all duration-1000 ease-out"
+        />
+        <defs>
+          <linearGradient id="gauge-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stopColor="#10B981" />
+            <stop offset="60%" stopColor="#0284C7" />
+            <stop offset="100%" stopColor="#0F172A" />
+          </linearGradient>
+        </defs>
+      </svg>
+    </div>
+  );
+}
+
+function MiniBarChart({ color = "sky", heights = [35, 65, 45, 90, 70] }: { color?: "sky" | "red" | "emerald" | "amber"; heights?: number[] }) {
+  const colorMap = {
+    sky: "bg-[#0284C7]",
+    red: "bg-rose-500",
+    emerald: "bg-emerald-500",
+    amber: "bg-amber-500",
+  };
+  return (
+    <div className="flex items-end gap-1 h-7 shrink-0">
+      {heights.map((h, i) => (
+        <div
+          key={i}
+          className={`w-1 rounded-full ${colorMap[color]} transition-all`}
+          style={{ height: `${h}%` }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function usePaging(total: number, initialPageSize = 10) {
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(initialPageSize);
+  const pageCount = Math.max(1, Math.ceil(total / pageSize));
+  const safePage = Math.min(page, pageCount);
+  const changePage = (p: number) => setPage(Math.max(1, Math.min(p, pageCount)));
+  const changePageSize = (s: number) => {
+    setPageSize(s);
+    setPage(1);
+  };
+  return {
+    page: safePage,
+    pageCount,
+    pageSize,
+    total,
+    start: (safePage - 1) * pageSize,
+    end: safePage * pageSize,
+    changePage,
+    changePageSize,
+  };
+}
+
+function PaginationControls({
+  paging,
+}: {
+  paging: ReturnType<typeof usePaging>;
+}) {
+  const { page, pageCount, pageSize, total, changePage, changePageSize } = paging;
+  const startItem = total === 0 ? 0 : (page - 1) * pageSize + 1;
+  const endItem = Math.min(page * pageSize, total);
+
+  const pageNumbers: (number | "…")[] = [];
+  if (pageCount <= 5) {
+    for (let i = 1; i <= pageCount; i++) pageNumbers.push(i);
+  } else {
+    pageNumbers.push(1);
+    if (page > 3) pageNumbers.push("…");
+    for (let i = Math.max(2, page - 1); i <= Math.min(pageCount - 1, page + 1); i++) pageNumbers.push(i);
+    if (page < pageCount - 2) pageNumbers.push("…");
+    pageNumbers.push(pageCount);
+  }
+
+  const navBtn =
+    "px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 hover:bg-slate-100 transition-all cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed";
+
+  return (
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
+      <div className="flex items-center gap-2.5 text-xs font-medium text-slate-500 flex-wrap">
+        <span>
+          Menampilkan{" "}
+          <strong className="text-slate-800">{startItem}–{endItem}</strong> dari{" "}
+          <strong className="text-slate-800">{total}</strong> data
+        </span>
+        <label className="flex items-center gap-1.5">
+          <span className="hidden sm:inline text-slate-400">Tampilkan:</span>
+          <select
+            value={pageSize}
+            onChange={(e) => changePageSize(Number(e.target.value))}
+            className="px-2 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-700 cursor-pointer outline-none focus:border-[#0284C7] focus:ring-2 focus:ring-[#0284C7]/20"
+            title="Jumlah data per halaman"
+          >
+            {[5, 10, 20, 50, 100].map((n) => (
+              <option key={n} value={n}>
+                {n} / hal.
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
+
+      <div className="flex items-center gap-1.5">
+        <button
+          onClick={() => changePage(page - 1)}
+          disabled={page === 1}
+          className={`${navBtn} flex items-center gap-1`}
+        >
+          <ChevronLeft className="w-3.5 h-3.5" />
+          <span>Sebelumnya</span>
+        </button>
+        {pageNumbers.map((p, i) =>
+          p === "…" ? (
+            <span key={`e${i}`} className="px-1 text-xs text-slate-400">
+              …
+            </span>
+          ) : (
+            <button
+              key={p}
+              onClick={() => changePage(p)}
+              className={`w-8 h-8 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
+                p === page
+                  ? "bg-[#0284C7] text-white shadow-md shadow-sky-500/20"
+                  : "bg-slate-100 text-slate-600 hover:bg-slate-200"
+              }`}
+            >
+              {p}
+            </button>
+          )
+        )}
+        <button
+          onClick={() => changePage(page + 1)}
+          disabled={page === pageCount}
+          className={`${navBtn} flex items-center gap-1`}
+        >
+          <span>Berikutnya</span>
+          <ChevronRight className="w-3.5 h-3.5" />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export default function DinasDashboard() {
   const { showToast } = useToast();
@@ -107,6 +282,7 @@ export default function DinasDashboard() {
   const [officers, setOfficers] = useState<Officer[]>(INITIAL_OFFICERS);
   const [auditLogs, setAuditLogs] = useState<AuditLog[]>(MOCK_AUDIT_LOGS);
   const [systemConfig, setSystemConfig] = useState<SystemConfig>(INITIAL_SYSTEM_CONFIG);
+  const [cctvPoints, setCctvPoints] = useState<CctvPoint[]>(() => getStoredCctv());
 
   // Sync reports with local store
   useEffect(() => {
@@ -114,6 +290,13 @@ export default function DinasDashboard() {
     const handleUpdate = () => setReports(getStoredReports());
     window.addEventListener("riverse_reports_updated", handleUpdate);
     return () => window.removeEventListener("riverse_reports_updated", handleUpdate);
+  }, []);
+
+  // Sync CCTV points with shared store
+  useEffect(() => {
+    const handleUpdate = () => setCctvPoints(getStoredCctv());
+    window.addEventListener("riverse_cctv_updated", handleUpdate);
+    return () => window.removeEventListener("riverse_cctv_updated", handleUpdate);
   }, []);
 
   const updateAndSaveReports = (newReports: Report[]) => {
@@ -129,6 +312,7 @@ export default function DinasDashboard() {
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [selectedRegion, setSelectedRegion] = useState<string>("semua");
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState<boolean>(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(false);
 
   // Modals
   const [selectedReport, setSelectedReport] = useState<Report | null>(null);
@@ -158,6 +342,58 @@ export default function DinasDashboard() {
   const [newOfficerRegion, setNewOfficerRegion] = useState<string>("Jakarta Selatan");
   const [newOfficerPhone, setNewOfficerPhone] = useState<string>("");
   const [newOfficerEmail, setNewOfficerEmail] = useState<string>("");
+
+  // CCTV Form State
+  const [showAddCctvModal, setShowAddCctvModal] = useState<boolean>(false);
+  const [playingCctv, setPlayingCctv] = useState<CctvPoint | null>(null);
+  const [newCctvName, setNewCctvName] = useState<string>("");
+  const [newCctvRiver, setNewCctvRiver] = useState<string>("Kali Ciliwung");
+  const [newCctvLocation, setNewCctvLocation] = useState<string>("");
+  const [newCctvLat, setNewCctvLat] = useState<string>("");
+  const [newCctvLng, setNewCctvLng] = useState<string>("");
+  const [newCctvStatus, setNewCctvStatus] = useState<CctvStatus>("aktif");
+  const [newCctvStreamUrl, setNewCctvStreamUrl] = useState<string>("");
+
+  const handleCctvMapSelect = (location: { lat: number; lng: number; riverName: string }) => {
+    setNewCctvLat(String(location.lat));
+    setNewCctvLng(String(location.lng));
+    setNewCctvLocation(location.riverName);
+    showToast(`Titik CCTV dipilih dari peta: ${location.riverName}`, "info");
+  };
+
+  const handleAddCctvSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const lat = parseFloat(newCctvLat);
+    const lng = parseFloat(newCctvLng);
+    if (!newCctvName.trim() || isNaN(lat) || isNaN(lng)) {
+      showToast("Lengkapi nama titik CCTV dan koordinat (klik peta untuk memilih lokasi).", "error");
+      return;
+    }
+
+    addCctvPoint({
+      name: newCctvName.trim(),
+      riverName: newCctvRiver,
+      locationDetail: newCctvLocation.trim() || "Bantaran Sungai",
+      lat,
+      lng,
+      status: newCctvStatus,
+      streamUrl: newCctvStreamUrl.trim() || undefined,
+    });
+
+    setShowAddCctvModal(false);
+    setNewCctvName("");
+    setNewCctvLocation("");
+    setNewCctvLat("");
+    setNewCctvLng("");
+    setNewCctvStatus("aktif");
+    setNewCctvStreamUrl("");
+    showToast("Titik CCTV baru berhasil ditambahkan ke peta GIS!", "success");
+  };
+
+  const handleRemoveCctv = (id: string) => {
+    removeCctvPoint(id);
+    showToast("Titik CCTV berhasil dihapus dari monitoring.", "info");
+  };
 
   const handleAddOfficer = (e: React.FormEvent) => {
     e.preventDefault();
@@ -206,6 +442,36 @@ export default function DinasDashboard() {
     .filter((r) => r.status === "terverifikasi" || r.status === "pending")
     .sort((a, b) => b.urgencyScore - a.urgencyScore)
     .slice(0, 3);
+
+  // Derived dashboard statistics (RIVERSE features)
+  const statusCounts = {
+    pending: reports.filter((r) => r.status === "pending").length,
+    terverifikasi: reports.filter((r) => r.status === "terverifikasi").length,
+    diproses: reports.filter((r) => r.status === "diproses").length,
+    selesai: reports.filter((r) => r.status === "selesai").length,
+    ditolak: reports.filter((r) => r.status === "ditolak").length,
+  };
+  const totalUrgency = reports.reduce((sum, r) => sum + (r.urgencyScore || 0), 0);
+  const totalUpvotes = reports.reduce((sum, r) => sum + (r.upvotes || 0), 0);
+  const completionPct =
+    reports.length > 0 ? Math.round((statusCounts.selesai / reports.length) * 100) : 0;
+  const regionDist = Object.entries(
+    reports.reduce<Record<string, number>>((acc, r) => {
+      const region = r.region || "DKI Jakarta & Sekitar";
+      acc[region] = (acc[region] || 0) + 1;
+      return acc;
+    }, {})
+  )
+    .map(([region, count]) => ({ region, count }))
+    .sort((a, b) => b.count - a.count)
+    .slice(0, 6);
+  const topUrgentReport = [...reports].sort((a, b) => b.urgencyScore - a.urgencyScore)[0];
+
+  // Pagination state for each list
+  const dashboardPaging = usePaging(reports.length, 10);
+  const laporanPaging = usePaging(filteredReports.length, 10);
+  const petugasPaging = usePaging(officers.length, 10);
+  const auditPaging = usePaging(auditLogs.length, 10);
 
   // Handle Save Action Update (Status Diproses/Selesai)
   const handleSaveAction = (e: React.FormEvent) => {
@@ -334,12 +600,13 @@ export default function DinasDashboard() {
   if (!isLoggedIn) {
     return (
       <div className="min-h-screen bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] text-slate-800 flex flex-col justify-between relative overflow-hidden font-sans">
-        {/* Top & Bottom Gradient Fades for Seamless Transition */}
+        {/* Top & Bottom Gradient Fades */}
         <div className="absolute top-0 left-0 right-0 h-16 bg-gradient-to-b from-white to-transparent pointer-events-none z-10" />
         <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
-        
-        {/* Ambient GIS River Glow */}
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[500px] h-[500px] bg-[#0284C7]/10 rounded-full blur-[120px] pointer-events-none" />
+
+        {/* Ambient Blue River Glows */}
+        <div className="absolute top-0 right-0 w-[480px] h-[480px] bg-[#0284C7]/10 rounded-full blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-[420px] h-[420px] bg-[#38BDF8]/10 rounded-full blur-[120px] pointer-events-none" />
 
         {/* Top Navbar Header: Back button on top-left */}
         <header className="relative z-20 p-6 sm:px-12 flex items-center justify-between">
@@ -350,99 +617,105 @@ export default function DinasDashboard() {
             <ArrowLeft className="w-4 h-4 text-[#0284C7]" />
             <span>Kembali ke Beranda</span>
           </Link>
+          <span className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+            <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+            Sistem Dinas Aktif
+          </span>
         </header>
 
         {/* Main Login Card */}
         <main className="relative z-20 flex-1 flex items-center justify-center p-4 sm:p-6">
-          <div className="w-full max-w-md bg-white/95 backdrop-blur-xl border border-slate-200/90 rounded-[36px] sm:rounded-[40px] p-8 sm:p-10 shadow-2xl shadow-slate-200/80 relative">
-            
-            {/* Big RIVERSE Logo & Brand Header inside Card */}
-            <div className="flex flex-col items-center justify-center mb-6 text-center">
+          <div className="w-full max-w-md overflow-hidden bg-white border border-slate-200/90 rounded-[36px] shadow-2xl shadow-slate-200/80">
+            {/* Brand Header Band */}
+            <div className="relative bg-gradient-to-br from-[#0284C7] via-[#0369A1] to-[#0F172A] px-8 py-8 text-center overflow-hidden">
+              <div className="absolute -top-10 -right-10 w-44 h-44 bg-white/10 rounded-full blur-2xl pointer-events-none" />
+              <div className="absolute -bottom-12 -left-12 w-40 h-40 bg-sky-400/10 rounded-full blur-2xl pointer-events-none" />
               <Image
-                src="/assets/logo-new.png"
+                src="/assets/logo-putih.png"
                 alt="RIVERSE Logo"
                 width={80}
                 height={80}
-                className="h-16 sm:h-20 w-auto object-contain mb-3"
+                className="h-16 w-auto object-contain mb-3 mx-auto drop-shadow-lg"
                 priority
               />
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">
+              <h1 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">
                 Portal Dinas & Komando RIVERSE
               </h1>
-              <p className="text-xs text-slate-500 mt-2 leading-relaxed max-w-xs">
-                Masukkan NIP atau ID Petugas untuk mengakses Dashboard Penanganan Sungai Dinas Lingkungan Hidup.
+              <p className="text-xs text-sky-100/90 mt-1.5 max-w-xs mx-auto leading-relaxed">
+                Akses Dashboard Penanganan Sungai Dinas Lingkungan Hidup.
               </p>
             </div>
 
-            {loginError && (
-              <div className="mb-6 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-2.5">
-                <AlertTriangle className="w-4 h-4 flex-shrink-0 text-rose-500" />
-                <span>{loginError}</span>
-              </div>
-            )}
-
-            <form onSubmit={handleLoginSubmit} className="space-y-4">
-              <div>
-                <label className="block text-[11px] font-extrabold text-slate-600 mb-1.5 uppercase tracking-wider">
-                  NIP / ID Petugas
-                </label>
-                <div className="relative">
-                  <User className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="text"
-                    value={nipInput}
-                    onChange={(e) => setNipInput(e.target.value)}
-                    placeholder="Masukkan NIP / ID"
-                    className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-medium focus:border-[#0284C7] focus:bg-white focus:ring-2 focus:ring-[#0284C7]/20 outline-none transition-all"
-                  />
+            <div className="p-8 sm:p-10">
+              {loginError && (
+                <div className="mb-6 p-3.5 rounded-2xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold flex items-center gap-2.5">
+                  <AlertTriangle className="w-4 h-4 flex-shrink-0 text-red-500" />
+                  <span>{loginError}</span>
                 </div>
-              </div>
+              )}
 
-              <div>
-                <label className="block text-[11px] font-extrabold text-slate-600 mb-1.5 uppercase tracking-wider">
-                  Kata Sandi
-                </label>
-                <div className="relative">
-                  <Lock className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
-                  <input
-                    type="password"
-                    value={passwordInput}
-                    onChange={(e) => setPasswordInput(e.target.value)}
-                    placeholder="Masukkan kata sandi"
-                    className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-medium focus:border-[#0284C7] focus:bg-white focus:ring-2 focus:ring-[#0284C7]/20 outline-none transition-all"
-                  />
+              <form onSubmit={handleLoginSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-[11px] font-extrabold text-slate-600 mb-1.5 uppercase tracking-wider">
+                    NIP / ID Petugas
+                  </label>
+                  <div className="relative">
+                    <User className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      value={nipInput}
+                      onChange={(e) => setNipInput(e.target.value)}
+                      placeholder="Masukkan NIP / ID"
+                      className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-medium focus:border-[#0284C7] focus:bg-white focus:ring-2 focus:ring-[#0284C7]/20 outline-none transition-all"
+                    />
+                  </div>
                 </div>
+
+                <div>
+                  <label className="block text-[11px] font-extrabold text-slate-600 mb-1.5 uppercase tracking-wider">
+                    Kata Sandi
+                  </label>
+                  <div className="relative">
+                    <Lock className="w-4 h-4 text-slate-400 absolute left-4 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="password"
+                      value={passwordInput}
+                      onChange={(e) => setPasswordInput(e.target.value)}
+                      placeholder="Masukkan kata sandi"
+                      className="w-full pl-11 pr-4 py-3 rounded-2xl bg-slate-50 border border-slate-200 text-slate-900 text-xs font-medium focus:border-[#0284C7] focus:bg-white focus:ring-2 focus:ring-[#0284C7]/20 outline-none transition-all"
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isAuthenticating}
+                  className="w-full py-3.5 rounded-2xl bg-[#0284C7] text-white font-extrabold text-xs shadow-lg shadow-[#0284C7]/25 hover:bg-[#0369A1] transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer mt-2"
+                >
+                  {isAuthenticating ? (
+                    <>
+                      <RefreshCw className="w-4 h-4 animate-spin" />
+                      <span>Memverifikasi Akses...</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>Masuk</span>
+                    </>
+                  )}
+                </button>
+              </form>
+
+              {/* Demo Preset Quick Link */}
+              <div className="mt-5 pt-4 border-t border-slate-100 text-center">
+                <button
+                  type="button"
+                  onClick={handleQuickAdminFill}
+                  className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0284C7] hover:text-[#0369A1] hover:underline transition-all cursor-pointer"
+                >
+                  <span>Gunakan Akun Demo Admin DLH</span>
+                </button>
               </div>
-
-              <button
-                type="submit"
-                disabled={isAuthenticating}
-                className="w-full py-3.5 rounded-2xl bg-[#0284C7] text-white font-extrabold text-xs shadow-lg shadow-[#0284C7]/25 hover:bg-[#0369A1] transition-all hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer mt-2"
-              >
-                {isAuthenticating ? (
-                  <>
-                    <RefreshCw className="w-4 h-4 animate-spin" />
-                    <span>Memverifikasi Akses...</span>
-                  </>
-                ) : (
-                  <>
-                    <span>Masuk</span>
-                  </>
-                )}
-              </button>
-            </form>
-
-            {/* Demo Preset Quick Link */}
-            <div className="mt-5 pt-4 border-t border-slate-100 text-center">
-              <button
-                type="button"
-                onClick={handleQuickAdminFill}
-                className="inline-flex items-center gap-1.5 text-xs font-bold text-[#0284C7] hover:text-[#0369A1] hover:underline transition-all cursor-pointer"
-              >
-                <span>Gunakan Akun Demo Admin DLH</span>
-              </button>
             </div>
-
           </div>
         </main>
 
@@ -454,58 +727,61 @@ export default function DinasDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC] text-slate-800 font-sans flex flex-col lg:flex-row selection:bg-[#0284C7] selection:text-white relative">
+    <div className="min-h-screen bg-[#0F172A] text-slate-800 font-sans flex flex-col lg:flex-row selection:bg-[#0284C7] selection:text-white relative p-0 lg:p-3.5 gap-0 lg:gap-3.5">
       
       {/* Dark Mobile Backdrop Overlay */}
       {isMobileSidebarOpen && (
         <div
           onClick={() => setIsMobileSidebarOpen(false)}
-          className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs z-40 lg:hidden"
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-40 lg:hidden"
         />
       )}
 
-      {/* 1. LEFT SIDEBAR NAVIGATION (Mobile Sliding Drawer & Desktop Fixed) */}
-      <aside className={`fixed inset-y-0 left-0 z-50 w-72 bg-white border-r border-slate-200/80 flex flex-col flex-shrink-0 transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:z-30 lg:w-64 lg:h-screen lg:overflow-y-auto ${isMobileSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"}`}>
-        <div className="p-5 sm:p-6 border-b border-slate-100 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-3 group">
+      {/* 1. LEFT SIDEBAR NAVIGATION (Modern Dark Sleek Drawer matching image) */}
+      <aside className={`fixed inset-y-0 left-0 z-50 w-72 ${isSidebarCollapsed ? "lg:w-[76px]" : "lg:w-60"} bg-[#0F172A] text-slate-300 flex flex-col flex-shrink-0 transition-all duration-300 ease-in-out lg:translate-x-0 lg:sticky lg:top-3.5 lg:z-30 lg:h-[calc(100vh-28px)] lg:overflow-y-auto ${isMobileSidebarOpen ? "translate-x-0 shadow-2xl" : "-translate-x-full"}`}>
+        
+        {/* Brand Header */}
+        <div className={`p-5 sm:p-6 border-b border-white/10 flex items-center justify-between ${isSidebarCollapsed ? "lg:justify-center lg:px-0" : ""}`}>
+          <Link href="/" className="flex items-center gap-3 group" title="RIVERSE">
             <Image
-              src="/assets/logo-new.png"
+              src="/assets/logo-putih.png"
               alt="RIVERSE Logo"
-              width={44}
-              height={44}
-              className="h-10 sm:h-11 w-auto object-contain transition-transform duration-300 group-hover:scale-105"
+              width={40}
+              height={40}
+              className="h-10 w-10 object-contain group-hover:scale-105 transition-transform"
               priority
             />
-            <div className="flex flex-col">
-              <span className="font-extrabold text-lg sm:text-xl tracking-tight text-[#0F172A] leading-none">
+            <div className={`flex flex-col ${isSidebarCollapsed ? "lg:hidden" : ""}`}>
+              <span className="font-extrabold text-base tracking-tight text-white leading-none">
                 RIVERSE
               </span>
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mt-1">PORTAL DINAS DLH</span>
+              <span className="text-[9px] text-sky-400 font-bold uppercase tracking-widest mt-1">DLH MONITORING</span>
             </div>
           </Link>
 
           {/* Close Sidebar Button on Mobile */}
           <button
             onClick={() => setIsMobileSidebarOpen(false)}
-            className="lg:hidden p-1.5 rounded-xl bg-slate-100 text-slate-500 hover:text-slate-900 cursor-pointer"
+            className="lg:hidden p-1.5 rounded-xl bg-white/10 text-slate-300 hover:text-white cursor-pointer"
             aria-label="Tutup Sidebar"
           >
             <X className="w-5 h-5" />
           </button>
         </div>
 
-        {/* Sidebar Links */}
+        {/* Sidebar Links & Navigation Section */}
         <div className="p-4 flex-1 space-y-6 overflow-y-auto">
           <div>
-            <span className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider px-3 mb-2">
-              Menu Utama Dinas
+            <span className={`block text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-3 mb-2.5 ${isSidebarCollapsed ? "lg:hidden" : ""}`}>
+              MENU UTAMA
             </span>
-            <nav className="space-y-1">
+            <nav className="space-y-1.5">
               {[
-                { id: "dashboard", label: "Dashboard Utama", icon: LayoutDashboard },
+                { id: "dashboard", label: "Dashboard", icon: LayoutDashboard },
                 { id: "peta", label: "Peta Density GIS", icon: MapPin },
-                { id: "laporan", label: "Manajemen Laporan", icon: FileText },
                 { id: "petugas", label: "Tim & Beban Kerja", icon: Users },
+                { id: "laporan", label: "Manajemen Laporan", icon: FileText },
+                { id: "cctv", label: "CCTV Monitoring", icon: Camera },
                 { id: "audit", label: "Audit Log Aktivitas", icon: History },
               ].map((item) => {
                 const Icon = item.icon;
@@ -517,65 +793,108 @@ export default function DinasDashboard() {
                       setActiveNav(item.id);
                       setIsMobileSidebarOpen(false);
                     }}
-                    className={`w-full flex items-center gap-3 px-3.5 py-3 rounded-2xl text-xs font-bold transition-all cursor-pointer ${
+                    title={isSidebarCollapsed ? item.label : undefined}
+                    className={`w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold transition-all cursor-pointer relative ${
                       isActive
-                        ? "bg-[#0284C7] text-white shadow-lg shadow-[#0284C7]/25"
-                        : "text-slate-600 hover:text-slate-900 hover:bg-slate-100/80"
-                    }`}
+                        ? "bg-slate-800/90 text-white shadow-md border border-white/10"
+                        : "text-slate-400 hover:text-white hover:bg-white/5"
+                    } ${isSidebarCollapsed ? "lg:justify-center lg:px-0" : ""}`}
                   >
-                    <Icon className="w-4 h-4" />
-                    <span>{item.label}</span>
+                    <Icon className={`w-4 h-4 shrink-0 ${isActive ? "text-sky-400" : "text-slate-500"}`} />
+                    <span className={isSidebarCollapsed ? "lg:hidden" : ""}>{item.label}</span>
                   </button>
                 );
               })}
             </nav>
           </div>
 
-          {/* Fitur B.4 Config Modal Trigger */}
+          {/* System Configuration Trigger */}
           <div>
-            <span className="block text-[11px] font-extrabold text-slate-400 uppercase tracking-wider px-3 mb-2">
-              Konfigurasi Sistem
+            <span className={`block text-[10px] font-extrabold text-slate-500 uppercase tracking-widest px-3 mb-2.5 ${isSidebarCollapsed ? "lg:hidden" : ""}`}>
+              SISTEM
             </span>
             <button
               onClick={() => {
                 setShowConfigModal(true);
                 setIsMobileSidebarOpen(false);
               }}
-              className="w-full flex items-center justify-between px-3.5 py-3 rounded-2xl text-xs font-bold text-slate-700 hover:bg-slate-100/80 transition-all border border-slate-200 cursor-pointer"
+              title={isSidebarCollapsed ? "Radius & Ambang Vote" : undefined}
+              className={`w-full text-left rounded-2xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all p-3 cursor-pointer ${isSidebarCollapsed ? "lg:flex lg:justify-center lg:px-0" : ""}`}
             >
-              <span className="flex items-center gap-2.5">
-                <Sliders className="w-4 h-4 text-[#0284C7]" />
-                <span>Set Threshold & Radius</span>
-              </span>
-              <span className="font-mono text-[10px] text-[#0284C7] font-bold">{systemConfig.globalThreshold} Vote</span>
+              <div className={`flex items-center justify-between gap-2 ${isSidebarCollapsed ? "lg:hidden" : ""}`}>
+                <span className="flex items-center gap-2 text-[11px] font-bold text-slate-300">
+                  <Sliders className="w-4 h-4 text-sky-400 shrink-0" />
+                  <span>Radius & Ambang Vote</span>
+                </span>
+                <ChevronRight className="w-4 h-4 text-slate-500 shrink-0" />
+              </div>
+              <div className={`mt-2.5 flex items-center gap-2 ${isSidebarCollapsed ? "lg:hidden" : ""}`}>
+                <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-sky-300 bg-white/10 px-2 py-0.5 rounded-md">
+                  <Crosshair className="w-3 h-3" />
+                  {systemConfig.geofencingRadiusMeters}m
+                </span>
+                <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-sky-300 bg-white/10 px-2 py-0.5 rounded-md">
+                  <ThumbsUp className="w-3 h-3" />
+                  {systemConfig.globalThreshold} Vote
+                </span>
+              </div>
+              {isSidebarCollapsed && (
+                <span className="hidden lg:block">
+                  <Sliders className="w-5 h-5 text-sky-400" />
+                </span>
+              )}
             </button>
           </div>
         </div>
 
-        {/* Sidebar Footer */}
-        <div className="p-4 border-t border-slate-100 space-y-1">
-          <button
-            onClick={() => setIsLoggedIn(false)}
-            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-rose-600 hover:bg-rose-50 transition-all cursor-pointer"
+        {/* Sidebar Footer: User Profile & Actions */}
+        <div className={`border-t border-white/10 ${isSidebarCollapsed ? "p-3 space-y-2.5" : "p-4 space-y-3"}`}>
+          {/* User Profile Avatar & Name */}
+          <div
+            className={`flex items-center gap-3 transition-all ${
+              isSidebarCollapsed
+                ? "justify-center p-0 bg-transparent border-0"
+                : "p-2.5 rounded-2xl bg-white/5 border border-white/5"
+            }`}
+            title={isSidebarCollapsed ? "Ir. Bambang Wijaya, M.T. (Super Admin DLH)" : undefined}
           >
-            <LogOut className="w-4 h-4" />
-            <span>Keluar Akun Dinas</span>
-          </button>
-          <Link
-            href="/"
-            className="w-full flex items-center gap-3 px-3.5 py-2.5 rounded-2xl text-xs font-bold text-slate-500 hover:bg-slate-100 transition-all"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Kembali ke Beranda</span>
-          </Link>
+            <div className="relative shrink-0">
+              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#0284C7] to-sky-400 text-white font-extrabold flex items-center justify-center text-xs shadow-md">
+                BW
+              </div>
+            </div>
+            <div className={`flex flex-col min-w-0 flex-1 text-left ${isSidebarCollapsed ? "hidden" : ""}`}>
+              <span className="text-xs font-bold text-white truncate leading-tight">Ir. Bambang Wijaya, M.T.</span>
+              <span className="text-[10px] text-slate-400 font-mono truncate">Super Admin DLH</span>
+            </div>
+          </div>
+
+          <div className={`grid gap-2 ${isSidebarCollapsed ? "grid-cols-1" : "grid-cols-2"}`}>
+            <Link
+              href="/"
+              className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold text-slate-300 bg-white/5 hover:bg-white/10 hover:text-white border border-white/5 transition-all"
+              title="Kembali ke Beranda"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 shrink-0" />
+              <span className={isSidebarCollapsed ? "hidden" : ""}>Beranda</span>
+            </Link>
+            <button
+              onClick={() => setIsLoggedIn(false)}
+              title={isSidebarCollapsed ? "Keluar" : undefined}
+              className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-bold text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all cursor-pointer"
+            >
+              <LogOut className="w-3.5 h-3.5 shrink-0" />
+              <span className={isSidebarCollapsed ? "hidden" : ""}>Keluar</span>
+            </button>
+          </div>
         </div>
       </aside>
 
-      {/* 2. MAIN CONTENT AREA */}
-      <main className="flex-1 flex flex-col min-w-0 min-h-screen">
+      {/* 2. MAIN CONTENT AREA (Bento Rounded White/Light Canvas matching image) */}
+      <main className="flex-1 flex flex-col min-w-0 bg-[#F8FAFC] rounded-none lg:rounded-[32px] border border-slate-200/80 shadow-2xl overflow-hidden min-h-screen lg:min-h-[calc(100vh-28px)]">
         
         {/* TOP HEADER BAR */}
-        <header className="bg-white border-b border-slate-200/80 px-4 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between gap-3 sticky top-0 z-20 shadow-xs">
+        <header className="bg-white border-b border-slate-200/80 px-5 sm:px-8 py-4 flex items-center justify-between gap-4 sticky top-0 z-20 shadow-xs">
           <div className="flex items-center gap-3">
             {/* Mobile Sidebar Hamburger Toggle */}
             <button
@@ -587,310 +906,306 @@ export default function DinasDashboard() {
             </button>
 
             <div>
-              <h1 className="text-base sm:text-xl font-extrabold text-slate-900 tracking-tight">
-                Dashboard Pengawasan & Penanganan Sungai
+              <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+                {activeNav === "dashboard" && "Dashboard"}
+                {activeNav === "peta" && "Peta Density GIS"}
+                {activeNav === "laporan" && "Manajemen Laporan"}
+                {activeNav === "cctv" && "CCTV Monitoring"}
+                {activeNav === "petugas" && "Tim & Beban Kerja"}
+                {activeNav === "audit" && "Audit Log Aktivitas"}
               </h1>
-              <p className="text-xs text-slate-500 font-medium hidden sm:block">
-                Dinas Lingkungan Hidup (DLH) Provinsi DKI Jakarta
-              </p>
             </div>
+
+            {/* Sidebar Collapse Toggle (Desktop) */}
+            <button
+              onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
+              className="hidden lg:flex items-center justify-center p-2 rounded-xl bg-slate-100 text-slate-600 hover:text-[#0284C7] hover:bg-slate-200 transition-all cursor-pointer"
+              aria-label={isSidebarCollapsed ? "Perluas Sidebar" : "Minimalkan Sidebar"}
+              title={isSidebarCollapsed ? "Perluas Sidebar" : "Minimalkan Sidebar"}
+            >
+              {isSidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+            </button>
           </div>
 
           <div className="flex items-center gap-3">
-
-            {/* Export PDF/Excel Button (Fitur B.5) */}
-            <button
-              onClick={handleExportData}
-              className="px-3.5 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs transition-all shadow-sm flex items-center gap-1.5 cursor-pointer"
-            >
-              <Download className="w-4 h-4" />
-              <span className="hidden sm:inline">Ekspor Rekap</span>
-            </button>
-
-            {/* User Profile Avatar */}
-            <div className="flex items-center gap-3 pl-2 border-l border-slate-200">
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#0284C7] to-sky-400 text-white font-extrabold flex items-center justify-center text-sm shadow-sm">
-                BW
-              </div>
-              <div className="hidden lg:flex flex-col text-left">
-                <span className="text-xs font-bold text-slate-900 leading-tight">Ir. Bambang Wijaya, M.T.</span>
-                <span className="text-[10px] text-slate-400 font-bold uppercase">{currentRole.replace("_", " ")}</span>
-              </div>
+            {/* User Profile Avatar in Header */}
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#0284C7] to-sky-400 text-white font-extrabold flex items-center justify-center text-xs shadow-sm ring-2 ring-white">
+              BW
             </div>
           </div>
         </header>
 
         {/* DASHBOARD BODY CONTAINER */}
-        <div className="p-6 space-y-6 max-w-7xl w-full mx-auto">
+        <div className="p-4 sm:p-7 space-y-6 max-w-7xl w-full mx-auto overflow-y-auto">
           
           {/* ============================================================ */}
-          {/* VIEW 1: DASHBOARD UTAMA (HOME)                               */}
+          {/* VIEW 1: DASHBOARD UTAMA (BENTO GRID MATCHING REFERENCE IMAGE)*/}
           {/* ============================================================ */}
           {activeNav === "dashboard" && (
-            <>
-              {/* TOP HERO & PERLU PERHATIAN SEGERA WIDGET */}
-              <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="space-y-6 animate-fadeIn">
+              
+              {/* TOP ROW: 3 COMPACT KPI METRIC CARDS WITH MICRO BAR CHARTS */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-5">
                 
-                {/* HERO GRADIENT CARD */}
-                <div className="lg:col-span-2 bg-gradient-to-r from-[#0284C7] via-[#0369A1] to-[#0F172A] text-white p-7 sm:p-8 rounded-[32px] shadow-xl relative overflow-hidden flex flex-col justify-between">
-                  <div className="absolute top-0 right-0 w-80 h-80 bg-sky-400/10 rounded-full blur-3xl pointer-events-none" />
-
-                  <div>
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md border border-white/20 text-sky-200 text-[11px] font-bold uppercase tracking-wider mb-4">
-                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                      Proses Penanganan Real-Time
+                {/* Metric 1: Total Laporan Aktif */}
+                <div className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs flex items-center justify-between gap-3 hover:border-slate-300 transition-colors">
+                  <div className="min-w-0">
+                    <span className="block text-[11px] font-medium text-slate-400">Total Laporan Aktif</span>
+                    <div className="flex items-baseline gap-1.5 mt-1">
+                      <span className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">{reports.length}</span>
+                      <span className="text-xs font-semibold text-slate-500">Tiket</span>
                     </div>
+                    <span className="block text-[10px] font-medium text-emerald-600 mt-1">
+                      &#8593; {statusCounts.diproses} dalam penanganan tim
+                    </span>
+                  </div>
+                  <MiniBarChart color="sky" heights={[30, 55, 45, 90, 70]} />
+                </div>
 
-                    <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight leading-tight">
-                      Pengawasan & Pembersihan Sungai Jabodetabek
-                    </h2>
-                    <p className="text-xs sm:text-sm text-sky-100/90 mt-2 max-w-xl leading-relaxed font-medium">
-                      Monitoring spasial laporan pencemaran warga, koordinasi tim armada sampah lapangan, dan penutupan tiket tertutup.
-                    </p>
+                {/* Metric 2: Laporan Terverifikasi */}
+                <div className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs flex items-center justify-between gap-3 hover:border-slate-300 transition-colors">
+                  <div className="min-w-0">
+                    <span className="block text-[11px] font-medium text-slate-400">Terverifikasi</span>
+                    <div className="flex items-baseline gap-1 mt-1">
+                      <span className="text-xl sm:text-2xl font-extrabold text-red-600 tracking-tight">{statusCounts.terverifikasi}</span>
+                      <span className="text-xs font-semibold text-slate-500">antrean DLH</span>
+                    </div>
+                    <span className="block text-[10px] font-medium text-red-500 mt-1">
+                      &#8593; {statusCounts.pending} masih pending
+                    </span>
+                  </div>
+                  <MiniBarChart color="red" heights={[60, 35, 75, 45, 80]} />
+                </div>
+
+                {/* Metric 3: Closed-Loop Selesai */}
+                <div className="bg-white rounded-2xl border border-slate-200/80 p-4 sm:p-5 shadow-xs flex items-center justify-between gap-3 hover:border-slate-300 transition-colors">
+                  <div className="min-w-0">
+                    <span className="block text-[11px] font-medium text-slate-400">Closed-Loop Selesai</span>
+                    <div className="flex items-baseline gap-1 mt-1">
+                      <span className="text-xl sm:text-2xl font-extrabold text-emerald-600 tracking-tight">{statusCounts.selesai}</span>
+                      <span className="text-xs font-semibold text-slate-500">tiket tertutup</span>
+                    </div>
+                    <span className="block text-[10px] font-medium text-emerald-600 mt-1">
+                      &#8593; {completionPct}% tingkat penyelesaian
+                    </span>
+                  </div>
+                  <MiniBarChart color="emerald" heights={[40, 65, 80, 55, 95]} />
+                </div>
+
+              </div>
+
+              {/* MIDDLE ROW: 3 MAIN BENTO WIDGETS (GAUGE, RENEWABLE, SOURCES USAGE) */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                
+                {/* WIDGET 1 (Col 1-3): Tingkat Penyelesaian Penanganan (Semi-circle Gauge) */}
+                <div className="lg:col-span-3 bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col justify-between items-center text-center">
+                  <div className="w-full">
+                    <span className="block text-xs font-extrabold text-slate-800">Tingkat Penyelesaian</span>
+                    <div className="text-3xl font-extrabold text-slate-900 tracking-tight my-2">
+                      {completionPct}%
+                    </div>
                   </div>
 
-                  <div className="mt-8 pt-6 border-t border-white/15">
-                    <div className="flex justify-between items-center text-xs font-bold mb-2">
-                      <span className="text-sky-200">KPI Response Time DLH (Rata-rata Waktu Selesai)</span>
-                      <span className="text-emerald-300 font-mono">4.2 Jam / Laporan</span>
-                    </div>
-                    <div className="w-full h-2.5 bg-white/20 rounded-full overflow-hidden mb-6">
-                      <div className="h-full bg-gradient-to-r from-emerald-400 to-sky-300 rounded-full w-[88%]" />
-                    </div>
+                  <div className="py-2">
+                    <SemiCircleGauge value={completionPct} />
+                  </div>
 
-                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-md border border-white/10 text-center">
-                        <span className="block text-[10px] text-sky-200 font-bold uppercase">Total Laporan</span>
-                        <span className="text-lg font-extrabold text-white mt-0.5 block">{reports.length}</span>
-                      </div>
-                      <div className="p-3 rounded-2xl bg-rose-500/20 backdrop-blur-md border border-rose-400/30 text-center">
-                        <span className="block text-[10px] text-rose-200 font-bold uppercase">Terverifikasi</span>
-                        <span className="text-lg font-extrabold text-rose-300 mt-0.5 block">
-                          {reports.filter((r) => r.status === "terverifikasi").length}
-                        </span>
-                      </div>
-                      <div className="p-3 rounded-2xl bg-sky-500/20 backdrop-blur-md border border-sky-400/30 text-center">
-                        <span className="block text-[10px] text-sky-200 font-bold uppercase">Diproses</span>
-                        <span className="text-lg font-extrabold text-sky-300 mt-0.5 block">
-                          {reports.filter((r) => r.status === "diproses").length}
-                        </span>
-                      </div>
-                      <div className="p-3 rounded-2xl bg-emerald-500/20 backdrop-blur-md border border-emerald-400/30 text-center">
-                        <span className="block text-[10px] text-emerald-200 font-bold uppercase">Selesai</span>
-                        <span className="text-lg font-extrabold text-emerald-300 mt-0.5 block">
-                          {reports.filter((r) => r.status === "selesai").length}
-                        </span>
-                      </div>
-                    </div>
+                  <div className="w-full pt-2">
+                    <span className="block text-[11px] font-medium text-slate-400">
+                      {statusCounts.selesai} dari {reports.length} tiket ditutup closed-loop
+                    </span>
                   </div>
                 </div>
 
-                {/* WIDGET PERLU PERHATIAN SEGERA (Fitur B.2) */}
-                <div className="bg-white p-6 rounded-[32px] border border-slate-200/80 shadow-xs flex flex-col justify-between space-y-4">
+                {/* WIDGET 2 (Col 4-6): Distribusi Status Laporan */}
+                <div className="lg:col-span-4 bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col justify-between">
                   <div>
-                    <span className="text-[11px] font-extrabold text-rose-600 uppercase tracking-wider bg-rose-50 px-3 py-1 rounded-full border border-rose-100 inline-block mb-3">
-                      Perlu Perhatian Segera
-                    </span>
-                    <h3 className="text-base font-extrabold text-slate-900">Laporan Prioritas Tertinggi</h3>
-                    <p className="text-xs text-slate-500 font-medium">Laporan dengan Urgency Score tertinggi yang menunggu penanganan dinas.</p>
+                    <span className="block text-xs font-extrabold text-slate-800">Distribusi Status Laporan</span>
+                    <div className="text-3xl font-extrabold text-slate-900 tracking-tight mt-1 mb-4">
+                      {reports.length}
+                    </div>
 
-                    <div className="space-y-3 mt-4">
-                      {urgentReports.map((urgent) => (
-                        <div key={urgent.id} className="p-3 rounded-2xl bg-slate-50 border border-slate-200/80 space-y-1">
-                          <div className="flex justify-between items-center">
-                            <span className="font-mono text-xs font-bold text-[#0284C7]">{urgent.ticketNo}</span>
-                            <span className="font-bold text-xs text-amber-700 bg-amber-100 px-2 py-0.5 rounded">
-                              {urgent.urgencyScore} Poin
-                            </span>
-                          </div>
-                          <h4 className="font-bold text-xs text-slate-900 truncate">{urgent.riverName}</h4>
-                          <p className="text-[11px] text-slate-500 truncate">{urgent.locationDetail}</p>
-                        </div>
-                      ))}
+                    <div className="space-y-2.5">
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="flex items-center gap-2 font-medium text-slate-600">
+                          <span className="w-2 h-2 rounded-full bg-amber-500" />
+                          Pending
+                        </span>
+                        <span className="font-bold text-slate-800">{statusCounts.pending}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="flex items-center gap-2 font-medium text-slate-600">
+                          <span className="w-2 h-2 rounded-full bg-red-500" />
+                          Terverifikasi
+                        </span>
+                        <span className="font-bold text-slate-800">{statusCounts.terverifikasi}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="flex items-center gap-2 font-medium text-slate-600">
+                          <span className="w-2 h-2 rounded-full bg-[#0284C7]" />
+                          Diproses
+                        </span>
+                        <span className="font-bold text-slate-800">{statusCounts.diproses}</span>
+                      </div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="flex items-center gap-2 font-medium text-slate-600">
+                          <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                          Selesai (Closed-Loop)
+                        </span>
+                        <span className="font-bold text-slate-800">{statusCounts.selesai}</span>
+                      </div>
                     </div>
                   </div>
 
                   <button
                     onClick={() => setActiveNav("laporan")}
-                    className="w-full py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer"
+                    className="w-full mt-5 py-2.5 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
                   >
-                    <span>Tinjau Semua Laporan Terverifikasi</span>
-                    <ChevronRight className="w-4 h-4" />
+                    Lihat Semua Laporan
                   </button>
                 </div>
 
+                {/* WIDGET 3 (Col 7-12): Sebaran Laporan per Wilayah */}
+                <div className="lg:col-span-5 bg-white rounded-3xl border border-slate-200/80 p-5 sm:p-6 shadow-xs flex flex-col justify-between">
+                  <div>
+                    <div className="flex items-start justify-between gap-2 mb-1">
+                      <div>
+                        <h3 className="text-xs font-extrabold text-slate-800">Sebaran Laporan per Wilayah</h3>
+                        <p className="text-[10px] text-slate-400 font-medium mt-0.5 max-w-xs">
+                          Distribusi tiket pencemaran berdasarkan wilayah administrasi sungai.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mt-4 items-center">
+                      <div className="space-y-2">
+                        {regionDist.map((item, idx) => (
+                          <div key={idx} className="flex items-center justify-between text-xs">
+                            <span className="flex items-center gap-2 font-medium text-slate-600 min-w-0">
+                              <span className={`w-2 h-2 rounded-full ${["bg-emerald-500", "bg-teal-500", "bg-sky-500", "bg-amber-500", "bg-indigo-500", "bg-rose-500"][idx % 6]}`} />
+                              <span className="truncate">{item.region}</span>
+                            </span>
+                            <span className="font-bold text-slate-800 ml-2">{item.count}</span>
+                          </div>
+                        ))}
+                      </div>
+
+                      {/* Mini GIS Hotspot Visual Card */}
+                      <div className="p-3.5 rounded-2xl bg-gradient-to-br from-slate-900 to-slate-800 text-white flex flex-col justify-between h-36 relative overflow-hidden shadow-sm">
+                        <div className="absolute top-0 right-0 w-24 h-24 bg-[#0284C7]/20 rounded-full blur-xl pointer-events-none" />
+                        <div className="flex items-center justify-between">
+                          <span className="text-[10px] font-bold text-slate-300">Hotspot Utama</span>
+                          <span className="text-sm font-extrabold text-sky-300">
+                            {topUrgentReport ? topUrgentReport.urgencyScore : 0} Poin
+                          </span>
+                        </div>
+                        <div className="mt-auto">
+                          <span className="block text-[9px] text-slate-400 uppercase tracking-wider">Urgensi Tertinggi</span>
+                          <span className="block text-[11px] font-bold text-white truncate mt-0.5">
+                            {topUrgentReport ? topUrgentReport.riverName : "Belum Ada Laporan"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </div>
 
-              {/* FITUR BARU: PUSAT PINTASAN MENU & PENJELASAN MODAL/FUNGSI */}
-              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
-                  <div>
-                    <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                      Pusat Pintasan Menu & Modul Penanganan Sungai
-                    </h3>
-                    <p className="text-xs text-slate-500 font-medium mt-0.5">
-                      Pilih pintasan menu di bawah ini untuk mengakses modul kerja atau memahami fungsi masing-masing menu.
+              {/* BOTTOM ROW: 3 BENTO WIDGETS (CLIMATE INDEX, WATER LEVEL, COMMUNITY BANNER) */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                
+                {/* Bottom Widget 1 (Col 1-4): Total Bobot Urgensi (Dark Pill Card) */}
+                <div className="lg:col-span-4 bg-gradient-to-br from-[#0F172A] to-slate-900 text-white rounded-3xl p-5 shadow-sm flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-full border-4 border-[#0284C7]/40 flex items-center justify-center shrink-0 text-center font-extrabold text-base text-sky-300">
+                    {totalUrgency}
+                  </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-extrabold text-white">Total Bobot Urgensi</h4>
+                    <p className="text-[11px] text-slate-400 mt-1 leading-relaxed">
+                      Akumulasi urgency score seluruh tiket penanganan
                     </p>
                   </div>
-                  <span className="text-[11px] font-extrabold text-[#0284C7] bg-sky-50 px-3 py-1 rounded-full border border-sky-100 self-start sm:self-auto">
-                    5 Modul Operasional Aktif
-                  </span>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {/* Shortcut 1: Peta Density GIS */}
-                  <div className="p-5 rounded-2xl bg-gradient-to-br from-sky-50/50 to-white border border-sky-100 flex flex-col justify-between space-y-3 hover:border-sky-300 transition-all hover:shadow-md group">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="w-10 h-10 rounded-2xl bg-[#0284C7] text-white flex items-center justify-center shadow-md shadow-[#0284C7]/20 group-hover:scale-105 transition-transform">
-                          <MapPin className="w-5 h-5" />
-                        </div>
-                        <span className="text-[10px] font-extrabold text-[#0284C7] bg-white px-2.5 py-0.5 rounded-full border border-sky-200">
-                          Peta Interactive
-                        </span>
-                      </div>
-                      <h4 className="font-extrabold text-sm text-slate-900">1. Peta Density GIS</h4>
-                      <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                        <strong>Fungsi & Kegunaan:</strong> Memantau sebaran spasial lokasi pencemaran sungai secara real-time berbasis peta Leaflet interaktif, mendeteksi kluster titik panas (hotspot), dan menganalisis tingkat kepadatan sampah per segmen wilayah sungai.
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => setActiveNav("peta")}
-                      className="w-full py-2.5 rounded-xl bg-white hover:bg-[#0284C7] text-[#0284C7] hover:text-white font-extrabold text-xs border border-sky-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
-                    >
-                      <span>Buka Modul Peta GIS</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
+                {/* Bottom Widget 2 (Col 5-7): Petugas DLH Aktif (Light Pill Card) */}
+                <div className="lg:col-span-3 bg-white border border-slate-200/80 rounded-3xl p-5 shadow-xs flex items-center gap-3.5">
+                  <div className="w-14 h-14 rounded-full border-4 border-emerald-500/40 flex items-center justify-center shrink-0 text-center font-extrabold text-xs text-slate-900">
+                    {officers.length}
                   </div>
+                  <div className="min-w-0">
+                    <h4 className="text-xs font-extrabold text-slate-900">Petugas DLH Aktif</h4>
+                    <p className="text-[11px] text-slate-400 mt-0.5 leading-relaxed">
+                      Tim armada terdaftar siap turun lapangan
+                    </p>
+                  </div>
+                </div>
 
-                  {/* Shortcut 2: Manajemen Laporan */}
-                  <div className="p-5 rounded-2xl bg-gradient-to-br from-emerald-50/50 to-white border border-emerald-100 flex flex-col justify-between space-y-3 hover:border-emerald-300 transition-all hover:shadow-md group">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center shadow-md shadow-emerald-600/20 group-hover:scale-105 transition-transform">
-                          <FileText className="w-5 h-5" />
-                        </div>
-                        <span className="text-[10px] font-extrabold text-emerald-700 bg-white px-2.5 py-0.5 rounded-full border border-emerald-200">
-                          {reports.length} Tiket Laporan
-                        </span>
-                      </div>
-                      <h4 className="font-extrabold text-sm text-slate-900">2. Manajemen Laporan</h4>
-                      <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                        <strong>Fungsi & Kegunaan:</strong> Mengelola antrean tiket laporan warga, melakukan verifikasi lapang, disposisi penugasan ke tim armada DLH, mengunggah foto bukti pembersihan (after clean), serta persetujuan/penolakan tiket.
-                      </p>
-                    </div>
+                {/* Bottom Widget 3 (Col 8-12): Komunitas RIVERSE Banner */}
+                <div className="lg:col-span-5 bg-gradient-to-br from-[#0284C7] via-[#0369A1] to-[#0F172A] text-white rounded-3xl p-5 sm:p-6 shadow-md relative overflow-hidden flex flex-col justify-between gap-4">
+                  <div className="absolute top-0 right-0 w-36 h-36 bg-sky-300/20 rounded-full blur-2xl pointer-events-none" />
+                  
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-bold uppercase tracking-widest text-sky-200 flex items-center gap-1.5">
+                      <Sparkles className="w-3.5 h-3.5" />
+                      RIVERSE
+                    </span>
                     <button
                       onClick={() => setActiveNav("laporan")}
-                      className="w-full py-2.5 rounded-xl bg-white hover:bg-emerald-600 text-emerald-700 hover:text-white font-extrabold text-xs border border-emerald-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
+                      className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors cursor-pointer"
+                      title="Buka Manajemen Laporan"
                     >
-                      <span>Buka Manajemen Laporan</span>
-                      <ChevronRight className="w-4 h-4" />
+                      <ArrowUpRight className="w-4 h-4" />
                     </button>
                   </div>
 
-                  {/* Shortcut 3: Tim & Beban Kerja */}
-                  <div className="p-5 rounded-2xl bg-gradient-to-br from-purple-50/50 to-white border border-purple-100 flex flex-col justify-between space-y-3 hover:border-purple-300 transition-all hover:shadow-md group">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="w-10 h-10 rounded-2xl bg-purple-600 text-white flex items-center justify-center shadow-md shadow-purple-600/20 group-hover:scale-105 transition-transform">
-                          <Users className="w-5 h-5" />
-                        </div>
-                        <span className="text-[10px] font-extrabold text-purple-700 bg-white px-2.5 py-0.5 rounded-full border border-purple-200">
-                          {officers.length} Petugas DLH
-                        </span>
+                  <div>
+                    <h3 className="text-lg font-extrabold text-white tracking-tight">
+                      Warga melapor, DLH bertindak
+                    </h3>
+                    <div className="flex items-center gap-3 mt-3">
+                      <div className="flex -space-x-2">
+                        <div className="w-7 h-7 rounded-full bg-emerald-500 border-2 border-white/40 flex items-center justify-center text-[10px] font-bold">B</div>
+                        <div className="w-7 h-7 rounded-full bg-sky-400 border-2 border-white/40 flex items-center justify-center text-[10px] font-bold">S</div>
+                        <div className="w-7 h-7 rounded-full bg-amber-500 border-2 border-white/40 flex items-center justify-center text-[10px] font-bold">D</div>
                       </div>
-                      <h4 className="font-extrabold text-sm text-slate-900">3. Tim & Beban Kerja</h4>
-                      <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                        <strong>Fungsi & Kegunaan:</strong> Memantau beban kerja (active workload) seluruh petugas lapangan dan Koordinator Wilayah DLH, membagikan penugasan secara adil, serta mendaftarkan petugas armada baru.
-                      </p>
+                      <span className="text-xs font-semibold text-sky-100">
+                        {totalUpvotes.toLocaleString("id-ID")}+ dukungan warga
+                      </span>
                     </div>
-                    <button
-                      onClick={() => setActiveNav("petugas")}
-                      className="w-full py-2.5 rounded-xl bg-white hover:bg-purple-600 text-purple-700 hover:text-white font-extrabold text-xs border border-purple-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
-                    >
-                      <span>Buka Kelola Tim & Beban Kerja</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  {/* Shortcut 4: Audit Log Aktivitas */}
-                  <div className="p-5 rounded-2xl bg-gradient-to-br from-amber-50/50 to-white border border-amber-100 flex flex-col justify-between space-y-3 hover:border-amber-300 transition-all hover:shadow-md group">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="w-10 h-10 rounded-2xl bg-amber-600 text-white flex items-center justify-center shadow-md shadow-amber-600/20 group-hover:scale-105 transition-transform">
-                          <History className="w-5 h-5" />
-                        </div>
-                        <span className="text-[10px] font-extrabold text-amber-700 bg-white px-2.5 py-0.5 rounded-full border border-amber-200">
-                          {auditLogs.length} Log Aktivitas
-                        </span>
-                      </div>
-                      <h4 className="font-extrabold text-sm text-slate-900">4. Audit Log Aktivitas</h4>
-                      <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                        <strong>Fungsi & Kegunaan:</strong> Mengawasi riwayat audit trail perubahan status tiket secara transparan, melacak actor/petugas yang mengubah status, waktu eksekusi, serta catatan tindakan dinas secara akuntabel.
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => setActiveNav("audit")}
-                      className="w-full py-2.5 rounded-xl bg-white hover:bg-amber-600 text-amber-700 hover:text-white font-extrabold text-xs border border-amber-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
-                    >
-                      <span>Buka Audit Log Transparan</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
-                  </div>
-
-                  {/* Shortcut 5: Konfigurasi Radius & Threshold */}
-                  <div className="p-5 rounded-2xl bg-gradient-to-br from-rose-50/50 to-white border border-rose-100 flex flex-col justify-between space-y-3 hover:border-rose-300 transition-all hover:shadow-md group md:col-span-2 lg:col-span-2">
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="w-10 h-10 rounded-2xl bg-rose-600 text-white flex items-center justify-center shadow-md shadow-rose-600/20 group-hover:scale-105 transition-transform">
-                          <Sliders className="w-5 h-5" />
-                        </div>
-                        <span className="text-[10px] font-extrabold text-rose-700 bg-white px-2.5 py-0.5 rounded-full border border-rose-200">
-                          Geofence: {systemConfig.geofencingRadiusMeters}m | Vote: {systemConfig.globalThreshold}
-                        </span>
-                      </div>
-                      <h4 className="font-extrabold text-sm text-slate-900">5. Konfigurasi Sistem (Smart Geofencing & Vote Escalation)</h4>
-                      <p className="text-xs text-slate-600 font-medium leading-relaxed">
-                        <strong>Fungsi & Kegunaan:</strong> Mengatur batas radius pencocokan otomatis duplikat laporan warga (Smart Geofencing Radius 500 meter), mengubah ambang batas vote eskalasi verifikasi, serta mengaktifkan mode otomatisasi sistem dinas.
-                      </p>
-                    </div>
-                    <button
-                      onClick={() => setShowConfigModal(true)}
-                      className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs"
-                    >
-                      <span>Buka Panel Konfigurasi Radius & Vote</span>
-                      <ChevronRight className="w-4 h-4" />
-                    </button>
                   </div>
                 </div>
+
               </div>
 
-              {/* MIDDLE: PETA SPASIAL GIS DENSITY HEATMAP */}
-              <div className="bg-white p-6 rounded-[32px] border border-slate-200/80 shadow-xs space-y-4">
+              {/* GIS MAP VIEW EMBEDDED IN DASHBOARD */}
+              <div className="bg-white p-5 sm:p-6 rounded-[28px] border border-slate-200/80 shadow-xs space-y-4">
                 <div className="flex items-center justify-between flex-wrap gap-3">
                   <div>
-                    <h3 className="text-base font-extrabold text-slate-900 flex items-center gap-2">
-                      Peta Spasial GIS Density & Clustering Marker
+                    <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                      <MapPin className="w-4 h-4 text-[#0284C7]" />
+                      Peta Spasial GIS Density & Hotspot Sungai
                     </h3>
                     <p className="text-xs text-slate-500 font-medium mt-0.5">
-                      Visualisasi sebaran titik laporan pencemaran (Oranye: Pending, Merah: Terverifikasi, Biru: Diproses, Hijau: Selesai).
+                      Visualisasi sebaran titik laporan pencemaran secara interaktif.
                     </p>
                   </div>
 
                   <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
                     <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                    Live GIS Feed Active
+                    Live GIS Active
                   </span>
                 </div>
 
                 <RiverGISMap />
               </div>
 
-              {/* RECENT REPORTS OVERVIEW */}
-              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs space-y-6">
-                <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+              {/* RECENT REPORTS TABLE */}
+              <div className="bg-white p-5 sm:p-6 rounded-[28px] border border-slate-200/80 shadow-xs space-y-5">
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
                   <div>
-                    <h3 className="text-base font-extrabold text-slate-900">
+                    <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                      <FileText className="w-4 h-4 text-[#0284C7]" />
                       Ringkasan Antrean Laporan Spasial Terkini
                     </h3>
                     <p className="text-xs text-slate-500 font-medium mt-0.5">
@@ -899,54 +1214,54 @@ export default function DinasDashboard() {
                   </div>
                   <button
                     onClick={() => setActiveNav("laporan")}
-                    className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer self-start md:self-auto"
+                    className="px-3.5 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs transition-all flex items-center justify-center gap-1.5 cursor-pointer self-start md:self-auto"
                   >
-                    <span>Buka Manajemen Laporan Lengkap</span>
+                    <span>Buka Semua Laporan</span>
                     <ChevronRight className="w-4 h-4" />
                   </button>
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs text-slate-700 border-collapse">
+                  <table className="w-full text-left text-xs text-slate-700 border-collapse min-w-[760px]">
                     <thead>
-                      <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-200/80 text-[11px]">
-                        <th className="py-3.5 px-4">No. Tiket</th>
-                        <th className="py-3.5 px-4">Segmen Sungai & Lokasi</th>
-                        <th className="py-3.5 px-4">Kategori Pencemaran</th>
-                        <th className="py-3.5 px-4 text-center">Urgency Score</th>
-                        <th className="py-3.5 px-4">Status Penanganan</th>
-                        <th className="py-3.5 px-4 text-right">Aksi Dinas</th>
+                      <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-200/80 text-[10px]">
+                        <th className="py-3 px-4">No. Tiket</th>
+                        <th className="py-3 px-4">Segmen Sungai & Lokasi</th>
+                        <th className="py-3 px-4">Kategori</th>
+                        <th className="py-3 px-4 text-center">Urgency Score</th>
+                        <th className="py-3 px-4">Status</th>
+                        <th className="py-3 px-4 text-right">Aksi Dinas</th>
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 font-medium">
-                      {reports.slice(0, 5).map((report) => (
+                      {reports.slice(dashboardPaging.start, dashboardPaging.end).map((report) => (
                         <tr key={report.id} className="hover:bg-slate-50/80 transition-colors">
-                          <td className="py-4 px-4 font-mono font-extrabold text-[#0284C7]">
+                          <td className="py-3.5 px-4 font-mono font-extrabold text-[#0284C7]">
                             {report.ticketNo}
                           </td>
-                          <td className="py-4 px-4 max-w-xs">
+                          <td className="py-3.5 px-4 max-w-xs">
                             <span className="block font-bold text-slate-900 truncate">{report.riverName}</span>
                             <span className="block text-[11px] text-slate-500 truncate mt-0.5">{report.locationDetail}</span>
                           </td>
-                          <td className="py-4 px-4">
-                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-100 border border-slate-200/80 text-slate-700 text-[11px] font-semibold">
+                          <td className="py-3.5 px-4">
+                            <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-lg bg-slate-100 border border-slate-200/80 text-slate-700 text-[10px] font-semibold">
                               {report.categoryLabel}
                             </span>
                           </td>
-                          <td className="py-4 px-4 text-center">
-                            <div className="inline-flex flex-col items-center justify-center px-3 py-1 rounded-xl bg-amber-50 border border-amber-200">
-                              <span className="font-extrabold text-sm text-amber-700">{report.urgencyScore}</span>
-                              <span className="text-[9px] text-amber-600 font-semibold">{report.upvotes} Upvotes</span>
+                          <td className="py-3.5 px-4 text-center">
+                            <div className="inline-flex flex-col items-center justify-center px-2.5 py-0.5 rounded-lg bg-amber-50 border border-amber-200">
+                              <span className="font-extrabold text-xs text-amber-700">{report.urgencyScore}</span>
+                              <span className="text-[8px] text-amber-600 font-semibold">{report.upvotes} Upvotes</span>
                             </div>
                           </td>
-                          <td className="py-4 px-4">
-                            {report.status === "pending" && <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-700 font-bold border border-amber-200 text-[11px]">Pending 🟠</span>}
-                            {report.status === "terverifikasi" && <span className="px-3 py-1 rounded-full bg-rose-50 text-rose-700 font-bold border border-rose-200 text-[11px]">Terverifikasi 🔴</span>}
-                            {report.status === "diproses" && <span className="px-3 py-1 rounded-full bg-sky-50 text-sky-700 font-bold border border-sky-200 text-[11px]">Diproses 🔵</span>}
-                            {report.status === "selesai" && <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 text-[11px]">Selesai 🟢</span>}
-                            {report.status === "ditolak" && <span className="px-3 py-1 rounded-full bg-slate-200 text-slate-700 font-bold border border-slate-300 text-[11px]">Ditolak ⚪</span>}
+                          <td className="py-3.5 px-4">
+                            {report.status === "pending" && <span className="px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-700 font-bold border border-amber-200 text-[10px]">Pending</span>}
+                            {report.status === "terverifikasi" && <span className="px-2.5 py-0.5 rounded-full bg-red-50 text-red-700 font-bold border border-red-200 text-[10px]">Terverifikasi</span>}
+                            {report.status === "diproses" && <span className="px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-700 font-bold border border-sky-200 text-[10px]">Diproses</span>}
+                            {report.status === "selesai" && <span className="px-2.5 py-0.5 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 text-[10px]">Selesai</span>}
+                            {report.status === "ditolak" && <span className="px-2.5 py-0.5 rounded-full bg-slate-200 text-slate-700 font-bold border border-slate-300 text-[10px]">Ditolak</span>}
                           </td>
-                          <td className="py-4 px-4 text-right">
+                          <td className="py-3.5 px-4 text-right">
                             <button
                               onClick={() => {
                                 setSelectedReport(report);
@@ -956,7 +1271,7 @@ export default function DinasDashboard() {
                                 setAfterImagePreview(report.afterImage || null);
                                 setShowActionModal(true);
                               }}
-                              className="px-3 py-1.5 rounded-xl bg-[#0284C7] hover:bg-[#0284C7]/90 text-white font-bold text-xs transition-all cursor-pointer shadow-sm"
+                              className="px-3 py-1 rounded-xl bg-[#0284C7] hover:bg-[#0284C7]/90 text-white font-bold text-xs transition-all cursor-pointer shadow-xs"
                             >
                               Tindak Lanjuti
                             </button>
@@ -966,8 +1281,11 @@ export default function DinasDashboard() {
                     </tbody>
                   </table>
                 </div>
+
+                <PaginationControls paging={dashboardPaging} />
               </div>
-            </>
+
+            </div>
           )}
 
           {/* ============================================================ */}
@@ -975,9 +1293,10 @@ export default function DinasDashboard() {
           {/* ============================================================ */}
           {activeNav === "peta" && (
             <div className="space-y-6 animate-fadeIn">
-              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="bg-white p-6 sm:p-7 rounded-[28px] border border-slate-200/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                    <MapPin className="w-5 h-5 text-[#0284C7]" />
                     Peta Spasial GIS Density & Hotspot Pencemaran Sungai
                   </h2>
                   <p className="text-xs text-slate-500 font-medium mt-1">
@@ -993,7 +1312,7 @@ export default function DinasDashboard() {
               </div>
 
               {/* Full Interactive Map Container */}
-              <div className="bg-white p-6 rounded-[32px] border border-slate-200/80 shadow-xs">
+              <div className="bg-white p-6 rounded-[28px] border border-slate-200/80 shadow-sm">
                 <RiverGISMap />
               </div>
             </div>
@@ -1004,9 +1323,10 @@ export default function DinasDashboard() {
           {/* ============================================================ */}
           {activeNav === "laporan" && (
             <div className="space-y-6 animate-fadeIn">
-              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+              <div className="bg-white p-6 sm:p-7 rounded-[28px] border border-slate-200/80 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                    <FileText className="w-5 h-5 text-[#0284C7]" />
                     Modul Manajemen & Penanganan Tiket Laporan Spasial
                   </h2>
                   <p className="text-xs text-slate-500 font-medium mt-1">
@@ -1023,7 +1343,7 @@ export default function DinasDashboard() {
               </div>
 
               {/* Full Table Component */}
-              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs space-y-6">
+              <div className="bg-white p-6 sm:p-7 rounded-[28px] border border-slate-200/80 shadow-sm space-y-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
                     <span className="font-extrabold text-sm text-slate-900">Daftar Antrean Tiket Spasial</span>
@@ -1036,10 +1356,10 @@ export default function DinasDashboard() {
                   <div className="flex items-center gap-1.5 p-1 bg-slate-100 rounded-2xl overflow-x-auto scrollbar-none">
                     {[
                       { id: "semua", label: "Semua" },
-                      { id: "terverifikasi", label: "Terverifikasi 🔴" },
-                      { id: "diproses", label: "Diproses 🔵" },
-                      { id: "selesai", label: "Selesai 🟢" },
-                      { id: "ditolak", label: "Ditolak ⚪" },
+                      { id: "terverifikasi", label: "Terverifikasi" },
+                      { id: "diproses", label: "Diproses" },
+                      { id: "selesai", label: "Selesai" },
+                      { id: "ditolak", label: "Ditolak" },
                     ].map((tab) => (
                       <button
                         key={tab.id}
@@ -1057,7 +1377,7 @@ export default function DinasDashboard() {
                 </div>
 
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs text-slate-700 border-collapse">
+                  <table className="w-full text-left text-xs text-slate-700 border-collapse min-w-[760px]">
                     <thead>
                       <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-200/80 text-[11px]">
                         <th className="py-3.5 px-4">No. Tiket</th>
@@ -1076,7 +1396,7 @@ export default function DinasDashboard() {
                           </td>
                         </tr>
                       ) : (
-                        filteredReports.map((report) => (
+                        filteredReports.slice(laporanPaging.start, laporanPaging.end).map((report) => (
                           <tr key={report.id} className="hover:bg-slate-50/80 transition-colors">
                             <td className="py-4 px-4 font-mono font-extrabold text-[#0284C7]">
                               {report.ticketNo}
@@ -1100,11 +1420,11 @@ export default function DinasDashboard() {
                               </div>
                             </td>
                             <td className="py-4 px-4">
-                              {report.status === "pending" && <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-700 font-bold border border-amber-200 text-[11px]">Pending 🟠</span>}
-                              {report.status === "terverifikasi" && <span className="px-3 py-1 rounded-full bg-rose-50 text-rose-700 font-bold border border-rose-200 text-[11px]">Terverifikasi 🔴</span>}
-                              {report.status === "diproses" && <span className="px-3 py-1 rounded-full bg-sky-50 text-sky-700 font-bold border border-sky-200 text-[11px]">Diproses 🔵</span>}
-                              {report.status === "selesai" && <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 text-[11px]">Selesai 🟢</span>}
-                              {report.status === "ditolak" && <span className="px-3 py-1 rounded-full bg-slate-200 text-slate-700 font-bold border border-slate-300 text-[11px]">Ditolak ⚪</span>}
+                              {report.status === "pending" && <span className="px-3 py-1 rounded-full bg-amber-50 text-amber-700 font-bold border border-amber-200 text-[11px]">Pending</span>}
+                              {report.status === "terverifikasi" && <span className="px-3 py-1 rounded-full bg-red-50 text-red-700 font-bold border border-red-200 text-[11px]">Terverifikasi</span>}
+                              {report.status === "diproses" && <span className="px-3 py-1 rounded-full bg-sky-50 text-sky-700 font-bold border border-sky-200 text-[11px]">Diproses</span>}
+                              {report.status === "selesai" && <span className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-bold border border-emerald-200 text-[11px]">Selesai</span>}
+                              {report.status === "ditolak" && <span className="px-3 py-1 rounded-full bg-slate-200 text-slate-700 font-bold border border-slate-300 text-[11px]">Ditolak</span>}
                             </td>
                             <td className="py-4 px-4 text-right">
                               <div className="flex items-center justify-end gap-2">
@@ -1141,6 +1461,8 @@ export default function DinasDashboard() {
                     </tbody>
                   </table>
                 </div>
+
+                <PaginationControls paging={laporanPaging} />
               </div>
             </div>
           )}
@@ -1150,9 +1472,10 @@ export default function DinasDashboard() {
           {/* ============================================================ */}
           {activeNav === "petugas" && (
             <div className="space-y-6 animate-fadeIn">
-              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="bg-white p-6 sm:p-7 rounded-[28px] border border-slate-200/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                    <Users className="w-5 h-5 text-[#0284C7]" />
                     Manajemen Tim Armada Lapangan & Beban Kerja DLH
                   </h2>
                   <p className="text-xs text-slate-500 font-medium mt-1">
@@ -1170,7 +1493,7 @@ export default function DinasDashboard() {
 
               {/* Officers Grid */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-                {officers.map((officer) => (
+                {officers.slice(petugasPaging.start, petugasPaging.end).map((officer) => (
                   <div key={officer.id} className="bg-white p-6 rounded-[28px] border border-slate-200/80 shadow-xs space-y-4 hover:shadow-md transition-all flex flex-col justify-between">
                     <div className="space-y-3.5">
                       {/* Avatar & Officer Name */}
@@ -1222,6 +1545,11 @@ export default function DinasDashboard() {
                   </div>
                 ))}
               </div>
+
+              {/* Pagination Controls Card */}
+              <div className="bg-white p-5 sm:p-6 rounded-[24px] border border-slate-200/80 shadow-xs">
+                <PaginationControls paging={petugasPaging} />
+              </div>
             </div>
           )}
 
@@ -1230,9 +1558,10 @@ export default function DinasDashboard() {
           {/* ============================================================ */}
           {activeNav === "audit" && (
             <div className="space-y-6 animate-fadeIn">
-              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="bg-white p-6 sm:p-7 rounded-[28px] border border-slate-200/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                   <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                    <History className="w-5 h-5 text-[#0284C7]" />
                     Audit Log Aktivitas & Log Mutasi Tiket Transparan
                   </h2>
                   <p className="text-xs text-slate-500 font-medium mt-1">
@@ -1245,9 +1574,9 @@ export default function DinasDashboard() {
               </div>
 
               {/* Audit Log Table Container */}
-              <div className="bg-white p-6 sm:p-7 rounded-[32px] border border-slate-200/80 shadow-xs space-y-4">
+              <div className="bg-white p-6 sm:p-7 rounded-[28px] border border-slate-200/80 shadow-sm space-y-4">
                 <div className="overflow-x-auto">
-                  <table className="w-full text-left text-xs text-slate-700 border-collapse">
+                  <table className="w-full text-left text-xs text-slate-700 border-collapse min-w-[760px]">
                     <thead>
                       <tr className="bg-slate-50 text-slate-400 font-bold uppercase tracking-wider border-b border-slate-200/80 text-[11px]">
                         <th className="py-3.5 px-4">Waktu</th>
@@ -1259,7 +1588,7 @@ export default function DinasDashboard() {
                       </tr>
                     </thead>
                     <tbody className="divide-y divide-slate-100 font-medium">
-                      {auditLogs.map((log) => (
+                      {auditLogs.slice(auditPaging.start, auditPaging.end).map((log) => (
                         <tr key={log.id} className="hover:bg-slate-50/80 transition-colors">
                           <td className="py-4 px-4 font-mono text-[11px] text-slate-500 whitespace-nowrap">{log.timestamp}</td>
                           <td className="py-4 px-4 font-mono font-extrabold text-[#0284C7] whitespace-nowrap">{log.ticketNo}</td>
@@ -1276,6 +1605,121 @@ export default function DinasDashboard() {
                     </tbody>
                   </table>
                 </div>
+
+                <PaginationControls paging={auditPaging} />
+              </div>
+            </div>
+          )}
+
+          {/* ============================================================ */}
+          {/* VIEW 6: CCTV MONITORING PAGE                                 */}
+          {/* ============================================================ */}
+          {activeNav === "cctv" && (
+            <div className="space-y-6 animate-fadeIn">
+              <div className="bg-white p-6 sm:p-7 rounded-[28px] border border-slate-200/80 shadow-sm flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-extrabold text-slate-900 flex items-center gap-2">
+                    <Camera className="w-5 h-5 text-[#0284C7]" />
+                    Manajemen CCTV Monitoring Sungai
+                  </h2>
+                  <p className="text-xs text-slate-500 font-medium mt-1">
+                    Pantau titik CCTV live di sepanjang alur sungai dan daftarkan titik kamera baru pada peta GIS.
+                  </p>
+                </div>
+                <button
+                  onClick={() => setShowAddCctvModal(true)}
+                  className="px-4 py-2.5 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white font-extrabold text-xs transition-all shadow-sm flex items-center gap-2 cursor-pointer self-start sm:self-auto"
+                >
+                  <PlusCircle className="w-4 h-4" />
+                  <span>Tambah Titik CCTV</span>
+                </button>
+              </div>
+
+              {/* Peta GIS dengan layer CCTV */}
+              <div className="bg-white p-6 rounded-[28px] border border-slate-200/80 shadow-sm">
+                <RiverGISMap
+                  onSelectLocation={handleCctvMapSelect}
+                  actionLabel="Gunakan Titik Ini"
+                />
+              </div>
+
+              {/* Daftar Titik CCTV */}
+              <div className="bg-white p-6 sm:p-7 rounded-[28px] border border-slate-200/80 shadow-sm space-y-5">
+                <div className="flex items-center justify-between gap-3 flex-wrap">
+                  <div>
+                    <h3 className="text-sm font-extrabold text-slate-900 flex items-center gap-2">
+                      <Video className="w-4 h-4 text-[#0284C7]" />
+                      Daftar Titik CCTV Terdaftar
+                    </h3>
+                    <p className="text-xs text-slate-500 font-medium mt-0.5">
+                      {cctvPoints.length} titik kamera memantau alur sungai secara real-time.
+                    </p>
+                  </div>
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs font-bold">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    {cctvPoints.filter((c) => c.status === "aktif").length} Kamera Aktif
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {cctvPoints.map((cam) => {
+                    const camStatus =
+                      cam.status === "aktif"
+                        ? { label: "Aktif", cls: "bg-emerald-50 text-emerald-700 border-emerald-200" }
+                        : cam.status === "perbaikan"
+                        ? { label: "Perbaikan", cls: "bg-amber-50 text-amber-700 border-amber-200" }
+                        : { label: "Offline", cls: "bg-slate-100 text-slate-600 border-slate-300" };
+                    return (
+                      <div
+                        key={cam.id}
+                        className="p-4 sm:p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex flex-col justify-between gap-3"
+                      >
+                        <div className="flex items-start justify-between gap-3">
+                          <div className="flex items-center gap-3 min-w-0">
+                            <div className="w-10 h-10 rounded-xl bg-[#0284C7]/10 text-[#0284C7] flex items-center justify-center shrink-0">
+                              <Video className="w-5 h-5" />
+                            </div>
+                            <div className="min-w-0">
+                              <h4 className="font-extrabold text-xs text-slate-900 truncate">{cam.name}</h4>
+                              <p className="text-[11px] text-slate-500 truncate font-medium">{cam.riverName}</p>
+                            </div>
+                          </div>
+                          <span className={`px-2 py-0.5 rounded-full border text-[10px] font-bold whitespace-nowrap ${camStatus.cls}`}>
+                            {camStatus.label}
+                          </span>
+                        </div>
+
+                        <div className="space-y-1.5 text-[11px] text-slate-600 font-medium">
+                          <div className="flex items-center gap-1.5">
+                            <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                            <span className="truncate">{cam.locationDetail}</span>
+                          </div>
+                          <div className="flex items-center gap-1.5 font-mono text-[10px] text-slate-400">
+                            <Crosshair className="w-3.5 h-3.5 shrink-0" />
+                            {cam.lat.toFixed(4)}, {cam.lng.toFixed(4)}
+                          </div>
+                        </div>
+
+                        <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                          <button
+                            onClick={() => setPlayingCctv(cam)}
+                            className="flex-1 inline-flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white text-[11px] font-bold transition-all cursor-pointer shadow-xs"
+                          >
+                            <Play className="w-3.5 h-3.5" />
+                            Putar Live
+                          </button>
+                          <button
+                            onClick={() => handleRemoveCctv(cam.id)}
+                            className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 transition-all cursor-pointer"
+                            title="Hapus Titik CCTV"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}
@@ -1288,8 +1732,11 @@ export default function DinasDashboard() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-900/60 backdrop-blur-md overflow-y-auto animate-fadeIn">
           <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl border border-slate-100 overflow-hidden my-auto max-h-[90vh] flex flex-col text-slate-800">
             
-            <div className="p-6 bg-slate-50 border-b border-slate-100 flex items-center justify-between">
+            <div className="p-6 bg-gradient-to-r from-sky-50 via-white to-white border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-2xl bg-[#0284C7] text-white flex items-center justify-center shadow-md shadow-sky-200 shrink-0">
+                  <ShieldCheck className="w-5 h-5" />
+                </div>
                 <div>
                   <div className="flex items-center gap-2">
                     <h3 className="text-base font-bold text-slate-900">Tindak Lanjut Lapangan DLH</h3>
@@ -1341,7 +1788,7 @@ export default function DinasDashboard() {
                     }`}
                   >
                     <RefreshCw className={`w-4 h-4 ${updateStatus === "diproses" ? "animate-spin" : ""}`} />
-                    <span>Dalam Pembersihan 🔵</span>
+                    <span>Dalam Pembersihan</span>
                   </button>
 
                   <button
@@ -1354,7 +1801,7 @@ export default function DinasDashboard() {
                     }`}
                   >
                     <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    <span>Selesai Clean (Closed-Loop) 🟢</span>
+                    <span>Selesai Clean (Closed-Loop)</span>
                   </button>
                 </div>
               </div>
@@ -1507,7 +1954,7 @@ export default function DinasDashboard() {
 
             <form onSubmit={handleSaveReject} className="space-y-4 text-xs">
               <p className="text-slate-600 leading-relaxed font-medium">
-                Mengubah status laporan menjadi <strong>Ditolak ⚪</strong>. Berikan alasan resmi penolakan yang akan dicatat di audit log.
+                Mengubah status laporan menjadi <strong>Ditolak</strong>. Berikan alasan resmi penolakan yang akan dicatat di audit log.
               </p>
 
               <div>
@@ -1707,6 +2154,150 @@ export default function DinasDashboard() {
           </div>
         </div>
       )}
+
+      {/* MODAL TAMBAH TITIK CCTV */}
+      {showAddCctvModal && (
+        <div className="fixed inset-0 z-50 bg-slate-950/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn overflow-y-auto">
+          <div className="bg-white rounded-[32px] max-w-md w-full p-6 sm:p-8 space-y-5 shadow-2xl border border-slate-100 my-auto">
+            <div className="flex items-center justify-between border-b border-slate-100 pb-4">
+              <div>
+                <h3 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
+                  <Camera className="w-5 h-5 text-[#0284C7]" />
+                  Tambah Titik CCTV
+                </h3>
+                <p className="text-xs text-slate-500 font-medium mt-1">
+                  Klik titik pada peta GIS untuk mengisi koordinat lokasi kamera.
+                </p>
+              </div>
+              <button
+                onClick={() => setShowAddCctvModal(false)}
+                className="w-8 h-8 rounded-full bg-slate-100 text-slate-500 flex items-center justify-center hover:bg-slate-200 transition-colors cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleAddCctvSubmit} className="space-y-4">
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">Nama Titik CCTV <span className="text-red-500">*</span></label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Contoh: CCTV Jembatan Polor"
+                  value={newCctvName}
+                  onChange={(e) => setNewCctvName(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#0284C7]"
+                />
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">Sungai / Segmen</label>
+                <select
+                  value={newCctvRiver}
+                  onChange={(e) => setNewCctvRiver(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#0284C7]"
+                >
+                  {[
+                    "Kali Ciliwung",
+                    "Kali Pesanggrahan",
+                    "Kali Cisadane",
+                    "Kali Angke",
+                    "Kali Sunter",
+                    "Kali Bekasi",
+                    "Banjir Kanal Barat",
+                    "Banjir Kanal Timur",
+                  ].map((r) => (
+                    <option key={r} value={r}>
+                      {r}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">Lokasi Detail</label>
+                <input
+                  type="text"
+                  placeholder="Contoh: Jembatan Polor, Kota Tangerang Selatan"
+                  value={newCctvLocation}
+                  onChange={(e) => setNewCctvLocation(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#0284C7]"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-extrabold text-slate-700 mb-1">Latitude <span className="text-red-500">*</span></label>
+                  <input
+                    type="number"
+                    step="any"
+                    required
+                    placeholder="-6.3006"
+                    value={newCctvLat}
+                    onChange={(e) => setNewCctvLat(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-mono font-semibold focus:outline-none focus:border-[#0284C7]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-extrabold text-slate-700 mb-1">Longitude <span className="text-red-500">*</span></label>
+                  <input
+                    type="number"
+                    step="any"
+                    required
+                    placeholder="106.7400"
+                    value={newCctvLng}
+                    onChange={(e) => setNewCctvLng(e.target.value)}
+                    className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-mono font-semibold focus:outline-none focus:border-[#0284C7]"
+                  />
+                </div>
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">Status Kamera</label>
+                <select
+                  value={newCctvStatus}
+                  onChange={(e) => setNewCctvStatus(e.target.value as CctvStatus)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#0284C7]"
+                >
+                  <option value="aktif">Aktif</option>
+                  <option value="perbaikan">Perbaikan</option>
+                  <option value="offline">Offline</option>
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-xs font-extrabold text-slate-700 mb-1">URL Stream Live</label>
+                <input
+                  type="url"
+                  placeholder="https://cctv.dpuprkotang.info/stream.html?src=..."
+                  value={newCctvStreamUrl}
+                  onChange={(e) => setNewCctvStreamUrl(e.target.value)}
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-mono font-semibold focus:outline-none focus:border-[#0284C7]"
+                />
+              </div>
+
+              <div className="pt-3 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowAddCctvModal(false)}
+                  className="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs transition-colors cursor-pointer"
+                >
+                  Batal
+                </button>
+                <button
+                  type="submit"
+                  className="flex-1 py-2.5 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs transition-colors shadow-md shadow-sky-600/20 cursor-pointer"
+                >
+                  Simpan Titik CCTV
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* CCTV Live Player Modal */}
+      <CctvPlayerModal cctv={playingCctv} onClose={() => setPlayingCctv(null)} />
 
     </div>
   );

@@ -1,12 +1,19 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 
 export default function CursorGlow() {
+  const pathname = usePathname();
   const [pos, setPos] = useState({ x: -200, y: -200 });
   const [isVisible, setIsVisible] = useState(false);
 
+  // Nonaktifkan efek shadow kursor pada halaman dashboard dinas
+  const isDashboard = pathname?.startsWith("/dinas");
+
   useEffect(() => {
+    if (isDashboard) return;
+
     let animationFrameId: number;
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -28,9 +35,9 @@ export default function CursorGlow() {
       document.removeEventListener("mouseleave", handleMouseLeave);
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
     };
-  }, [isVisible]);
+  }, [isVisible, isDashboard]);
 
-  if (!isVisible) return null;
+  if (isDashboard || !isVisible) return null;
 
   return (
     <div

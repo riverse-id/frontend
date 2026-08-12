@@ -253,7 +253,13 @@ export default function EcosystemSection() {
       <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none z-10" />
       <div className="max-w-7xl mx-auto relative z-10 px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center max-w-3xl mx-auto mb-16"
+        >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
             4 Langkah Mudah Laporkan Pencemaran Sungai
           </h2>
@@ -261,17 +267,24 @@ export default function EcosystemSection() {
             Dari jepretan foto di lapangan hingga pembersihan oleh petugas, semua transparan dan dapat dipantau secara{" "}
             <span className="text-[#0284C7] font-semibold">real-time</span>.
           </p>
-        </div>
+        </motion.div>
 
         {/* 4 Interactive 3D Flip Step Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {STEPS.map((step) => (
-            <FlipStepCard
+          {STEPS.map((step, index) => (
+            <motion.div
               key={step.stepNumber}
-              step={step}
-              isFlipped={activeFlippedStep === step.stepNumber}
-              onToggle={() => handleToggleFlip(step.stepNumber)}
-            />
+              initial={{ opacity: 0, y: 28 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, margin: "-60px" }}
+              transition={{ duration: 0.5, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            >
+              <FlipStepCard
+                step={step}
+                isFlipped={activeFlippedStep === step.stepNumber}
+                onToggle={() => handleToggleFlip(step.stepNumber)}
+              />
+            </motion.div>
           ))}
         </div>
       </div>

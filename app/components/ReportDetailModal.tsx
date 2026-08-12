@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
+import { createPortal } from "react-dom";
 import { Report } from "../../lib/types";
 import {
   X,
@@ -37,6 +38,31 @@ export default function ReportDetailModal({
   const [copied, setCopied] = useState<boolean>(false);
   const [activeLightBoxImage, setActiveLightBoxImage] = useState<string | null>(null);
 
+  // Kunci scroll halaman belakang dan tangani tombol ESC
+  React.useEffect(() => {
+    if (!report) return;
+
+    const originalOverflow = document.body.style.overflow;
+    const originalTouchAction = document.body.style.touchAction;
+
+    document.body.style.overflow = "hidden";
+    document.body.style.touchAction = "none";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      document.body.style.touchAction = originalTouchAction;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [report, onClose]);
+
   if (!report) return null;
 
   const isCompleted = report.status === "selesai";
@@ -61,8 +87,24 @@ export default function ReportDetailModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-slate-950/75 backdrop-blur-md overflow-y-auto animate-fadeIn">
-      <div className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col text-slate-800 font-sans">
+    <div
+      className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6 bg-slate-950/75 backdrop-blur-md overflow-y-auto animate-fadeIn overscroll-none"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) {
+          onClose();
+        }
+      }}
+      onWheel={(e) => e.stopPropagation()}
+      onTouchMove={(e) => {
+        if (e.target === e.currentTarget) {
+          e.preventDefault();
+        }
+      }}
+    >
+      <div
+        className="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl border border-slate-200 overflow-hidden my-auto max-h-[92vh] flex flex-col text-slate-800 font-sans"
+        onClick={(e) => e.stopPropagation()}
+      >
         
         {/* Header Bar */}
         <div className="p-5 sm:p-6 bg-white border-b border-slate-100 flex items-center justify-between flex-shrink-0">
@@ -100,30 +142,30 @@ export default function ReportDetailModal({
                 {report.status === "pending" && (
                   <span className="px-3 py-1 rounded-full bg-amber-100 text-amber-800 font-bold border border-amber-200 flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
-                    Pending (Mengumpulkan Dukungan Warga) 🟠
+                    Pending (Mengumpulkan Dukungan Warga)
                   </span>
                 )}
                 {report.status === "terverifikasi" && (
                   <span className="px-3 py-1 rounded-full bg-rose-100 text-rose-800 font-bold border border-rose-200 flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                    Terverifikasi (Antrean DLH) 🔴
+                    Terverifikasi (Antrean DLH)
                   </span>
                 )}
                 {report.status === "diproses" && (
                   <span className="px-3 py-1 rounded-full bg-sky-100 text-sky-800 font-bold border border-sky-200 flex items-center gap-1.5">
                     <span className="w-2 h-2 rounded-full bg-sky-500 animate-spin" />
-                    Sedang Diproses Tim Lapangan 🔵
+                    Sedang Diproses Tim Lapangan
                   </span>
                 )}
                 {report.status === "selesai" && (
                   <span className="px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 font-bold border border-emerald-200 flex items-center gap-1.5">
                     <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                    Closed-Loop Selesai Clean 🟢
+                    Closed-Loop Selesai Clean
                   </span>
                 )}
                 {report.status === "ditolak" && (
                   <span className="px-3 py-1 rounded-full bg-slate-200 text-slate-700 font-bold border border-slate-300">
-                    Ditolak DLH ⚪
+                    Ditolak DLH
                   </span>
                 )}
               </div>

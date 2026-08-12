@@ -121,11 +121,12 @@ export default function LaporPage() {
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
   const [selectedDetailReport, setSelectedDetailReport] = useState<Report | null>(null);
 
-  // Pagination / Index State (4 reports per page)
+  // Pagination / Index State (reports per page, configurable)
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 4;
-  const totalPages = Math.ceil(reports.length / ITEMS_PER_PAGE) || 1;
-  const displayedReports = reports.slice((currentPage - 1) * ITEMS_PER_PAGE, currentPage * ITEMS_PER_PAGE);
+  const [pageSize, setPageSize] = useState(4);
+  const totalPages = Math.ceil(reports.length / pageSize) || 1;
+  const safePage = Math.min(currentPage, totalPages);
+  const displayedReports = reports.slice((safePage - 1) * pageSize, safePage * pageSize);
 
   // Sync with store & localStorage
   React.useEffect(() => {
@@ -456,16 +457,36 @@ export default function LaporPage() {
           })}
         </div>
 
-        {/* Pagination Index (Otomatis setiap 4 laporan) */}
-        {totalPages > 1 && (
+        {/* Pagination Index (configurable per page) */}
+        {reports.length > 0 && (
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-4">
-            <span className="text-xs font-semibold text-slate-500">
-              Menampilkan Halaman {currentPage} dari {totalPages} ({reports.length} Total Laporan)
-            </span>
+            <div className="flex items-center gap-3 flex-wrap">
+              <span className="text-xs font-semibold text-slate-500">
+                Menampilkan Halaman {safePage} dari {totalPages} ({reports.length} Total Laporan)
+              </span>
+              <label className="flex items-center gap-1.5 text-xs font-medium text-slate-500">
+                <span className="hidden sm:inline">Tampilkan:</span>
+                <select
+                  value={pageSize}
+                  onChange={(e) => {
+                    setPageSize(Number(e.target.value));
+                    setCurrentPage(1);
+                  }}
+                  className="px-2 py-1.5 rounded-lg border border-slate-200 bg-white text-xs font-bold text-slate-700 cursor-pointer outline-none focus:border-[#0284C7]"
+                >
+                  {[4, 8, 12, 20].map((n) => (
+                    <option key={n} value={n}>
+                      {n} / hal.
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
+
             <div className="flex items-center gap-1.5">
               <button
                 onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
+                disabled={safePage === 1}
                 className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 transition-all cursor-pointer flex items-center gap-1"
               >
                 <ChevronLeft className="w-4 h-4" />
@@ -477,7 +498,7 @@ export default function LaporPage() {
                   key={pageNum}
                   onClick={() => setCurrentPage(pageNum)}
                   className={`w-8 h-8 rounded-xl text-xs font-extrabold transition-all cursor-pointer ${
-                    currentPage === pageNum
+                    safePage === pageNum
                       ? "bg-[#0284C7] text-white shadow-md shadow-[#0284C7]/20"
                       : "bg-slate-100 text-slate-600 hover:bg-slate-200"
                   }`}
@@ -488,7 +509,7 @@ export default function LaporPage() {
 
               <button
                 onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
+                disabled={safePage === totalPages}
                 className="px-3 py-1.5 rounded-xl border border-slate-200 text-xs font-bold text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-slate-100 transition-all cursor-pointer flex items-center gap-1"
               >
                 <span>Berikutnya</span>

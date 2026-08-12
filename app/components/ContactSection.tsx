@@ -72,7 +72,13 @@ export default function ContactSection() {
 
       <div className="max-w-7xl mx-auto relative z-10">
         {/* Section Header */}
-        <div className="text-center max-w-3xl mx-auto mb-16">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-80px" }}
+          transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+          className="text-center max-w-3xl mx-auto mb-16"
+        >
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-[#0F172A] tracking-tight leading-tight">
             Hubungi Tim RIVERSE & <br className="hidden sm:block" />
             <span className="text-[#0284C7]">Layanan Pengaduan Darurat Sungai</span>
@@ -80,7 +86,7 @@ export default function ContactSection() {
           <p className="mt-4 text-sm sm:text-base text-slate-600 leading-relaxed font-medium">
             Punya pertanyaan seputar integrasi sistem GIS, pengawasan dinas, atau ingin menjalin kerjasama jaringan komunitas sungai? Tim kami siap merespon pesan Anda.
           </p>
-        </div>
+        </motion.div>
 
         {/* 2-Column Grid Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-start">
