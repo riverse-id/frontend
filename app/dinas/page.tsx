@@ -1552,7 +1552,7 @@ export default function DinasDashboard() {
                 </div>
                 <button
                   onClick={() => setShowAddOfficerModal(true)}
-                  className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-extrabold text-xs transition-all shadow-sm flex items-center gap-2 cursor-pointer self-start sm:self-auto"
+                  className="px-4 py-2.5 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white font-extrabold text-xs transition-all shadow-sm flex items-center gap-2 cursor-pointer self-start sm:self-auto"
                 >
                   <PlusCircle className="w-4 h-4" />
                   <span>Tambah Petugas Lapangan</span>
@@ -1566,7 +1566,7 @@ export default function DinasDashboard() {
                     <div className="space-y-3.5">
                       {/* Avatar & Officer Name */}
                       <div className="flex items-center gap-3.5">
-                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0284C7] to-purple-600 text-white font-extrabold text-base flex items-center justify-center shadow-md shrink-0 font-mono tracking-wider">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#0284C7] to-sky-400 text-white font-extrabold text-base flex items-center justify-center shadow-md shrink-0 font-mono tracking-wider">
                           {getInitials(officer.name)}
                         </div>
                         <div className="min-w-0 flex-1">
@@ -1577,7 +1577,7 @@ export default function DinasDashboard() {
 
                       {/* Role Badge Pill */}
                       <div>
-                        <span className="inline-flex items-center px-3 py-1 rounded-xl bg-purple-50 text-purple-700 border border-purple-200/80 text-[10px] font-extrabold uppercase tracking-wide">
+                        <span className="inline-flex items-center px-3 py-1 rounded-xl bg-sky-50 text-[#0284C7] border border-sky-200/80 text-[10px] font-extrabold uppercase tracking-wide">
                           {officer.roleLabel}
                         </span>
                       </div>
@@ -2144,7 +2144,7 @@ export default function DinasDashboard() {
                   placeholder="Contoh: Ahmad Subagja, S.T."
                   value={newOfficerName}
                   onChange={(e) => setNewOfficerName(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-purple-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#0284C7] focus:ring-4 focus:ring-[#0284C7]/10"
                 />
               </div>
 
@@ -2156,7 +2156,7 @@ export default function DinasDashboard() {
                   placeholder="Contoh: 19850412 201001 1 009"
                   value={newOfficerNip}
                   onChange={(e) => setNewOfficerNip(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-mono font-semibold focus:outline-none focus:border-purple-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-mono font-semibold focus:outline-none focus:border-[#0284C7] focus:ring-4 focus:ring-[#0284C7]/10"
                 />
               </div>
 
@@ -2165,7 +2165,7 @@ export default function DinasDashboard() {
                 <select
                   value={newOfficerRole}
                   onChange={(e) => setNewOfficerRole(e.target.value as OfficerRole)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-purple-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#0284C7] focus:ring-4 focus:ring-[#0284C7]/10"
                 >
                   <option value="petugas_lapangan">Petugas Lapangan</option>
                   <option value="korwil">Koordinator Wilayah (Korwil)</option>
@@ -2181,7 +2181,7 @@ export default function DinasDashboard() {
                   placeholder="Contoh: Jakarta Selatan / Sungai Ciliwung"
                   value={newOfficerRegion}
                   onChange={(e) => setNewOfficerRegion(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-purple-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-semibold focus:outline-none focus:border-[#0284C7] focus:ring-4 focus:ring-[#0284C7]/10"
                 />
               </div>
 
@@ -2192,7 +2192,7 @@ export default function DinasDashboard() {
                   placeholder="Contoh: 0812-3456-7890"
                   value={newOfficerPhone}
                   onChange={(e) => setNewOfficerPhone(e.target.value)}
-                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-mono font-semibold focus:outline-none focus:border-purple-500"
+                  className="w-full px-4 py-2.5 rounded-xl border border-slate-200 text-xs font-mono font-semibold focus:outline-none focus:border-[#0284C7] focus:ring-4 focus:ring-[#0284C7]/10"
                 />
               </div>
 
@@ -2206,7 +2206,7 @@ export default function DinasDashboard() {
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-bold text-xs transition-colors shadow-md shadow-purple-600/20 cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white font-bold text-xs transition-colors shadow-md shadow-sky-600/20 cursor-pointer"
                 >
                   Simpan Petugas
                 </button>
