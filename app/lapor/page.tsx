@@ -713,27 +713,23 @@ export default function LaporPage() {
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                       {POLLUTION_CATEGORIES.map((cat) => {
-                        const Icon = cat.icon;
                         const isSelected = category === cat.id;
                         return (
                           <div
                             key={cat.id}
                             onClick={() => setCategory(cat.id)}
-                            className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-start gap-3.5 relative ${
+                            className={`p-4 rounded-2xl border-2 transition-all cursor-pointer flex items-start justify-between gap-3.5 relative ${
                               isSelected
                                 ? "border-[#0284C7] bg-sky-50/70 shadow-sm ring-2 ring-[#0284C7]/15"
                                 : "border-slate-200/80 bg-white hover:border-slate-300 hover:bg-slate-50/50"
                             }`}
                           >
-                            <div className={`p-2.5 rounded-xl bg-gradient-to-br ${cat.color} border`}>
-                              <Icon className="w-5 h-5" />
-                            </div>
-                            <div className="pr-6">
+                            <div className="pr-2">
                               <h4 className="font-bold text-xs text-slate-900">{cat.title}</h4>
                               <p className="text-[11px] text-slate-500 leading-snug mt-0.5 font-normal">{cat.desc}</p>
                             </div>
                             {isSelected && (
-                              <CheckCircle2 className="w-4 h-4 text-[#0284C7] absolute top-3.5 right-3.5" />
+                              <CheckCircle2 className="w-4 h-4 text-[#0284C7] shrink-0 mt-0.5" />
                             )}
                           </div>
                         );
@@ -773,7 +769,6 @@ export default function LaporPage() {
                           disabled={isLocating}
                           className="w-full flex items-center justify-center gap-2 py-3 px-4 rounded-2xl bg-sky-50 hover:bg-sky-100/80 border border-sky-200/80 text-[#0284C7] text-xs font-bold transition-all cursor-pointer active:scale-95"
                         >
-                          <Zap className={`w-4 h-4 ${isLocating ? "animate-spin" : ""}`} />
                           <span>{isLocating ? "Mendeteksi Koordinat GPS..." : "Gunakan Titik GPS Presisi"}</span>
                         </button>
                         {gpsLocation && (
@@ -864,15 +859,9 @@ export default function LaporPage() {
                       className="w-full flex items-center justify-center gap-2.5 py-4 px-6 rounded-2xl bg-[#0284C7] hover:bg-[#0284C7]/90 text-white font-bold text-sm shadow-xl shadow-[#0284C7]/25 hover:scale-[1.01] active:scale-[0.99] transition-all disabled:opacity-70 cursor-pointer"
                     >
                       {isSubmitting ? (
-                        <>
-                          <RefreshCw className="w-5 h-5 animate-spin" />
-                          <span>Mengirim Laporan ke Server Spasial...</span>
-                        </>
+                        <span>Mengirim Laporan...</span>
                       ) : (
-                        <>
-                          <Send className="w-5 h-5" />
-                          <span>Kirim Laporan Spasial Sekarang</span>
-                        </>
+                        <span>Kirim Laporan</span>
                       )}
                     </button>
                   </div>
