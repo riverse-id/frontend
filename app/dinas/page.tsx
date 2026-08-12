@@ -1425,7 +1425,7 @@ export default function DinasDashboard() {
                 </div>
                 <button
                   onClick={handleExportData}
-                  className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-extrabold text-xs transition-all shadow-sm flex items-center gap-2 cursor-pointer self-start md:self-auto"
+                  className="px-4 py-2.5 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white font-extrabold text-xs transition-all shadow-sm flex items-center gap-2 cursor-pointer self-start md:self-auto"
                 >
                   <Download className="w-4 h-4" />
                   <span>Ekspor Rekap Laporan</span>
