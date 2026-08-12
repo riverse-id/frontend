@@ -18,11 +18,6 @@ const CCTV_STATUS_STYLE: Record<CctvPoint["status"], { label: string; cls: strin
 
 export default function CctvPlayerModal({ cctv, onClose }: CctvPlayerModalProps) {
   const [isLoaded, setIsLoaded] = React.useState(false);
-  const [mounted, setMounted] = React.useState(false);
-
-  React.useEffect(() => {
-    setMounted(true);
-  }, []);
 
   // Kunci scroll halaman belakang dan blokir seluruh interaksi saat modal CCTV terbuka
   React.useEffect(() => {
@@ -49,7 +44,7 @@ export default function CctvPlayerModal({ cctv, onClose }: CctvPlayerModalProps)
     };
   }, [cctv, onClose]);
 
-  if (!cctv || !mounted) return null;
+  if (!cctv) return null;
 
   const status = CCTV_STATUS_STYLE[cctv.status] || CCTV_STATUS_STYLE.offline;
   const hasStream = Boolean(cctv.streamUrl);
