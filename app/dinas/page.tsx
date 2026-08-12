@@ -904,28 +904,6 @@ export default function DinasDashboard() {
                     <span className="text-emerald-400 font-bold">Aktif</span>
                   </div>
                 </div>
-
-                <div className="mt-3 pt-2.5 border-t border-white/10 flex items-center gap-2">
-                  <Link
-                    href="/"
-                    onClick={() => setShowProfileModal(false)}
-                    className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-[10px] font-bold text-slate-300 bg-white/5 hover:bg-white/10 hover:text-white border border-white/5 transition-all"
-                  >
-                    <ArrowLeft className="w-3 h-3" />
-                    <span>Beranda</span>
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowProfileModal(false);
-                      setIsLoggedIn(false);
-                    }}
-                    className="flex-1 flex items-center justify-center gap-1 py-1.5 rounded-lg text-[10px] font-bold text-red-400 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all cursor-pointer"
-                  >
-                    <LogOut className="w-3 h-3" />
-                    <span>Keluar</span>
-                  </button>
-                </div>
               </div>
             </>
           )}
