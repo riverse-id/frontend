@@ -11,7 +11,7 @@ export default function LaporanIndexRedirect() {
   }, [router]);
 
   return (
-    <div className="min-h-screen bg-canvas flex items-center justify-center">
+    <div className="min-h-screen bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] flex items-center justify-center">
       <div className="flex flex-col items-center gap-3">
         <div className="w-8 h-8 border-4 border-[#0284C7] border-t-transparent rounded-full animate-spin" />
         <span className="text-xs font-bold text-slate-500">Mengarahkan ke Peta Laporan...</span>

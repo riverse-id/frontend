@@ -190,7 +190,7 @@ export default function LaporanDetailPage({ params }: PageProps) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-canvas text-slate-800 font-sans flex flex-col">
+      <div className="min-h-screen bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] text-slate-800 font-sans flex flex-col">
         <Navbar />
         <main className="max-w-5xl mx-auto w-full px-4 pt-32 pb-20 flex-1 flex flex-col items-center justify-center text-center">
           <div className="w-10 h-10 border-4 border-[#0284C7] border-t-transparent rounded-full animate-spin mb-4" />
@@ -205,7 +205,7 @@ export default function LaporanDetailPage({ params }: PageProps) {
   // Not Found State
   if (!report) {
     return (
-      <div className="min-h-screen bg-canvas text-slate-800 font-sans flex flex-col">
+      <div className="min-h-screen bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] text-slate-800 font-sans flex flex-col">
         <Navbar />
         <main className="max-w-3xl mx-auto w-full px-4 pt-32 pb-20 flex-1 flex flex-col items-center justify-center text-center">
           <div className="w-20 h-20 rounded-3xl bg-sky-50 border border-sky-200 text-[#0284C7] flex items-center justify-center mb-6 shadow-xl shadow-sky-100">
@@ -249,7 +249,7 @@ export default function LaporanDetailPage({ params }: PageProps) {
   );
 
   return (
-    <div className="min-h-screen bg-canvas text-slate-800 font-sans flex flex-col selection:bg-[#0284C7] selection:text-white">
+    <div className="min-h-screen bg-white bg-[linear-gradient(to_right,#f1f5f9_1px,transparent_1px),linear-gradient(to_bottom,#f1f5f9_1px,transparent_1px)] [background-size:32px_32px] text-slate-800 font-sans flex flex-col selection:bg-[#0284C7] selection:text-white relative overflow-hidden">
       <Navbar />
 
       {/* Main Content Area */}
