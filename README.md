@@ -15,7 +15,7 @@
 ## Instansi
 **Universitas Amikom Yogyakarta**
 
-## Anggota Tim (Wong Menangan)
+## Anggota Tim (My Team Gueh)
 - **Ketua** : Muhammad Firdaus Chuzaeni
 - **Anggota 1** : Nisa Athifah As Sodri
 - **Anggota 2** : Wasima Juhaina
@@ -190,5 +190,5 @@ npm run start
 ---
 
 ## Lisensi & Hak Cipta
-© 2026 **Tim Wong Menangan — Universitas Amikom Yogyakarta**. Seluruh Hak Cipta Dilindungi Undang-Undang.  
+© 2026 **Tim My Team Gueh — Universitas Amikom Yogyakarta**. Seluruh Hak Cipta Dilindungi Undang-Undang.  
 Dikembangkan untuk mendukung pelestarian ekosistem sungai dan digitalisasi pengawasan lingkungan hidup di Indonesia.
