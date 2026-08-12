@@ -189,8 +189,11 @@ export default function AccessibilityWidget() {
 
   const effPos = pos ?? defaultPosition();
   const isRight = effPos.x + BTN_W / 2 >= (typeof window !== "undefined" ? window.innerWidth / 2 : 0);
-  const showPanelBelow =
-    typeof window !== "undefined" && effPos.y < Math.max(340, window.innerHeight / 2);
+  // Panel tampil di sisi yang ruangnya paling besar agar tidak terpotong
+  const vh = typeof window !== "undefined" ? window.innerHeight : 900;
+  const spaceAbove = effPos.y;
+  const spaceBelow = vh - (effPos.y + BTN_H);
+  const showPanelBelow = spaceAbove < spaceBelow;
 
   useEffect(() => {
     const el = document.documentElement;
@@ -303,23 +306,24 @@ export default function AccessibilityWidget() {
   return (
     <div
       ref={containerRef}
-      className={`fixed top-0 left-0 z-[999] flex flex-col gap-3 will-change-transform ${isRight ? "items-end" : "items-start"}`}
+      className="fixed top-0 left-0 z-[999] will-change-transform"
       style={{
         transform: `translate3d(${effPos.x}px, ${effPos.y}px, 0)`,
         transition: dragging ? "none" : "transform 0.25s ease",
       }}
     >
-      {showPanelBelow ? (
-        <>
-          {dragButton}
-          {open && panel}
-        </>
-      ) : (
-        <>
-          {open && panel}
-          {dragButton}
-        </>
-      )}
+      <div className="relative">
+        {dragButton}
+        {open && (
+          <div
+            className={`absolute ${showPanelBelow ? "top-full mt-3" : "bottom-full mb-3"} ${
+              isRight ? "right-0" : "left-0"
+            }`}
+          >
+            {panel}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
