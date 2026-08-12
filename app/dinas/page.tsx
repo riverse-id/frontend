@@ -600,11 +600,11 @@ export default function DinasDashboard() {
   };
 
   const REPORT_STATUS_LABEL: Record<string, string> = {
-    pending: "Pending 🟠",
-    terverifikasi: "Terverifikasi 🔴",
-    diproses: "Diproses 🔵",
-    selesai: "Selesai 🟢",
-    ditolak: "Ditolak ⚪",
+    pending: "Pending",
+    terverifikasi: "Terverifikasi",
+    diproses: "Diproses",
+    selesai: "Selesai",
+    ditolak: "Ditolak",
   };
 
   const handleExportOfficers = () => {
