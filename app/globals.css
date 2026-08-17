@@ -50,9 +50,8 @@ body {
 }
 
 /* ===================================================================== */
-/* DARK MODE & HIGH CONTRAST — remap theme tokens on class activate       */
+/* HIGH CONTRAST (A11Y) — remap theme tokens on a11y-hc activate         */
 /* ===================================================================== */
-.dark,
 .a11y-hc {
   color-scheme: dark;
   --background: #0B1220;
@@ -129,52 +128,6 @@ body {
   --color-amber-800: #FDE68A;
   --color-amber-900: #FEF3C7;
   --color-amber-950: #FEF3C7;
-}
-
-/* Keep text-white legible on colored/dark elements (white token becomes dark card) */
-.dark .text-white {
-  color: #ffffff;
-}
-
-/* Keep dark button/gradient backgrounds dark even though slate-800/900 now map to light text */
-.dark .bg-slate-900,
-.dark .bg-slate-900\/60,
-.dark .bg-slate-900\/70,
-.dark .bg-slate-900\/75,
-.dark .bg-slate-900\/80,
-.dark .bg-slate-900\/90 {
-  background-color: #1E293B;
-}
-.dark .bg-slate-800 {
-  background-color: #243244;
-}
-.dark .bg-slate-800\/80 {
-  background-color: #243244;
-}
-.dark .bg-slate-800\/90 {
-  background-color: #334155;
-}
-.dark .from-slate-900 {
-  --tw-gradient-from: #1E293B;
-}
-.dark .to-slate-900 {
-  --tw-gradient-to: #1E293B;
-}
-.dark .via-slate-800 {
-  --tw-gradient-via: #243244;
-}
-.dark .via-slate-900 {
-  --tw-gradient-via: #1E293B;
-}
-.dark .to-slate-800 {
-  --tw-gradient-to: #243244;
-}
-.dark .bg-slate-950\/60,
-.dark .bg-slate-950\/70,
-.dark .bg-slate-950\/75,
-.dark .bg-slate-950\/85,
-.dark .bg-slate-950\/90 {
-  background-color: rgba(2, 6, 23, 0.85);
 }
 
 /* High-contrast variant keeps dark buttons/gradients dark (mirror of dark) */
