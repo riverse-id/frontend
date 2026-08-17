@@ -775,10 +775,13 @@ export default function RiverGISMap({
             </div>
             <h4 class="font-extrabold text-xs text-slate-900 leading-tight mb-1">${spot.judul}</h4>
             <p class="text-[10px] text-slate-500 font-medium mb-2">${spot.lokasi}</p>
-            <div class="flex items-center justify-between text-[10px] text-slate-600 font-bold border-t border-slate-100 pt-1.5">
+            <div class="flex items-center justify-between text-[10px] text-slate-600 font-bold border-t border-slate-100 pt-1.5 mb-2">
               <span>👍 ${spot.upvotes} Dukungan</span>
               <span class="text-sky-600">${spot.timeAgo}</span>
             </div>
+            <a href="/laporan/${spot.id}" class="inline-flex w-full items-center justify-center gap-1 px-3 py-1.5 rounded-xl bg-[#0284C7] hover:bg-[#0369A1] text-white text-[11px] font-bold transition-all shadow-xs" style="color: #ffffff !important; text-decoration: none;">
+              <span>Lihat Detail Laporan →</span>
+            </a>
           </div>
         `;
 

@@ -30,13 +30,14 @@ import {
   Search,
   Filter
 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import ReportDetailModal from "../components/ReportDetailModal";
 import {
   submitCitizenReport,
   voteReport,
   getStoredReports,
+  getReportByIdOrTicket,
   SubmissionResult
 } from "../../lib/store";
 import { Report, ReportCategory } from "../../lib/types";
@@ -116,10 +117,11 @@ export default function LaporPage() {
   const [ticketNumber, setTicketNumber] = useState("");
   const [showFormModal, setShowFormModal] = useState(false);
 
+  const router = useRouter();
+
   // Reports & Geofence Submission States
   const [reports, setReports] = useState<Report[]>([]);
   const [submissionResult, setSubmissionResult] = useState<SubmissionResult | null>(null);
-  const [selectedDetailReport, setSelectedDetailReport] = useState<Report | null>(null);
 
   // Pagination / Index State (reports per page, configurable)
   const [currentPage, setCurrentPage] = useState(1);
@@ -128,22 +130,29 @@ export default function LaporPage() {
   const safePage = Math.min(currentPage, totalPages);
   const displayedReports = reports.slice((safePage - 1) * pageSize, safePage * pageSize);
 
-  // Sync with store & localStorage
+  // Sync with store & localStorage and redirect if ticket/id query param is present
   React.useEffect(() => {
-    setReports(getStoredReports());
+    const all = getStoredReports();
+    setReports(all);
+
+    if (typeof window !== "undefined") {
+      const params = new URLSearchParams(window.location.search);
+      const queryId = params.get("id") || params.get("ticket");
+      if (queryId) {
+        router.replace(`/laporan/${encodeURIComponent(queryId)}`);
+      }
+    }
+
     const handleUpdate = () => setReports(getStoredReports());
     window.addEventListener("riverse_reports_updated", handleUpdate);
     return () => window.removeEventListener("riverse_reports_updated", handleUpdate);
-  }, []);
+  }, [router]);
 
   const handleVote = (reportId: string) => {
     const updated = voteReport(reportId);
     if (updated) {
       setReports(getStoredReports());
       showToast("Dukungan laporan (+1 Vote) berhasil ditambahkan!", "success");
-      if (selectedDetailReport && selectedDetailReport.id === reportId) {
-        setSelectedDetailReport(updated);
-      }
     }
   };
 
@@ -444,13 +453,13 @@ export default function LaporPage() {
                     </span>
                   </button>
 
-                  <button
-                    onClick={() => setSelectedDetailReport(rpt)}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-slate-600 hover:text-slate-900 transition-colors cursor-pointer"
+                  <Link
+                    href={`/laporan/${encodeURIComponent(rpt.ticketNo || rpt.id)}`}
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-sky-50 text-slate-700 hover:text-[#0284C7] font-bold text-xs transition-all border border-slate-200/80 cursor-pointer"
                   >
                     <span>Detail & Sub-Laporan</span>
-                    <ChevronRight className="w-4 h-4" />
-                  </button>
+                    <ChevronRight className="w-4 h-4 text-[#0284C7]" />
+                  </Link>
                 </div>
               </div>
             );
@@ -546,13 +555,6 @@ export default function LaporPage() {
           </div>
         )}
       </section>
-
-      {/* Detail Modal Dialog */}
-      <ReportDetailModal
-        report={selectedDetailReport}
-        onClose={() => setSelectedDetailReport(null)}
-        onVote={handleVote}
-      />
 
       {/* ============================================================ */}
       {/* MODAL DIALOG REPORTING FORM OVERLAY                           */}
