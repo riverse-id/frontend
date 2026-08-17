@@ -27,13 +27,6 @@ export default function RootLayout({
       lang="id"
       className="font-sans h-full antialiased scroll-smooth"
     >
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var isLanding=window.location.pathname==='/';if(isLanding)return;var t=localStorage.getItem('riverse_theme');var d=t?t==='dark':window.matchMedia('(prefers-color-scheme: dark)').matches;if(d)document.documentElement.classList.add('dark');}catch(e){}})();`,
-          }}
-        />
-      </head>
       <body className="min-h-full flex flex-col bg-white text-zinc-900 selection:bg-[#0284C7] selection:text-white relative">
         <ToastProvider>
           <CursorGlow />
