@@ -567,7 +567,7 @@ const LOG_ACTIONS = [
   { action: "Disposisi Tim Lapangan", details: "Menugaskan petugas armada ke lokasi titik GIS laporan." },
   { action: "Update Status (DIPROSES)", details: "Petugas mulai melakukan penanganan pembersihan di lapangan." },
   { action: "Update Status (SELESAI)", details: "Closed-loop selesai, dokumentasi Before vs After diunggah." },
-  { action: "Eskalasi Threshold", details: "Vote mencapai threshold. Status otomatis menjadi Terverifikasi 🔴." },
+  { action: "Eskalasi Threshold", details: "Vote mencapai threshold. Status otomatis menjadi Terverifikasi." },
   { action: "Tolak Laporan (REJECT)", details: "Laporan ditolak karena duplikat / foto tidak relevan." },
   { action: "Unggah Bukti After", details: "Dokumentasi foto pembersihan diunggah ke tiket." },
 ];
@@ -628,7 +628,7 @@ export const MOCK_AUDIT_LOGS: AuditLog[] = [
     actorName: "Sistem Spasial Auto",
     actorRole: "Automated System",
     action: "Eskalasi Threshold",
-    details: "Vote mencapai 64/50 (+142 Urgency Score). Status otomatis menjadi Terverifikasi 🔴.",
+    details: "Vote mencapai 64/50 (+142 Urgency Score). Status otomatis menjadi Terverifikasi.",
   },
   ...buildGeneratedAuditLogs(),
 ];

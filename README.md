@@ -1,34 +1,55 @@
 # RIVERSE — Smart River Monitoring & GIS Reporting Platform
-### *Humanity OS Solution for River Ecosystem Preservation*
-> **Platform Sistem Informasi Geografis (SIG) Partisipatif untuk Pemantauan & Pelaporan Pencemaran Sungai secara Real-Time.**
-
-[![Next.js](https://img.shields.io/badge/Next.js-16.2.11-000000?style=for-the-badge&logo=next.js&logoColor=white)](https://nextjs.org/)
-[![React](https://img.shields.io/badge/React-19.0.0-61DAFB?style=for-the-badge&logo=react&logoColor=black)](https://react.dev/)
-[![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
-[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-4.x-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)](https://tailwindcss.com/)
-[![Leaflet](https://img.shields.io/badge/Leaflet-GIS_Mapping-199900?style=for-the-badge&logo=leaflet&logoColor=white)](https://leafletjs.com/)
-[![WCAG 2.1 AA](https://img.shields.io/badge/Accessibility-WCAG_2.1_AA-0284C7?style=for-the-badge)](https://www.w3.org/WAI/standards-guidelines/wcag/)
-[![Deploy](https://img.shields.io/badge/Live_Demo-Vercel-black?style=for-the-badge&logo=vercel)](https://riverse.vercel.app)
-
----
 
 ## Instansi
-**Universitas Amikom Yogyakarta**
+Universitas Amikom Yogyakarta
 
-## Anggota Tim (My Team Gueh)
-- **Ketua** : Muhammad Firdaus Chuzaeni
-- **Anggota 1** : Nisa Athifah As Sodri
-- **Anggota 2** : Wasima Juhaina
-
----
+## Anggota Tim
+- Ketua       : Muhammad Firdaus Chuzaeni
+  - Anggota 1: Nisa Athifah As Sodri
+  - Anggota 2: Wasima Juhaina
 
 ## Deskripsi Karya
 
-### Latar Belakang & Masalah
-Berdasarkan data Kementerian Lingkungan Hidup (KLH), sebesar **70,7% dari 4.482 lokasi pemantauan sungai di Indonesia berstatus tercemar**. Meskipun tingkat literasi digital masyarakat tinggi, partisipasi dalam pengawasan lingkungan secara digital masih sangat minim. Hal ini disebabkan oleh *interface design failure* pada platform pengaduan umum yang birokratis, rumit, serta tidak memberikan kepastian tindak lanjut.
+### 1. Latar Belakang Pemilihan Masalah
+Sungai merupakan urat nadi ekosistem dan sumber air baku vital bagi kehidupan masyarakat. Namun, berdasarkan data Kementerian Lingkungan Hidup (KLH), sebesar **70,7% dari 4.482 lokasi pemantauan sungai di Indonesia saat ini berstatus tercemar**, didominasi oleh limbah domestik, sampah plastik anorganik, dan pembuangan limbah industri ilegal. 
 
-### Solusi & Konsep Humanity OS
-**RIVERSE** hadir sebagai solusi berbasis **Humanity OS** yang mengintegrasikan pendekatan *Human-Centered Design (HCD)* dan *Eco-Emotional Visual Language*. RIVERSE menghubungkan kepedulian warga dengan aksi nyata **Dinas Lingkungan Hidup (DLH)** melalui mekanisme pelaporan berbasis lokasi yang bebas hambatan (*frictionless report* < 90 detik) tanpa prosedur pendaftaran yang membingungkan.
+Meskipun penetrasi perangkat pintar dan literasi digital masyarakat perkotaan maupun pedesaan telah tinggi, partisipasi aktif warga dalam pengawasan lingkungan masih sangat rendah. Hal ini dipicu oleh kegagalan sistem pelaporan konvensional (*interface & workflow failure*):
+- **Birokrasi Rumit & Membingungkan**: Prosedur aduan mengharuskan registrasi panjang dan formulir berbelit.
+- **Ketiadaan Konfirmasi Spasial**: Laporan tidak terpetakan secara geografis (*non-geotagged*), memicu penumpukan aduan duplikat di titik yang sama.
+- **Sistem Pelaporan Satu Arah (*Black-Box Reporting*)**: Pelapor tidak pernah mengetahui apakah laporannya sedang diproses atau sudah selesai, menghilangkan kepercayaan publik terhadap instansi pemerintah.
+
+### 2. Tujuan Utama Pembuatan Sistem
+**RIVERSE** dikembangkan sebagai platform Sistem Informasi Geografis (SIG/GIS) partisipatif (*crowdsourced*) yang bertujuan untuk:
+1. **Memotong Friksi Pelaporan Warga**: Menghadirkan antarmuka pelaporan cepat (*frictionless report* < 90 detik) berbasis titik GPS dan alur sungai GeoJSON presisi tinggi tanpa registrasi yang membebani.
+2. **Validasi Cerdas & Anti-Spam Berbasis Lokasi**: Mengimplementasikan algoritma **Smart Geofencing (<500m)** dan **Community Upvote** untuk mencegah redundansi laporan dan memfilter data palsu secara otomatis.
+3. **Sentralisasi Komando Dinas Lingkungan Hidup (DLH)**: Menyediakan *dashboard command center* terintegrasi bagi petugas DLH untuk memantau *density heatmap*, mengalokasikan armada kebersihan, memantau *live stream* CCTV aliran sungai, hingga mengunggah bukti transparansi *Before vs After*.
+4. **Membangun Akuntabilitas Siklus Tertutup (*Closed-Loop Accountability*)**: Menjamin transparansi status laporan dari tahap *Pending* ➔ *Terverifikasi* ➔ *Diproses* ➔ *Selesai* secara real-time.
+
+### 3. Manfaat yang Dihadirkan bagi Masyarakat & Lingkungan
+- **Bagi Masyarakat Umum**:
+  - Memberikan kanal partisipasi digital yang mudah diakses, inklusif, dan transparan dalam menjaga kebersihan lingkungan tempat tinggal.
+  - Memberikan kepastian tindak lanjut dengan bukti visual nyata (*interactive before-after comparison slider*).
+  - Membangun solidaritas warga sekitar melalui mekanisme dukungan aduan (*community upvoting*).
+- **Bagi Pemerintah & Dinas Lingkungan Hidup (DLH)**:
+  - Menghemat waktu dan efisiensi alokasi anggaran penanganan lapangan berkat data spasial dan koordinat titik pencemaran yang presisi.
+  - Memudahkan evaluasi kebijakan dan kinerja armada melalui fitur rekapitulasi data dan ekspor laporan terstruktur (`.xlsx`).
+- **Bagi Ekosistem & Pembangunan Berkelanjutan (SDGs)**:
+  - **SDG 6 (Clean Water and Sanitation)**: Melindungi kelestarian sumber daya air tawar dan sanitasi lingkungan dari limbah beracun.
+  - **SDG 13 (Climate Action)**: Mendorong aksi mitigasi pencemaran lingkungan berbasis keterlibatan komunitas lokal.
+  - **SDG 14 (Life Below Water)**: Mencegah sampah darat dan mikroplastik mengalir ke muara serta merusak biota perairan.
+
+### 4. Alasan Mendasar Pemilihan Subtema Humanity OS
+Subtema **Humanity OS** dipilih karena RIVERSE berakar pada filosofi bahwa **teknologi harus memanusiakan manusia, menjembatani empati sosial, dan memberdayakan kepedulian warga menjadi aksi nyata penyelamatan bumi**.
+
+Melalui integrasi *Human-Centered Design (HCD)*, RIVERSE mengadopsi prinsip:
+1. **Empati & Inklusivitas Universal**: RIVERSE menerapkan standar aksesibilitas **WCAG 2.1 AA** secara menyeluruh (fitur pembaca teks ramah disleksia, mode kontras tinggi, penyesuaian ukuran font, dan *reduce motion*) agar seluruh kalangan, termasuk penyandang disabilitas dan lansia, dapat berpartisipasi setara.
+2. **Teknologi Sebagai Jembatan Kolaborasi Sipil-Pemerintah**: Menghilangkan sekat birokrasi antara warga dan petugas dinas, mengubah relasi pasif menjadi kemitraan gotong royong digital yang harmonis demi masa depan air bersih Indonesia.
+
+---
+
+## Tautan / Link Deploy Website
+- **URL Website Aktif (Live Demo)** : [https://riverse.vercel.app](https://riverse.vercel.app)
+- **Repository GitHub** : [https://github.com/riverse-id/frontend](https://github.com/riverse-id/frontend)
 
 ---
 
@@ -40,67 +61,45 @@ Berdasarkan data Kementerian Lingkungan Hidup (KLH), sebesar **70,7% dari 4.482 
 | **Smart Geofencing (<500m)** | Algoritma pemindaian lokasi otomatis untuk mendeteksi laporan ganda dalam radius 500 meter. | Mencegah redundansi data & penumpukan pin laporan ganda di lokasi yang sama. |
 | **Community Upvote** | Fitur dukungan publik untuk aduan warga di wilayah sekitarnya. | Menentukan skala prioritas aduan yang otomatis diteruskan ke Dashboard DLH. |
 | **Workflow & Visual Before-After** | Tracking status penanganan berjenjang disertai penggeser foto interaktif *Before vs After*. | Menjamin transparansi, akuntabilitas, dan kepuasan visual bagi pelapor. |
-
----
-
-## Relevansi Tema & Dukungan SDGs
-RIVERSE dirancang untuk mendukung ketercapaian target **Indeks Kualitas Air (IKA) Nasional** serta 3 poin utama **Sustainable Development Goals (SDGs)**:
-- **SDG 6 (Clean Water and Sanitation)**: Menjaga kebersihan sumber air permukaan masyarakat dari kontaminasi limbah berbahaya.
-- **SDG 13 (Climate Action)**: Memperluas akses partisipasi digital warga dalam aksi mitigasi pencemaran lingkungan hidup.
-- **SDG 14 (Life Below Water)**: Mencegah aliran limbah dan mikroplastik darat mencemari biota dan ekosistem perairan.
-
----
-
-## Tech Stack & Arsitektur
-
-- **Frontend Framework**: [Next.js 16 (App Router)](https://nextjs.org/) + [React 19](https://react.dev/) + [TypeScript](https://www.typescriptlang.org/)
-- **Styling & Design System**: [Tailwind CSS](https://tailwindcss.com/) + Custom Design Tokens (`#0F172A`, `#0284C7`, `#E0F2FE`, `#F8FAFC`, `#FFFFFF`)
-- **GIS & Pemetaan Spasial**: [Leaflet.js](https://leafletjs.com/) + [React-Leaflet](https://react-leaflet.js.org/) + GeoJSON Polylines + SVG Map Pins
-- **Animasi & Interaksi**: [Framer Motion](https://www.framer.com/motion/) + 3D Tilt Spatial Effects + Canvas Particle Systems
-- **Eksportir Data**: [XLSX SheetJS](https://sheetjs.com/) (Ekspor Rekap Laporan & Armada DLH)
-- **Kompatibilitas Standar**: WCAG 2.1 AA Compliance (Inklusivitas & Disabilitas)
+| **Live CCTV Monitoring** | Pemantauan streaming kamera pengawas titik rawan banjir dan penumpukan limbah di bantaran sungai. | Deteksi dini aktivitas pembuangan sampah liar secara preventif. |
+| **Aksesibilitas WCAG 2.1 AA** | Panel kendali inklusivitas lengkap (Dyslexia Font, Kontras Tinggi, Skala Abu-Abu, Pembesar Teks). | Memberikan kenyamanan akses setara bagi seluruh lapisan masyarakat. |
 
 ---
 
 ## Panduan Penggunaan Platform RIVERSE
 
 ### A. Modul Warga (Masyarakat Umum)
-
-#### 1. Tata Cara Melaporkan Pencemaran Sungai:
-1. **Buka Menu Pelaporan**: Akses halaman utama dan pilih menu **Buat Laporan** atau klik tombol **Buat Laporan Sekarang**.
-2. **Tentukan Titik Lokasi**: Pilih alur atau titik sungai yang mengalami pencemaran pada **Peta GIS Interaktif**.
-3. **Konfirmasi Titik Spasial**: Klik tombol **Lapor Titik Ini** pada jendela informasi lokasi yang muncul di peta.
-4. **Isi Formulir Pengaduan**: Lengkapi detail laporan, mulai dari kategori pencemaran, patokan lokasi, deskripsi kejadian, hingga foto bukti lapangan.
-5. **Kirim Laporan**: Klik tombol **Kirim Laporan** untuk menerbitkan aduan ke dalam sistem GIS.
-
-#### 2. Tata Cara Mendukung (Upvote) Laporan Warga Lain:
-1. **Eksplorasi Daftar Laporan**: Gulir ke bawah pada menu Buat Laporan hingga menemukan bagian **Dukung & Pantau Laporan Warga**.
-2. **Cek Detail Aduan**: Pilih kartu laporan yang ingin ditinjau untuk melihat deskripsi lengkap, lokasi, dan status terkini.
-3. **Berikan Upvote**: Klik tombol **Dukung (+1 Vote)** pada laporan yang valid untuk memprioritaskan penanganannya oleh Dinas Lingkungan Hidup (DLH).
-
----
+1. **Tata Cara Melaporkan Pencemaran Sungai**:
+   - Akses landing page, klik tombol **Buat Laporan Sekarang**.
+   - Tentukan lokasi pencemaran pada **Peta GIS Interaktif** atau gunakan deteksi GPS otomatis.
+   - Klik **Lapor Titik Ini** pada pop-up alur sungai.
+   - Isi formulir (kategori pencemaran, patokan lokasi, deskripsi kejadian, dan foto bukti).
+   - Klik **Kirim Laporan** untuk mempublikasikan aduan ke sistem GIS.
+2. **Tata Cara Mendukung (Upvote) Laporan Warga Lain**:
+   - Buka bagian **Dukung & Pantau Laporan Warga**.
+   - Pilih laporan yang ingin diverifikasi.
+   - Klik tombol **Dukung (+1 Vote)** untuk menaikkan prioritas penanganan ke antrean DLH.
 
 ### B. Modul Administrator & Petugas (Dinas Lingkungan Hidup)
-
-#### 1. Akses Portal Komando & Otentikasi Keamanan:
-- Klik tombol **Masuk** pada navbar, lalu masukkan **NIP / ID Petugas** dan **Kata Sandi**.
-- *Catatan/Disclaimer*: Platform tidak menyediakan formulir registrasi publik demi menjaga integritas data dan membatasi akses khusus bagi personel resmi berkepentingan.
-
-#### 2. Fitur & Navigasi Dashboard DLH:
-- **Dashboard Utama**: Menampilkan ringkasan statistik real-time, seperti total laporan aktif, status terverifikasi, persentase tingkat penyelesaian, serta peta sebaran laporan per wilayah.
-- **Peta Density GIS**: Pemetaan spasial interaktif untuk memantau sebaran koordinat titik hotspot pencemaran sungai di seluruh wilayah administratif.
-- **Tim & Beban Kerja**: Modul manajemen personel untuk memantau alokasi petugas lapangan yang sedang bertugas beserta riwayat penanganan yang telah diselesaikan.
-- **Manajemen Laporan**: Pusat kendali bagi admin untuk mengonfirmasi, menindaklanjuti, atau menolak aduan warga berdasarkan verifikasi lapangan.
-- **CCTV Monitoring**: Modul integrasi untuk menambahkan dan memantau titik feed kamera pengawas di sepanjang aliran sungai secara real-time.
-- **Audit Log Aktivitas**: Catatan rekam jejak digital (*log history*) yang mencatat setiap tindakan dan aktivitas personel dalam sistem secara akuntabel.
-- **Pengaturan Radius & Ambang Vote**: Fitur konfigurasi dinamis bagi admin untuk menentukan ambang batas dukungan publik (*upvote threshold*) serta radius Smart Geofencing guna memvalidasi laporan warga.
+1. **Akses Portal Komando**:
+   - Klik **Masuk** pada navbar, masukkan kredensial resmi (NIP/ID Petugas & Password).
+2. **Fitur Dashboard DLH**:
+   - **Statistik & Hotspot GIS**: Ringkasan persentase penyelesaian laporan dan peta densitas sebaran aduan.
+   - **Manajemen & Verifikasi Aduan**: Verifikasi bukti lapangan, alokasikan petugas, dan perbarui status pengerjaan.
+   - **Penyelesaian & Upload Before-After**: Dokumentasikan hasil pembersihan dengan foto *After* untuk verifikasi warga.
+   - **Live CCTV & Audit Log**: Monitoring CCTV berkala serta pemantauan rekam jejak aktivitas dinas yang akuntabel.
+   - **Ekspor Data**: Unduh rekapitulasi data laporan dan performa petugas dalam format spreadsheet (`.xlsx`).
 
 ---
 
-### C. Fitur Aksesibilitas (Disabilitas)
-RIVERSE berkomitmen menyediakan antarmuka inklusif berstandar **WCAG 2.1 AA** bagi pengguna berkebutuhan khusus melalui widget aksesibilitas terintegrasi:
-- **Penyesuaian Teks & Kontras**: Pengaturan ukuran font, Mode Kontras Tinggi (*High Contrast*), Skala Abu-Abu (*Grayscale*), dan Inversi Warna.
-- **Kenyamanan Membaca & Navigasi**: Pilihan Font Mudah Dibaca (*Dyslexia Friendly*), Garis Bawah Tautan, Penyesuaian Spasi Huruf, serta Fitur Pengurangan Animasi (*Reduce Motion*).
+## Tech Stack & Arsitektur
+
+- **Frontend Framework**: Next.js 16 (App Router) + React 19 + TypeScript
+- **Styling & Design System**: Tailwind CSS v4 + Custom Design Tokens (Ocean & River GIS Palette)
+- **GIS & Pemetaan Spasial**: Leaflet.js + React-Leaflet + GeoJSON Polylines + Custom SVG Status Pins
+- **Animasi & Interaktivitas**: Framer Motion + 3D Tilt Cards + Canvas Particle System
+- **Ekspor Data**: XLSX (SheetJS)
+- **Standar Aksesibilitas**: Web Content Accessibility Guidelines (WCAG) 2.1 Level AA
 
 ---
 
@@ -144,6 +143,7 @@ frontend-1/
 │   ├── assets/                       # Aset gambar, ikon, & logo resmi RIVERSE
 │   └── data/                         # GeoJSON alur sungai & titik pemantauan
 ├── DESIGN.md                         # Panduan token warna & pedoman desain UI/UX
+├── FLOW.md                           # Diagram alur end-to-end sistem
 ├── LIST-CCTV.md                      # Daftar titik kamera CCTV monitoring sungai
 ├── package.json
 └── README.md
@@ -154,9 +154,8 @@ frontend-1/
 ## Panduan Memulai (Getting Started)
 
 ### Prasyarat
-Pastikan sistem Anda telah terpasang:
 - **Node.js**: `v18.x` atau lebih baru
-- **npm** atau **yarn** atau **pnpm**
+- **Package Manager**: `npm`, `yarn`, atau `pnpm`
 
 ### 1. Clone Repository
 ```bash
@@ -180,12 +179,6 @@ Buka browser Anda dan akses: [http://localhost:3000](http://localhost:3000)
 npm run build
 npm run start
 ```
-
----
-
-## Tautan / Link Deploy Website
-- **Live Website**: [https://riverse.vercel.app](https://riverse.vercel.app)
-- **Repository GitHub**: [https://github.com/riverse-id/frontend](https://github.com/riverse-id/frontend)
 
 ---
 
